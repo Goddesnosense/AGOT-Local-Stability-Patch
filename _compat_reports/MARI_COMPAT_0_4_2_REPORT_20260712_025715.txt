@@ -1,0 +1,15 @@
+﻿AGOT Local Stability Mari Compat v0.4.2
+Fecha: 20260712_025715
+LocalPatch: D:\Paradox Interactive\Crusader Kings III\mod\AGOT Local Stability Patch
+MariRoot: D:\Paradox Interactive\Crusader Kings III\mod\Mari's AGOT Makeovers
+Backup: D:\Paradox Interactive\Crusader Kings III\mod\AGOT Local Stability Patch.backup_MARI_COMPAT_20260712_025715
+
+Overrides generados:
+- D:\Paradox Interactive\Crusader Kings III\mod\AGOT Local Stability Patch\common\dna_data\mari_new_dna_data.txt
+- D:\Paradox Interactive\Crusader Kings III\mod\AGOT Local Stability Patch\gfx\portraits\portrait_modifiers\mm_agot_characters.txt
+- D:\Paradox Interactive\Crusader Kings III\mod\AGOT Local Stability Patch\gfx\portraits\portrait_modifiers\asoiaf_clothes.txt
+
+Notas:
+- Este parche NO modifica Mari's AGOT Makeovers original.
+- AGOT Local Stability Patch debe ir ultimo absoluto en el playset AGOT.
+- Si algo falla, restaura el backup: D:\Paradox Interactive\Crusader Kings III\mod\AGOT Local Stability Patch.backup_MARI_COMPAT_20260712_025715
