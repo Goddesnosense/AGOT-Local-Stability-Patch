@@ -1,0 +1,1 @@
+Package=AGOT_HOUSE_FOUNDERS_BASTARD_CADET_SAFETY_SAFE_010 Version=0.6.8-HouseFoundersBastardCadetSafety Installed=2026-07-18 13:46:37 SourceMod=D:\Paradox Interactive\Crusader Kings III\mod\AGOT House Founders Backup=D:\Paradox Interactive\Crusader Kings III\BACKUPS_MODS_MANUALES\AGOT_HOUSE_FOUNDERS_BASTARD_CADET_SAFETY_SAFE_010_20260718_134341
