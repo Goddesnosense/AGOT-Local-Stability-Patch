@@ -1,0 +1,1456 @@
+﻿# AGOT Local Stability 0.6.7
+# LOAA / AGOT 0.4.38 / CK3 1.19 casus belli rebase.
+
+ep3_laamp_adventurer_duchy_invasion = {
+	icon = invasion
+	group = invasion
+
+	combine_into_one = yes
+	should_show_war_goal_subview = yes
+	mutually_exclusive_titles = { always = yes }
+	allow_hostages = no
+
+	allowed_for_character = {
+		ep3_adventurer_invasion_allowed_for_character_trigger = yes
+		scope:defender.highest_held_title_tier >= tier_duchy
+	}
+
+	allowed_for_character_display_regardless = {
+		trigger_if = {
+			limit = {
+				culture = {
+					has_cultural_parameter = cb_lower_prestige_level_requirement
+				}
+			}
+			prestige_level >= 2
+		}
+		trigger_else = {
+			prestige_level >= 3
+		}
+		ep3_adventurer_invasion_allowed_for_character_display_regardless_trigger = yes
+	}
+
+	allowed_against_character = {
+		ep3_adventurer_landless_allowed_against_character_trigger = yes
+	}
+
+	target_titles = all
+	target_title_tier = duchy
+	target_de_jure_regions_above = yes
+	ignore_effect = change_title_holder
+
+	ai_can_target_all_titles = { always = yes }
+	ai_score_mult = {
+		value = ep3_laamp_invasion_ai_targeting_value
+		
+		#AGOT Disabled
+		# add = frankokratia_leader_protection_value #Set back to 0. Declaring war on the frankokratia leader can really ruin the whole thing
+	}
+
+	valid_to_start = {
+		scope:target = {
+			any_in_de_jure_hierarchy = {
+				count >= 1
+				tier = tier_county
+			}
+			# Also make sure you can't war for, like, the Papal States
+			trigger_if = {
+				limit = { holder.faith ?= root.faith }
+				NOT = {
+					holder ?= { is_theocratic_lessee = yes }
+				}
+			}
+			trigger_if = {
+				limit = {
+					scope:attacker = { is_ai = yes }
+				}
+				any_in_de_jure_hierarchy = {
+					continue = { tier > tier_county }
+					count >= 2
+					tier = tier_county
+					holder ?= {
+						OR = {
+							this = scope:defender
+							is_vassal_or_below_of = scope:defender
+						}
+					}
+				}
+			}
+			# AGOT 0.4.38: reject invalid Mega Wars targets.
+			NOT = { agot_invalid_war_target = yes }
+		}
+		# # LOTR compatibility
+		# dwarf_and_goblin_underground_duchy_cb_trigger = yes
+	}
+
+	should_invalidate = { ep3_adventurer_landless_should_invalidate_trigger = yes }
+
+	on_invalidated_desc = msg_county_conquest_war_invalidated_message
+
+	on_invalidated = {}
+
+	cost = {
+		piety = {
+			add = ep3_laamp_invasion_base_piety_cost
+			multiply = common_cb_piety_cost_multiplier
+			multiply = common_claim_reduction_cost_multiplier_core
+		}
+		prestige = {
+			value = ep3_laamp_invasion_cb_cost
+			multiply = common_cb_prestige_cost_multiplier
+			multiply = common_claim_reduction_cost_multiplier_core
+		}
+	}
+
+	on_declaration = {
+		on_declared_war = yes
+		scope:attacker.var:adventurer_invasion_supporter ?= { save_scope_as = supporter }
+		if = {
+			limit = { ep3_adventurer_sponsorship_valid_trigger = yes }
+			scope:attacker = {
+				random_in_list = {
+					list = target_titles
+					save_scope_as = target_title
+				}
+				# Save scopes and cleanup variables
+				set_variable = {
+					name = adventurer_invasion_supporter
+					value = scope:attacker.var:adventurer_invasion_supporter
+				}
+				scope:war ?= {
+					set_variable = {
+						name = adventurer_invasion_supporter
+						value = scope:attacker.var:adventurer_invasion_supporter
+					}
+
+				}
+				scope:attacker.var:adventurer_invasion_supporter ?= {
+					set_variable = {
+						name = adventurer_invasion_supportee
+						value = scope:attacker
+					}
+				}
+				# Opinion loss
+				reverse_add_opinion = {
+					target = scope:defender
+					modifier = sponsored_laamp_invasion_against_me_opinion
+				}
+				# Support
+				send_interface_toast = {
+					type = msg_troops_gained
+					title = ep3_laamp_sponsor_troops_tt
+					left_icon = scope:supporter
+					right_icon = scope:defender
+					if = {
+						limit = { exists = scope:supporter.var:adventurer_invasion_request_soldiers }
+						capital_barony = { save_scope_as = capital_barony }
+						spawn_army = {
+							men_at_arms = {
+								type = armored_footmen
+								stacks = 3
+							}
+							men_at_arms = {
+								type = accolade_maa_archers
+								stacks = 4
+							}
+							men_at_arms = {
+								type = armored_horsemen
+								stacks = 2
+							}
+							levies = 100
+							inheritable = yes
+							location = scope:attacker.capital_province
+							war = scope:war
+							war_keep_on_attacker_victory = yes
+							save_scope_as = new_army
+							name = ep3_laamp_invasion_event_army
+						}
+						scope:supporter = { remove_variable = adventurer_invasion_request_soldiers }
+					}
+					if = {
+						limit = { exists = scope:supporter.var:adventurer_invasion_join_war }
+						scope:war ?= { add_attacker = scope:supporter }
+						scope:supporter = { remove_variable = adventurer_invasion_join_war }
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					scope:supporter ?= scope:defender
+					scope:supporter.top_liege ?= scope:defender.top_liege
+				}
+			}
+			scope:attacker = { ep3_laamp_supporter_invalidated_effect = yes }
+		}
+	}
+
+	on_victory_desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:attacker = { is_local_player = yes }
+				}
+				desc = county_conquest_cb_victory_desc_attacker
+			}
+			desc = county_conquest_cb_victory_desc
+		}
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					exists = scope:attacker.var:adventurer_invasion_supporter
+					ep3_adventurer_sponsorship_valid_trigger = no
+				}
+				desc = {
+					desc = ep3_laamp_sponsor_no_support_tt
+					triggered_desc = {
+						trigger = {
+							scope:attacker.var:adventurer_invasion_supporter ?= { var:adventurer_invasion_target != scope:defender }
+						}
+						desc = ep3_laamp_sponsor_target_tt
+					}
+					triggered_desc = {
+						trigger = {
+							scope:attacker.var:adventurer_invasion_supporter ?= {
+								OR = {
+									this = scope:defender
+									top_liege = scope:defender.top_liege
+								}
+							}
+						}
+						desc = ep3_laamp_sponsor_defender_tt
+					}
+					triggered_desc = {
+						trigger = {
+							scope:attacker.var:adventurer_invasion_supporter ?= { is_allied_to = scope:defender }
+						}
+						desc = ep3_laamp_sponsor_ally_tt
+					}
+					triggered_desc = {
+						trigger = {
+							scope:attacker.var:adventurer_invasion_supporter ?= { is_spouse_of = scope:defender }
+						}
+						desc = ep3_laamp_sponsor_spouse_tt
+					}
+					triggered_desc = {
+						trigger = {
+							scope:attacker.var:adventurer_invasion_supporter ?= {
+								NOT = { this = scope:defender }
+								is_close_family_of = scope:defender
+								opinion = {
+									target = scope:defender
+									value >= -25
+								}
+							}
+						}
+						desc = ep3_laamp_sponsor_family_tt
+					}
+					triggered_desc = {
+						trigger = {
+							scope:attacker.var:adventurer_invasion_supporter ?= {
+								OR = {
+									has_relation_friend = scope:defender
+									has_relation_lover = scope:defender
+								}
+							}
+						}
+						desc = ep3_laamp_sponsor_relation_tt
+					}
+					triggered_desc = {
+						trigger = {
+							scope:attacker.var:adventurer_invasion_supporter ?= {
+								any_character_war = {
+									primary_attacker = scope:attacker.var:adventurer_invasion_supporter
+									primary_defender = scope:defender
+								}
+							}
+						}
+						desc = ep3_laamp_sponsor_attacking_tt
+					}
+					triggered_desc = {
+						trigger = {
+							scope:attacker.var:adventurer_invasion_supporter ?= {
+								NOT = { in_diplomatic_range = scope:defender }
+							}
+						}
+						desc = ep3_laamp_sponsor_range_tt
+					}
+				}
+			}
+			triggered_desc = {
+				trigger = {
+					exists = scope:attacker.var:adventurer_invasion_supporter.var:adventurer_invasion_join_war
+					exists = scope:attacker.var:adventurer_invasion_supporter.var:adventurer_invasion_request_soldiers
+				}
+				desc = ep3_laamp_sponsor_support_both_tt
+			}
+			triggered_desc = {
+				trigger = { exists = scope:attacker.var:adventurer_invasion_supporter.var:adventurer_invasion_join_war }
+				desc = ep3_laamp_sponsor_support_join_tt
+			}
+			triggered_desc = {
+				trigger = { exists = scope:attacker.var:adventurer_invasion_supporter.var:adventurer_invasion_request_soldiers }
+				desc = ep3_laamp_sponsor_support_soldiers_tt
+			}
+		}
+	}
+
+	on_victory = {
+		scope:attacker = {
+			add_character_flag = {
+				flag = domicile_culture_and_faith_check
+				days = 1
+			}
+			# Save target
+			ordered_in_list = {
+				list = target_titles
+				order_by = tier
+				save_scope_as = target
+				save_scope_as = target_2
+			}
+
+			ep3_become_landed_warning_effect = {
+				TITLE_RECEIVER = scope:attacker
+				#TITLE_GIVER = scope:defender
+				TITLE = scope:target
+			}
+			scope:defender = {
+				every_held_title = {
+					limit = { duchy ?= scope:target }
+					add_to_list = target_titles
+				}
+				# Ensure that the target's capital county and counties within the target held directly by the defender are taken
+				if = {
+					limit = {
+						NOT = {
+							any_in_list = {
+								list = target_titles
+								tier = tier_county
+							}
+						}
+					}
+					every_sub_realm_county = {
+						limit = {
+							OR = {
+								AND = {
+									duchy = scope:target
+									holder = scope:target.holder
+								}
+								scope:target.title_capital_county = this
+								AND = {
+									duchy = scope:target
+									holder = {
+										government_allows = administrative
+									}
+								}
+							}
+						}
+						add_to_list = target_titles
+					}
+				}
+			}
+
+			# Organise general results for the attacker.
+			if = {
+				limit = { ep3_adventurer_invasion_sponsorship_applies_trigger = yes }
+				var:adventurer_invasion_supporter = { save_scope_as = supporter }
+				ep3_laamp_support_variable_cleanup_effect = yes
+				conquest_supporter_memory_variable_effect = yes
+			}
+			# AGOT 0.4.38: preserve Free City conversion.
+			agot_free_city_conversion_from_laamp_invasion_effect = yes
+
+			ep3_landless_invasion_titles_taken_effect = {
+				TITLE_GIVER = scope:defender
+				TITLE_RECEIVER = scope:attacker
+				TITLE = scope:target_2
+				TITLE_LIST = target_titles
+			}
+			### Set a new capital.
+			#### We prefer the de jure capital of the other.
+			if = {
+				limit = {
+					scope:target_2.title_capital_county = { is_in_list = target_titles }
+				}
+				scope:target_2.title_capital_county = {
+					save_temporary_scope_as = new_capital
+					scope:attacker = { set_realm_capital = scope:new_capital }
+				}
+			}
+			### Otherwise, tribals go by pure levy count.
+			else_if = {
+				limit = {
+					scope:attacker = { government_has_flag = government_is_tribal }
+				}
+				ordered_in_list = {
+					list = target_titles
+					limit = { tier = tier_county }
+					order_by = total_county_levies
+					save_temporary_scope_as = new_capital
+					scope:attacker = { set_realm_capital = scope:new_capital }
+				}
+			}
+			### If nomadic, they will prefer county fertility
+			else_if = {
+				limit = {
+					any_in_list = {
+						list = target_titles
+						tier = tier_county
+						uses_county_fertility = yes
+					}
+				}
+				ordered_in_list = {
+					list = target_titles
+					limit = { tier = tier_county }
+					order_by =  county_fertility
+					save_temporary_scope_as = new_capital
+					scope:attacker = { set_realm_capital = scope:new_capital }
+				}
+			}
+			### Generally everyone prefers the highest development.
+			else = {
+				ordered_in_list = {
+					list = target_titles
+					limit = { tier = tier_county }
+					order_by = development_level
+					save_temporary_scope_as = new_capital
+					scope:attacker = { set_realm_capital = scope:new_capital }
+				}
+			}
+			## Seizing control so things *vaguely* work.
+			custom_tooltip = fp1_varangian_adventurer_conquest.summaries.control_rebate
+			scope:attacker = { trigger_event = fp1_varangian_adventures.0001 }
+			## And giving them a gold bounty to keep them afloat.
+			scope:attacker = {
+				add_gold = {
+					value = varangian_adventures_bounty_amount_value
+					multiply = 0.5 #Half it for counties
+				}
+			}
+			# Finally, general cleanup.
+			ep3_become_landed_cleanup_effect = yes
+			# Prestige Progress for the Attacker
+			add_prestige_experience = medium_prestige_value
+		}
+
+		# Allies on both sides get full prestige value for helping in the war, based on their war participation.
+		modify_allies_of_participants_fame_values = {
+			WINNER = scope:attacker
+			FAME_BASE = medium_prestige_value
+			IS_RELIGIOUS_WAR = no
+			WINNER_ALLY_FAME_SCALE = 1
+			LOSER_ALLY_FAME_SCALE = 1
+		}
+
+		# Break alliances now out of diplo range
+		scope:attacker = {
+			every_ally = {
+				limit = {
+					NOT = { in_diplomatic_range = scope:attacker }
+				}
+				break_alliance = scope:attacker
+			}
+		}
+
+		# Truce
+		add_truce_attacker_victory_effect = yes
+
+		# FP1: note the victory for future memorialisation via stele (if applicable).
+		scope:attacker = { fp1_remember_recent_conquest_victory_effect = yes }
+
+		# EP3: note gold gained from military assistance/join war contracts and their war contribution threshold
+		laamp_as_mercenary_payout_tooltip_effect = yes
+	
+		# AGOT 0.4.38: Mega Wars and post-victory integration.
+		agot_war_victory_effects = yes
+	}
+
+	on_white_peace_desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:defender = { is_local_player = yes } }
+				desc = county_conquest_cb_white_peace_desc_defender
+			}
+			desc = county_conquest_cb_white_peace_desc
+		}
+	}
+
+	on_white_peace = {
+		scope:attacker = { ep3_laamp_support_variable_cleanup_effect = yes }
+
+		#EP2 accolade glory gain for winning against higher ranked enemy
+		scope:defender = { accolade_defender_war_end_glory_gain_low_effect = yes }
+
+		# Prestige loss for the attacker
+		scope:attacker = {
+			add_prestige = {
+				value = minor_prestige_value
+				multiply = -1.0
+			}
+			stress_impact = {
+				ambitious = medium_stress_impact_gain
+				arrogant = medium_stress_impact_gain
+			}
+		}
+
+		# Allies on both sides get full prestige value for helping in the war, based on their war participation.
+		modify_allies_of_participants_fame_values = {
+			WINNER = scope:attacker # Not important as the scales are identical
+			FAME_BASE = medium_prestige_value
+			IS_RELIGIOUS_WAR = no
+			WINNER_ALLY_FAME_SCALE = 1
+			LOSER_ALLY_FAME_SCALE = 1
+		}
+
+		scope:defender = {
+			stress_impact = {
+				arrogant = medium_stress_impact_gain
+			}
+		}
+
+		add_truce_white_peace_effect = yes
+
+		# EP3: note gold gained from military assistance/join war contracts and their war contribution threshold
+		laamp_as_mercenary_payout_tooltip_effect = yes
+	}
+
+	on_defeat_desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:defender = { is_local_player = yes } }
+				desc = county_conquest_cb_defeat_desc_defender
+			}
+			triggered_desc = {
+				trigger = {
+					scope:attacker = {
+						is_local_player = yes
+						has_targeting_faction = yes
+					}
+				}
+				desc = county_conquest_cb_defeat_desc_attacker
+			}
+			desc = county_conquest_cb_defeat_desc
+		}
+	}
+
+	on_defeat = {
+		scope:attacker = { ep3_laamp_support_variable_cleanup_effect = yes }
+
+		scope:defender = {
+			mandala_peacemaker_perk_serenity_effect = yes
+			# EP2 accolade glory gain for winning against higher ranked enemy
+			accolade_defender_war_end_glory_gain_high_effect = yes
+			# Prestige for Defender
+			add_prestige_war_defender_effect = {
+				PRESTIGE_VALUE = medium_prestige_value
+			}
+		}
+
+		# Prestige loss for the attacker
+		scope:attacker = {
+			pay_short_term_gold_reparations_effect = {
+				GOLD_VALUE = 3
+			}
+			add_prestige = {
+				value = major_prestige_value
+				multiply = -1.0
+			}
+		}
+
+		# Allies on both sides get full prestige value for helping in the war, based on their war participation.
+		modify_allies_of_participants_fame_values = {
+			WINNER = scope:defender
+			FAME_BASE = medium_prestige_value
+			IS_RELIGIOUS_WAR = no
+			WINNER_ALLY_FAME_SCALE = 1
+			LOSER_ALLY_FAME_SCALE = 1
+		}
+
+		add_truce_attacker_defeat_effect = yes
+
+		scope:attacker = {
+			save_temporary_scope_as = loser
+		}
+
+		on_lost_aggression_war_discontent_loss = yes
+
+		# EP3: note gold gained from military assistance/join war contracts and their war contribution threshold
+		laamp_as_mercenary_payout_tooltip_effect = yes
+	}
+
+	transfer_behavior = transfer
+
+	on_primary_attacker_death = inherit
+	on_primary_defender_death = inherit
+
+	attacker_allies_inherit = yes
+	defender_allies_inherit = yes
+
+	war_name = "EP3_LAAMP_INVASION_WAR_NAME"
+	war_name_base = "EP3_LAAMP_INVASION_WAR_NAME_BASE"
+	cb_name = "EP3_LAAMP_INVASION_CB_DUCHY_NAME"
+
+	interface_priority = 79
+
+	use_de_jure_wargoal_only = yes
+
+	attacker_wargoal_percentage = 0.8
+
+	max_attacker_score_from_battles = 75
+
+	max_defender_score_from_occupation = 150
+	max_attacker_score_from_occupation = 150
+}
+
+ep3_laamp_apprehend_adventurer_cb = {
+	icon = apprehend_adventurer
+	group = event
+	allow_hostages = no
+
+	attacker_score_from_occupation_scale = 150
+	attacker_score_from_battles_scale = 150
+	defender_score_from_battles_scale = 150
+
+	target_top_liege_if_outside_realm = no
+
+	allowed_for_character = {}
+	allowed_against_character = {}
+
+	valid_to_start = { always = no }
+
+	should_invalidate = {
+		OR = {
+			scope:attacker = { is_landless_adventurer = no }
+			scope:defender = { is_landed = no }
+		}
+	}
+
+	on_invalidated_desc = {
+		desc = msg_invalidate_war_title
+	}
+
+	on_declaration = { on_declared_war = yes }
+
+	on_victory_desc = { desc = loaa_apprehend_adventurer_choice_desc  }
+
+	on_victory = {
+		scope:attacker = { show_pow_release_message_effect = yes }
+		#EP2 Accolade glory gain from winning against higher ranked enemy
+		scope:defender = {
+			accolade_defender_war_end_glory_gain_low_effect = yes
+			add_prestige = { value = major_prestige_gain }
+		}
+
+
+		# Allies on both sides get full prestige value for helping in the war, based on their war participation.
+		modify_allies_of_participants_fame_values = {
+			WINNER = scope:attacker
+			FAME_BASE = major_prestige_value
+			IS_RELIGIOUS_WAR = no
+			WINNER_ALLY_FAME_SCALE = 1
+			LOSER_ALLY_FAME_SCALE = 1
+		}
+		scope:attacker = { save_scope_as = winner }
+		scope:defender = { save_scope_as = loser }
+		scope:loser = {
+			switch = {
+				trigger = scope:loser.primary_title.tier
+				tier_county = {
+					add_prestige = { value = minor_prestige_loss }
+				}
+				tier_duchy = {
+					add_prestige = { value = medium_prestige_loss }
+				}
+				tier_kingdom = {
+					add_prestige = { value = major_prestige_loss }
+				}
+				tier_empire = {
+					add_prestige = { value = massive_prestige_loss }
+				}
+			}
+		}
+		#scope:defender = { save_temporary_scope_as = loser }
+		on_lost_aggression_war_discontent_loss = yes
+		# Truce
+		add_truce_attacker_victory_effect = yes
+
+		# EP3: note gold gained from military assistance/join war contracts and their war contribution threshold
+		laamp_as_mercenary_payout_tooltip_effect = yes
+
+		if = {
+			limit = { scope:attacker = { has_game_rule = apprehension_war_choice_on } }
+			scope:attacker = { trigger_event = loaa_eviction_events.1 }
+		}
+		else = {
+			custom_tooltip = seize_realm_warning
+			scope:loser = {
+				every_held_title = {
+					limit = {
+						is_leased_out = no
+						is_landless_type_title = no
+						is_head_of_faith = no
+					}
+					add_to_list = target_titles
+				}
+				ordered_in_list = {
+					list = target_titles
+					limit = { tier = tier_county }
+					order_by = development_level
+					save_scope_as = new_capital
+				}
+				primary_title = { save_scope_as = new_primary_title }
+			}
+			ep3_landless_invasion_titles_taken_effect = {
+				TITLE_GIVER = scope:loser
+				TITLE_RECEIVER = scope:winner
+				TITLE = scope:loser.primary_title
+				TITLE_LIST = target_titles
+			}
+		}
+	
+		# AGOT 0.4.38: Mega Wars and post-victory integration.
+		agot_war_victory_effects = yes
+	}
+
+	on_white_peace_desc = { desc = ep3_laamp_apprehend_adventurer_cb_white_peace_desc }
+
+	on_white_peace = {
+        scope:attacker = {
+            show_pow_release_message_effect = yes
+            stress_impact = {
+                ambitious = medium_stress_impact_gain
+                arrogant = medium_stress_impact_gain
+            }
+            add_prestige = { value = medium_prestige_loss }
+        }
+        # Allies on both sides get full prestige value for helping in the war, based on their war participation.
+        modify_allies_of_participants_fame_values = {
+            WINNER = scope:attacker # not important as the scales are identical
+            FAME_BASE = major_prestige_value
+            IS_RELIGIOUS_WAR = no
+            WINNER_ALLY_FAME_SCALE = 1
+            LOSER_ALLY_FAME_SCALE = 1
+        }
+        scope:defender = {
+            stress_impact = {
+                arrogant = medium_stress_impact_gain
+            }
+        }
+        # Truce
+        add_truce_white_peace_effect = yes
+
+		# EP3: note gold gained from military assistance/join war contracts and their war contribution threshold
+		laamp_as_mercenary_payout_tooltip_effect = yes
+    }
+
+	on_defeat_desc = { desc = ep3_laamp_apprehend_adventurer_cb_defeat_desc }
+
+	on_defeat = {
+		scope:attacker = {
+			show_pow_release_message_effect = yes
+			accolade_attacker_war_end_glory_gain_low_effect = yes
+		}
+		rightfully_imprison_character_less_verbose_effect = {
+			TARGET = scope:attacker
+			IMPRISONER = scope:defender
+		}
+		destroy_laamp_effect = { ADVENTURER = scope:attacker }
+		scope:attacker = {
+			if = {
+				limit = { gold > 0 }
+				pay_short_term_gold = {
+					gold = gold
+					target = scope:defender
+				}
+			}
+			every_character_artifact = {
+				limit = {
+					NOT = { has_variable = artifact_prevent_transfer }
+				}
+				set_owner = {
+					target = scope:defender
+					history = {
+						type = taken_in_battle
+						actor = scope:defender
+						recipient = scope:attacker
+						location = scope:attacker.location
+					}
+				}
+			}
+		}
+		scope:defender = {
+			mandala_peacemaker_perk_serenity_effect = yes
+		}
+		# Allies on both sides get full prestige value for helping in the war, based on their war participation.
+		modify_allies_of_participants_fame_values = {
+			WINNER = scope:defender
+			FAME_BASE = major_prestige_value
+			IS_RELIGIOUS_WAR = no
+			WINNER_ALLY_FAME_SCALE = 1
+			LOSER_ALLY_FAME_SCALE = 1
+		}
+		# Truce
+		add_truce_attacker_defeat_effect = yes
+
+		# EP3: note gold gained from military assistance/join war contracts and their war contribution threshold
+		laamp_as_mercenary_payout_tooltip_effect = yes
+	}
+
+	full_occupation_by_defender_gives_victory = no
+	full_occupation_by_attacker_gives_victory = yes
+
+	on_primary_attacker_death = inherit
+	on_primary_defender_death = inherit
+
+	attacker_allies_inherit = yes
+	defender_allies_inherit = yes
+
+	war_name = "EP3_LAAMP_APPREHEND_ADVENTURER_CB_WAR_NAME"
+	war_name_base = "EP3_LAAMP_APPREHEND_ADVENTURER_CB_WAR_NAME_BASE"
+	cb_name = "EP3_LAAMP_APPREHEND_ADVENTURER_CB_NAME"
+	interface_priority = 80
+
+	ticking_war_score_targets_entire_realm = yes
+
+	attacker_ticking_warscore = 0
+	defender_ticking_warscore = 0.1
+	defender_ticking_warscore_delay = { days = 1 }
+
+	attacker_wargoal_percentage = 0.01
+
+	attacker_score_from_occupation_scale = 200
+	defender_score_from_occupation_scale = 0
+
+	attacker_score_from_battles_scale = 75
+	defender_score_from_battles_scale = 200
+
+	max_attacker_score_from_battles = 200
+	max_defender_score_from_battles = 200
+
+	max_defender_score_from_occupation = 0
+	max_attacker_score_from_occupation = 200
+
+	landless_attacker_needs_armies = no
+}
+
+ep3_laamp_raid_contract_cb = {
+	icon = ducal_conquest_cb
+	group = invasion
+	allow_hostages = no
+
+	target_top_liege_if_outside_realm = no
+
+	# Root is the title
+	# scope:attacker is the attacker
+	# scope:defender is the defender
+	allowed_for_character = {
+		any_character_active_contract = {
+			OR = {
+				has_task_contract_type = laamp_raid_contract
+				has_task_contract_type = loaa_laamp_raid_contract
+			}
+		}
+	}
+	allowed_against_character = {
+		scope:attacker = {
+			any_character_active_contract = {
+				OR = {
+					has_task_contract_type = laamp_raid_contract
+					has_task_contract_type = loaa_laamp_raid_contract
+				}
+				var:task_contract_target ?= scope:defender
+			}
+		}
+	}
+	#it's free, because someone employs you to do that
+	cost = {
+	}
+
+	should_invalidate = {
+		scope:attacker = {
+			NOT = {
+				any_character_active_contract = {
+					OR = {
+						has_task_contract_type = laamp_raid_contract
+						has_task_contract_type = loaa_laamp_raid_contract
+					}
+					var:task_contract_target ?= scope:defender
+				}
+			}
+		}
+	}
+
+	on_invalidated_desc = msg_laamp_raid_contract_war_invalidated_message
+
+	on_invalidated = {
+		scope:attacker = {
+			if = {
+				limit = {
+					any_character_active_contract = {
+					OR = {
+						has_task_contract_type = laamp_raid_contract
+						has_task_contract_type = loaa_laamp_raid_contract
+					}
+						var:task_contract_target ?= scope:defender
+					}
+				}
+				every_character_active_contract = {
+					limit = {
+						OR = {
+							has_task_contract_type = laamp_raid_contract
+							has_task_contract_type = loaa_laamp_raid_contract
+						}
+						var:task_contract_target ?= scope:defender
+					}
+					invalidate_contract = yes
+				}
+			}
+		}
+	}
+
+	on_declaration = {
+		on_declared_war = yes
+	}
+
+	on_victory_desc = {
+		desc = ep3_laamp_raid_contract_cb_victory_desc
+	}
+
+	on_victory = {
+		scope:attacker = {
+			show_pow_release_message_effect = yes
+			accolade_attacker_war_end_glory_gain_low_effect = yes
+			random_character_active_contract = {
+				limit = {
+					OR = {
+						has_task_contract_type = laamp_raid_contract
+						has_task_contract_type = loaa_laamp_raid_contract
+					}
+					var:task_contract_target = scope:defender
+				}
+				save_scope_as = raid_contract
+				task_contract_employer = {
+					save_scope_as = task_contract_employer
+				}
+			}
+			custom_tooltip = ep3_laamp_raid_contract_cb_prisoners.tt_attacker
+			hidden_effect = {
+				scope:defender = {
+					every_courtier_or_guest = { add_to_list = potential_captives_list }
+					random_in_list = {	#Nab someone related to the defender, preferring tangentials.
+						list = potential_captives_list
+						limit = {
+							OR = {
+								AND = {
+									has_dynasty = yes
+									dynasty = scope:defender.dynasty
+								}
+								is_consort_of = scope:defender
+							}
+						}
+						alternative_limit = { always = yes }
+						weight = {
+							base = 1
+							modifier = {
+								add = 25
+								NOT = { is_close_family_of = scope:defender }
+							}
+							modifier = {
+								add = 15
+								NOT = { is_extended_family_of = scope:defender }
+							}
+						}
+						add_to_list = definite_captives_list
+						save_temporary_scope_as = future_captive
+						scope:task_contract_employer = {
+							imprison = {
+								target = scope:future_captive
+								type = dungeon
+							}
+						}
+					}
+					random_in_list = {	#Always try to grab a second person.
+						list = potential_captives_list
+						limit = {
+							NOT = { is_in_list = definite_captives_list }
+						}
+						weight = {
+							base = 1
+							modifier = {
+								add = 40
+								NOT = {
+									any_claim = {
+										useful_courtier_or_guest_claim_trigger = { RULER = scope:defender }
+									}
+								}
+							}
+							modifier = {
+								add = 10
+								NAND = {
+									can_be_chancellor_trigger = { COURT_OWNER = scope:defender }
+									diplomacy >= high_skill_rating
+								}
+							}
+							modifier = {
+								add = 10
+								NAND = {
+									can_be_marshal_trigger = { COURT_OWNER = scope:defender }
+									martial >= high_skill_rating
+								}
+							}
+							modifier = {
+								add = 10
+								NAND = {
+									can_be_steward_trigger = { COURT_OWNER = scope:defender }
+									stewardship >= high_skill_rating
+								}
+							}
+							modifier = {
+								add = 10
+								NAND = {
+									can_be_spymaster_trigger = { COURT_OWNER = scope:defender }
+									intrigue >= high_skill_rating
+								}
+							}
+							modifier = {
+								add = 10
+								NOT = { learning >= high_skill_rating }
+							}
+							modifier = {
+								add = 10
+								NOT = {	prowess >= high_skill_rating }
+							}
+							modifier = {
+								add = 50
+								NOT = { is_close_or_extended_family_of = scope:defender }
+							}
+						}
+						add_to_list = definite_captives_list
+						save_temporary_scope_as = future_captive
+							scope:task_contract_employer = {
+								imprison = {
+									target = scope:future_captive
+									type = dungeon
+								}
+							}
+					}
+					random_in_list = {	#Always try to grab a third person.
+						list = potential_captives_list
+						limit = {
+							NOT = { is_in_list = definite_captives_list }
+						}
+						weight = {
+							base = 1
+							modifier = {
+								add = 40
+								NOT = {
+									any_claim = {
+										useful_courtier_or_guest_claim_trigger = { RULER = scope:defender }
+									}
+								}
+							}
+							modifier = {
+								add = 10
+								NAND = {
+									can_be_chancellor_trigger = { COURT_OWNER = scope:defender }
+									diplomacy >= high_skill_rating
+								}
+							}
+							modifier = {
+								add = 10
+								NAND = {
+									can_be_marshal_trigger = { COURT_OWNER = scope:defender }
+									martial >= high_skill_rating
+								}
+							}
+							modifier = {
+								add = 10
+								NAND = {
+									can_be_steward_trigger = { COURT_OWNER = scope:defender }
+									stewardship >= high_skill_rating
+								}
+							}
+							modifier = {
+								add = 10
+								NAND = {
+									can_be_spymaster_trigger = { COURT_OWNER = scope:defender }
+									intrigue >= high_skill_rating
+								}
+							}
+							modifier = {
+								add = 10
+								NOT = { learning >= high_skill_rating }
+							}
+							modifier = {
+								add = 10
+								NOT = {	prowess >= high_skill_rating }
+							}
+							modifier = {
+								add = 50
+								NOT = { is_close_or_extended_family_of = scope:defender }
+							}
+						}
+						add_to_list = definite_captives_list
+						save_temporary_scope_as = future_captive
+							scope:task_contract_employer = {
+								imprison = {
+									target = scope:future_captive
+									type = dungeon
+								}
+							}
+					}
+					if = {	#If at least duchy-tier, try to grab a fourth person.
+						limit = { primary_title.tier >= tier_duchy }
+						random_in_list = {
+							list = potential_captives_list
+							limit = {
+								NOT = { is_in_list = definite_captives_list }
+							}
+							weight = {
+								base = 1
+								modifier = {
+									add = 40
+									NOT = {
+										any_claim = {
+											useful_courtier_or_guest_claim_trigger = { RULER = scope:defender }
+										}
+									}
+								}
+								modifier = {
+									add = 10
+									NAND = {
+										can_be_chancellor_trigger = { COURT_OWNER = scope:defender }
+										diplomacy >= high_skill_rating
+									}
+								}
+								modifier = {
+									add = 10
+									NAND = {
+										can_be_marshal_trigger = { COURT_OWNER = scope:defender }
+										martial >= high_skill_rating
+									}
+								}
+								modifier = {
+									add = 10
+									NAND = {
+										can_be_steward_trigger = { COURT_OWNER = scope:defender }
+										stewardship >= high_skill_rating
+									}
+								}
+								modifier = {
+									add = 10
+									NAND = {
+										can_be_spymaster_trigger = { COURT_OWNER = scope:defender }
+										intrigue >= high_skill_rating
+									}
+								}
+								modifier = {
+									add = 10
+									NOT = { learning >= high_skill_rating }
+								}
+								modifier = {
+									add = 10
+									NOT = { prowess >= high_skill_rating }
+								}
+							}
+							add_to_list = definite_captives_list
+							save_temporary_scope_as = future_captive
+							scope:task_contract_employer = {
+								imprison = {
+									target = scope:future_captive
+									type = dungeon
+								}
+							}
+						}
+					}
+					if = {	#If at least kingdom-tier, try to grab a fifth person.
+						limit = { primary_title.tier >= tier_kingdom }
+						random_in_list = {
+							list = potential_captives_list
+							limit = {
+								NOT = { is_in_list = definite_captives_list }
+							}
+							weight = {
+								base = 1
+								modifier = {
+									add = 40
+									NOT = {
+										any_claim = {
+											useful_courtier_or_guest_claim_trigger = { RULER = scope:defender }
+										}
+									}
+								}
+								modifier = {
+									add = 10
+									NAND = {
+										can_be_chancellor_trigger = { COURT_OWNER = scope:defender }
+										diplomacy >= high_skill_rating
+									}
+								}
+								modifier = {
+									add = 10
+									NAND = {
+										can_be_marshal_trigger = { COURT_OWNER = scope:defender }
+										martial >= high_skill_rating
+									}
+								}
+								modifier = {
+									add = 10
+									NAND = {
+										can_be_steward_trigger = { COURT_OWNER = scope:defender }
+										stewardship >= high_skill_rating
+									}
+								}
+								modifier = {
+									add = 10
+									NAND = {
+										can_be_spymaster_trigger = { COURT_OWNER = scope:defender }
+										intrigue >= high_skill_rating
+									}
+								}
+								modifier = {
+									add = 10
+									NOT = { learning >= high_skill_rating }
+								}
+								modifier = {
+									add = 10
+									NOT = { prowess >= high_skill_rating }
+								}
+							}
+							add_to_list = definite_captives_list
+							save_temporary_scope_as = future_captive
+							scope:task_contract_employer = {
+								imprison = {
+									target = scope:future_captive
+									type = dungeon
+								}
+							}
+						}
+					}
+				}
+			}
+			every_in_list = {
+				list = definite_captives_list
+				add_character_flag = captured_in_ep3_laamp_raid_contract_cb
+			}
+			#complete the contract
+			hidden_effect = {
+				scope:raid_contract = {
+					complete_task_contract = success_standard
+				}
+			}
+		}
+		# Allies on both sides get full prestige value for helping in the war, based on their war participation.
+		modify_allies_of_participants_fame_values = {
+			WINNER = scope:attacker
+			FAME_BASE = major_prestige_value
+			IS_RELIGIOUS_WAR = no
+			WINNER_ALLY_FAME_SCALE = 1
+			LOSER_ALLY_FAME_SCALE = 1
+		}
+		# Truce
+		add_truce_attacker_victory_effect = yes
+
+		# EP3: note gold gained from military assistance/join war contracts and their war contribution threshold
+		laamp_as_mercenary_payout_tooltip_effect = yes
+	
+		# AGOT 0.4.38: Mega Wars and post-victory integration.
+		agot_war_victory_effects = yes
+	}
+
+	on_white_peace_desc = {
+		desc = ep3_laamp_raid_contract_cb_white_peace_desc
+
+	}
+
+	on_white_peace = {
+		scope:attacker = {
+			show_pow_release_message_effect = yes
+			stress_impact = {
+				ambitious = medium_stress_impact_gain
+				arrogant = medium_stress_impact_gain
+			}
+		}
+		scope:attacker = {
+			add_prestige = {
+				value = medium_prestige_loss
+			}
+		}
+		# Allies on both sides get full prestige value for helping in the war, based on their war participation.
+		modify_allies_of_participants_fame_values = {
+			WINNER = scope:attacker # not important as the scales are identical
+			FAME_BASE = major_prestige_value
+			IS_RELIGIOUS_WAR = no
+			WINNER_ALLY_FAME_SCALE = 1
+			LOSER_ALLY_FAME_SCALE = 1
+		}
+		scope:defender = {
+			stress_impact = {
+				arrogant = medium_stress_impact_gain
+			}
+		}
+		# Truce
+		add_truce_attacker_victory_effect = yes
+		scope:attacker = {
+			random_character_active_contract = {
+				limit = {
+					OR = {
+						has_task_contract_type = laamp_raid_contract
+						has_task_contract_type = loaa_laamp_raid_contract
+					}
+					var:task_contract_target = scope:defender
+				}
+				save_scope_as = raid_contract
+				task_contract_employer = {
+					save_scope_as = task_contract_employer
+				}
+			}
+			#complete the contract
+			scope:raid_contract = {
+				complete_task_contract = failure_standard
+			}
+		}
+
+		# EP3: note gold gained from military assistance/join war contracts and their war contribution threshold
+		laamp_as_mercenary_payout_tooltip_effect = yes
+	}
+
+	on_defeat_desc = {
+		desc = ep3_laamp_raid_contract_cb_defeat_desc
+	}
+
+	on_defeat = {
+		scope:attacker = { show_pow_release_message_effect = yes }
+
+		scope:defender = {
+			mandala_peacemaker_perk_serenity_effect = yes
+			# EP2 accolade glory gain from winning against higher ranked enemy
+			accolade_defender_war_end_glory_gain_high_effect = yes
+		}
+
+		scope:attacker = {
+			switch = {
+				trigger = scope:attacker.primary_title.tier
+				tier_county = {
+					add_prestige = { value = minor_prestige_loss }
+				}
+				tier_duchy = {
+					add_prestige = { value = medium_prestige_loss }
+				}
+				tier_kingdom = {
+					add_prestige = { value = major_prestige_loss }
+				}
+				tier_empire = {
+					add_prestige = { value = massive_prestige_loss }
+				}
+			}
+			random_character_active_contract = {
+				limit = {
+					OR = {
+						has_task_contract_type = laamp_raid_contract
+						has_task_contract_type = loaa_laamp_raid_contract
+					}
+					var:task_contract_target = scope:defender
+				}
+				save_scope_as = raid_contract
+				task_contract_employer = {
+					save_scope_as = task_contract_employer
+				}
+			}
+			#complete the contract
+			scope:raid_contract = {
+				complete_task_contract = failure_standard
+			}
+		}
+		scope:defender = {
+			switch = {
+				trigger = scope:attacker.primary_title.tier
+				tier_county = {
+					add_prestige = { value = minor_prestige_gain }
+				}
+				tier_duchy = {
+					add_prestige = { value = medium_prestige_gain }
+				}
+				tier_kingdom = {
+					add_prestige = { value = major_prestige_gain }
+				}
+				tier_empire = {
+					add_prestige = { value = massive_prestige_gain }
+				}
+			}
+		}
+
+		# Allies on both sides get full prestige value for helping in the war, based on their war participation.
+		modify_allies_of_participants_fame_values = {
+			WINNER = scope:defender
+			FAME_BASE = major_prestige_value
+			IS_RELIGIOUS_WAR = no
+			WINNER_ALLY_FAME_SCALE = 1
+			LOSER_ALLY_FAME_SCALE = 1
+		}
+
+		# Truce
+		add_truce_attacker_defeat_effect = yes
+
+		scope:attacker = { save_temporary_scope_as = loser }
+		on_lost_aggression_war_discontent_loss = yes
+
+		# EP3: note gold gained from military assistance/join war contracts and their war contribution threshold
+		laamp_as_mercenary_payout_tooltip_effect = yes
+	}
+
+	on_primary_attacker_death = inherit
+	on_primary_defender_death = inherit
+
+	attacker_allies_inherit = yes
+	defender_allies_inherit = yes
+
+	war_name = "EP3_LAAMP_RAID_CONTRACT_CB_WAR_NAME"
+	war_name_base = "EP3_LAAMP_RAID_CONTRACT_CB_WAR_NAME_BASE"
+	cb_name = "EP3_LAAMP_RAID_CONTRACT_CB_NAME"
+	interface_priority = 80
+
+	ticking_war_score_targets_entire_realm = yes
+	attacker_ticking_warscore = 0
+	attacker_wargoal_percentage = 0.01
+	attacker_score_from_occupation_scale = 50
+	defender_score_from_occupation_scale = 50
+	attacker_score_from_battles_scale = 200
+	defender_score_from_battles_scale = 200
+
+	max_attacker_score_from_battles = 200
+	max_defender_score_from_battles = 200
+
+	max_defender_score_from_occupation = 150
+	max_attacker_score_from_occupation = 150
+
+	max_ai_diplo_distance_to_title = 500
+
+	ai_score = {
+		value = raid_for_captives_ai_score_value
+	}
+
+	ai_score_mult = {
+		value = 1
+		# Increase odds if the character is a vassal with Ghazi Contract
+		add = {
+			if = {
+				limit = {
+					scope:attacker = {
+						is_independent_ruler = no
+						vassal_contract_has_flag = vassal_contract_cheaper_religious_war
+					}
+				}
+				add = 1
+			}
+		}
+		# Holy War are limited to connected neighbour to limit big empire expansions over weak realms.
+		add = {
+			if = {
+				limit = {  religious_war_vassals_constraints = yes }
+				add = -1000
+			}
+		}
+	}
+}

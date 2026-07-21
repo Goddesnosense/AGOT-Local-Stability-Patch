@@ -1,0 +1,51 @@
+﻿# AGOT LOCAL STABILITY — DRAGON STORAGE MIGRATION SAFE 0.5.4
+# Reparación única y conservadora:
+# - solo crea un registro si el dragón sigue conservando variables fuente;
+# - nunca reemplaza ni elimina registros existentes;
+# - los escritores idempotentes impiden duplicados nuevos.
+
+agot_local_dragon_storage_migration_054 = {
+	effect = {
+		if = {
+			limit = {
+				NOT = { has_global_variable = agot_local_dragon_storage_migration_054_complete }
+			}
+			every_living_dragon = {
+				save_scope_as = agot_local_storage_dragon
+				if = {
+					limit = {
+						has_variable = dragon_age
+						has_variable = gene_dragon_primary_color_value
+						NOT = { has_global_variable_list = gl_dragon_variable_storage }
+					}
+					agot_dragon_transfer_vars_to_story_cycle_effect = {
+						DRAGON = scope:agot_local_storage_dragon
+					}
+				}
+				else_if = {
+					limit = {
+						has_variable = dragon_age
+						has_variable = gene_dragon_primary_color_value
+						NOT = {
+							any_in_global_list = {
+								variable = gl_dragon_variable_storage
+								story_type = story_dragon_variable_storage
+								var:dragon_id ?= scope:agot_local_storage_dragon
+							}
+						}
+					}
+					agot_dragon_transfer_vars_to_story_cycle_effect = {
+						DRAGON = scope:agot_local_storage_dragon
+					}
+				}
+			}
+			set_global_variable = agot_local_dragon_storage_migration_054_complete
+		}
+	}
+}
+
+on_game_start_after_lobby = {
+	on_actions = {
+		agot_local_dragon_storage_migration_054
+	}
+}

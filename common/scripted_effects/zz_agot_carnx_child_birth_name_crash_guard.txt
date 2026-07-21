@@ -1,0 +1,7 @@
+﻿# AGOT CULTURE NAME CRASH GUARD - SAFE 0.2.0
+# Protege el renombrado posterior al nacimiento de Carnalitas Slavery Reimagined.
+# El nacimiento, parentesco, casa, dinastia, fe, cultura y rasgos siguen activos.
+# Solo se omite la creacion del personaje auxiliar y change_first_name.
+
+carnx_child_birth_name_effect = {
+}

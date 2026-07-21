@@ -1,0 +1,771 @@
+﻿# AGOT Local Stability Patch 0.5.6 - MDE egg, spawn and secret effects
+
+agot_set_living_egg_description = {
+	switch = {
+		trigger = var:dragon_egg_color
+		flag:white = {
+			set_artifact_description = dragon_egg_white_desc_living
+		}
+		flag:whitegold = {
+			set_artifact_description = dragon_egg_whitegold_desc_living
+		}
+		flag:silver = {
+			set_artifact_description = dragon_egg_silver_desc_living
+		}
+		flag:grey_1 = {
+			set_artifact_description = dragon_egg_grey_1_desc_living
+		}
+		flag:grey_2 = {
+			set_artifact_description = dragon_egg_grey_1_desc_living
+		}
+		flag:blackgreen = {
+			set_artifact_description = dragon_egg_blackgreen_desc_living
+		}
+		flag:blackyellow = {
+			set_artifact_description = dragon_egg_blackyellow_desc_living
+		}
+		flag:black = {
+			set_artifact_description = dragon_egg_black_desc_living
+		}
+		flag:blackdarkred = {
+			set_artifact_description = dragon_egg_blackdarkred_desc_living
+		}
+		flag:blackred = {
+			set_artifact_description = dragon_egg_blackred_desc_living
+		}
+		flag:darkred = {
+			set_artifact_description = dragon_egg_darkred_desc_living
+		}
+		flag:redblackgold = {
+			set_artifact_description = dragon_egg_redblackgold_desc_living
+		}
+		flag:magma = {
+			set_artifact_description = dragon_egg_magma_desc_living
+		}
+		flag:red = {
+			set_artifact_description = dragon_egg_red_desc_living
+		}
+		flag:palered = {
+			set_artifact_description = dragon_egg_palered_desc_living
+		}
+		flag:flame = {
+			set_artifact_description = dragon_egg_flame_desc_living
+		}
+		flag:tan = {
+			set_artifact_description = dragon_egg_tan_desc_living
+		}
+		flag:sunburst = {
+			set_artifact_description = dragon_egg_sunburst_desc_living
+		}
+		flag:rainbowgold = {
+			set_artifact_description = dragon_egg_rainbowgold_desc_living
+		}
+		flag:bronze = {
+			set_artifact_description = dragon_egg_bronze_desc_living
+		}
+		flag:orange = {
+			set_artifact_description = dragon_egg_orange_desc_living
+		}
+		flag:yellow = {
+			set_artifact_description = dragon_egg_yellow_desc_living
+		}
+		flag:gold = {
+			set_artifact_description = dragon_egg_gold_desc_living
+		}
+		flag:yellowgreen = {
+			set_artifact_description = dragon_egg_yellowgreen_desc_living
+		}
+		flag:greenorange = {
+			set_artifact_description = dragon_egg_greenorange_desc_living
+		}
+		flag:greengrey = {
+			set_artifact_description = dragon_egg_greengrey_desc_living
+		}
+		flag:green_1 = {
+			set_artifact_description = dragon_egg_green_1_desc_living
+		}
+		flag:green_2 = {
+			set_artifact_description = dragon_egg_green_2_desc_living
+		}
+		flag:blue = {
+			set_artifact_description = dragon_egg_blue_desc_living
+		}
+		flag:darkblue = {
+			set_artifact_description = dragon_egg_darkblue_desc_living
+		}
+		flag:frost = {
+			set_artifact_description = dragon_egg_frost_desc_living
+		}
+		flag:palebluepink = {
+			set_artifact_description = dragon_egg_palebluepink_desc_living
+		}
+		flag:bluebronze = {
+			set_artifact_description = dragon_egg_bluebronze_desc_living
+		}
+		flag:purplegold = {
+			set_artifact_description = dragon_egg_purplegold_desc_living
+		}
+		flag:goldpink = {
+			set_artifact_description = dragon_egg_goldpink_desc_living
+		}
+		flag:darkpurple = {
+			set_artifact_description = dragon_egg_darkpurple_desc_living
+		}
+		flag:purple = {
+			set_artifact_description = dragon_egg_purple_desc_living
+		}
+		flag:pinkspot = {
+			set_artifact_description = dragon_egg_pinkspot_desc_living
+		}
+		flag:pink = {
+			set_artifact_description = dragon_egg_pink_desc_living
+		}
+		flag:palepink = {
+			set_artifact_description = dragon_egg_palepink_desc_living
+		}
+		flag:rainbow = {
+			set_artifact_description = dragon_egg_rainbow_desc_living
+		}
+		flag:icefire = {
+			set_artifact_description = dragon_egg_icefire_desc_living
+		}
+	}
+	if = {
+		limit = {
+			has_variable = dragon_parent
+			var:dragon_parent = { has_trait = dragon }
+		}
+		save_scope_as = egg_artifact
+		var:dragon_parent = { save_scope_as = dragon_parent }
+		if = {
+			limit = {
+				has_variable = dragon_parent_other
+				var:dragon_parent_other = { has_trait = dragon }
+			}
+			var:dragon_parent_other = { save_scope_as = dragon_parent_other }
+			set_artifact_description = dragon_egg_gen_parents
+		}
+		else = {
+			set_artifact_description = dragon_egg_gen_parent
+		}
+	}
+	if = { # MDE Modified
+		limit = {
+			has_variable = dragon_embryo
+		}
+		mde_set_living_dragon_embryo_description = yes
+	}
+}
+
+mde_set_living_dragon_embryo_description = {
+	this = {
+		save_scope_as = newly_created_artifact
+	}
+	switch = {
+		trigger = var:dragon_embryo
+		flag:drogon = {
+			#set_artifact_description = dragon_egg_blackDarkRed_desc_living
+			set_artifact_description = dragon_egg_drogon_desc
+		}
+		flag:viserion = {
+			set_artifact_description = dragon_egg_viserion_desc
+		}
+		flag:rhaegal = {
+			set_artifact_description = dragon_egg_rhaegal_desc
+		}
+	}
+	clear_saved_scope = newly_created_artifact
+}
+
+agot_create_random_brown_dragon_egg_artifact = { # MDE Modified
+	random_list = { # Random Brown Egg
+		1 = {
+			create_artifact_dragon_egg_brown_effect = { OWNER = $OWNER$ }
+		}
+		1 = {
+			create_artifact_dragon_egg_brownspots_effect = { OWNER = $OWNER$ }
+		}
+		1 = {
+			create_artifact_dragon_egg_lightBrown_effect = { OWNER = $OWNER$ }
+		}
+	}
+}
+
+agot_spawn_owned_hatchling_from_egg_effect = {
+	$OWNER$ = { save_scope_as = owner }
+	$EGG$ = { save_scope_as = egg }
+
+	if = {
+		limit = {
+			agot_canon_dragons_enabled = yes
+			# MDE Modified
+			scope:egg = {
+				has_variable = dragon_embryo
+			}
+		}
+		mde_spawn_canon_dragon_from_egg_effect = { EGG = scope:egg }
+	}
+	else_if = {
+		limit = {
+			agot_canon_dragons_enabled = yes
+			exists = scope:cradlemate
+			scope:cradlemate ?= {
+				agot_has_canon_cradle_egg = yes
+				NOT = { has_character_flag = hatched_canon_dragon }
+			}
+		}
+		scope:cradlemate = { add_character_flag = hatched_canon_dragon }
+		agot_spawn_canon_cradle_dragon_effect = { CRADLEMATE = scope:cradlemate }
+		scope:dragon = {
+			add_character_flag = {
+				flag = agot_no_silly_name
+				months = 1
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			agot_canon_dragons_enabled = yes
+			agot_is_valid_unpaired_canon_dragon_birth = { EGG = scope:egg }
+		}
+		agot_spawn_unpaired_canon_dragon = { EGG = scope:egg }
+		scope:dragon = {
+			add_character_flag = {
+				flag = agot_no_silly_name
+				months = 1
+			}
+		}
+	}
+	else = {
+		create_character = {
+			location = $OWNER$.location
+			template = agot_dragon_hatchling_template
+			random_traits = no
+			save_scope_as = dragon
+		}
+	}
+
+
+	hidden_effect = {
+		agot_set_as_owned_dragon = {
+			OWNER = scope:owner
+			DRAGON = scope:dragon
+		}
+	}
+
+	$OWNER$ = {
+		send_interface_message = {
+			type = event_generic_good_text
+			title = agot_spawn_dragon_effect.interface.t
+			desc = agot_spawn_dragon_effect.interface.desc
+
+			left_icon = scope:dragon
+		}
+	}
+
+	agot_set_dragon_parents = { EGG = $EGG$ }
+	agot_dragon_tree_creation_effect = { DRAGON = scope:dragon }
+	custom_tooltip = {
+		text = agot_dragon_hatched_from_egg_effect_tt
+		agot_remove_dragon_egg = { EGG = $EGG$ }
+	}
+}
+
+secret_exposed_notification_effect = {
+	save_scope_as = secret
+	secret_owner = {
+		save_scope_as = owner
+	}
+	if = {
+		limit = { exists = secret_target }
+		secret_target = { save_scope_as = target }
+	}
+
+
+	#### Visible events for those who care and knower of landed people's secrets ###
+
+	#Save spouses, close family members, liege and anyone whom I am primary heir of
+	scope:owner = {
+		save_list_targets_for_secret_exposure_events_effect = { SECRET = scope:secret CHARACTER = scope:owner }
+	}
+
+	#If it's a lover secret, tell people who cares about the target as well
+	if = {
+		limit = { scope:secret = { secret_type = secret_lover } }
+		save_extra_lover_list_targets_for_secret_exposure_events_effect = yes
+	}
+
+	#If it's a bastard secret, tell people who cares about child/real_father as well
+	else_if = {
+		limit  = {
+			scope:secret = {
+				OR = {
+					secret_type = secret_disputed_heritage
+					secret_type = secret_unmarried_illegitimate_child
+				}
+			}
+		}
+		save_extra_bastard_list_targets_for_secret_exposure_events_effect = yes
+	}
+
+	#If it's a murder/murder attempt secret, also inform those who care about victim
+	else_if = {
+		limit = {
+			scope:secret = {
+				OR = {
+					secret_type = secret_murder_attempt
+					secret_type = secret_murder
+				}
+			}
+		}
+
+		scope:victim = { save_list_targets_for_secret_exposure_events_effect = { SECRET = scope:secret CHARACTER = scope:victim } }
+	}
+
+	#If it's a secret faith, save the faith
+	else_if = {
+		limit = {
+			scope:secret = { secret_type = secret_crypto_religionist }
+		}
+		scope:owner.secret_faith = { save_scope_as = crypto_faith }
+	}
+
+	#Send the notification event
+	every_in_list = {
+		list = send_exposed_secret_event_list
+
+		if = {
+			limit = {
+				scope:secret = { secret_type = secret_incest }
+			}
+			trigger_event = secrets.0106
+		}
+		else_if = {
+			limit = {
+				scope:secret = { secret_type = secret_witch }
+			}
+			trigger_event = secrets.0107
+		}
+		else_if = {
+			limit = {
+				scope:secret = {
+					OR = {
+						secret_type = secret_embezzler
+						secret_type = secret_siphoned_treasury					
+					}
+				}
+			}
+			trigger_event = secrets.0122
+		}
+		else_if = {
+			limit = {
+				scope:secret = { secret_type = secret_cannibal }
+			}
+			trigger_event = secrets.0104
+		}
+		else_if = {
+			limit = {
+				scope:secret = { secret_type = secret_non_believer }
+			}
+			trigger_event = secrets.0105
+		}
+		else_if = {
+			limit = {
+				scope:secret = { secret_type = secret_homosexual }
+			}
+			trigger_event = secrets.0103
+		}
+		else_if = {
+			limit = {
+				scope:secret = { secret_type = secret_lover }
+			}
+			trigger_event = secrets.0108
+		}
+		else_if = {
+			limit = {
+				scope:secret = { secret_type = secret_deviant }
+			}
+			trigger_event = secrets.0101
+		}
+		else_if = {
+			limit = {
+				scope:secret = { secret_type = secret_disputed_heritage }
+			}
+			trigger_event = secrets.0110
+		}
+		else_if = {
+			limit = {
+				scope:secret = { secret_type = secret_unmarried_illegitimate_child }
+			}
+			trigger_event = secrets.0112
+		}
+		else_if = {
+			limit = {
+				scope:secret = { secret_type = secret_murder_attempt }
+			}
+			trigger_event = secrets.0116
+		}
+		else_if = {
+			limit = {
+				scope:secret = { secret_type = secret_murder }
+			}
+			if = {
+				limit = {
+					scope:secret = { has_variable = known_murder }
+				}
+				add_death_event_blocker_effect = { DEAD = scope:victim }
+			}
+			trigger_event = secrets.0118
+		}
+		#AGOT Added
+		else_if = {
+			limit = {
+				scope:secret = { secret_type = secret_agot_wildling }
+			}
+			trigger_event = agot_secret_events.0101
+		}
+		else_if = {
+			limit = {
+				scope:secret = { secret_type = secret_agot_identity }
+			}
+			trigger_event = agot_secret_events.1002
+		}
+		else_if = {
+			limit = {
+				scope:secret = { secret_type = secret_agot_hidden_artifact }
+			}
+			if = {
+				limit = { scope:owner.house ?= dynasty:dynn_Uller.dynasty_founder.house }
+				trigger_event = agot_secret_events.3000
+			}
+			else_if = {
+				limit = {
+					exists = dynasty:dynn_Mopatis
+					scope:owner.house ?= dynasty:dynn_Mopatis.dynasty_founder.house
+				}
+				trigger_event = agot_secret_events.3010
+			}
+			else_if = { # MDE Modified
+				limit = { scope:owner.house ?= dynasty:dynn_Hightower.dynasty_founder.house }
+				trigger_event = mde_decisions_events.3000
+			}
+		}
+		else = {
+			add_to_list = send_exposed_secret_feed_message_list
+		}
+	}
+
+	### Sending feed messages to other characters who care ###
+	scope:owner = {
+		#Save secret knowers and extended family members for feed messages
+		save_list_targets_for_secret_exposure_feed_messages_effect = { SECRET = scope:secret CHARACTER = scope:owner }
+	}
+
+	#Extra stuff for lover secrets
+	if = {
+		limit = { scope:secret = { secret_type = secret_lover } }
+		secret_owner = {
+			#Also send feed messages who know about my sodomy/incest secret if relation is homosexual/incestuous
+			scope:target = { save_temporary_scope_as = other_lover }
+			save_additional_lover_secret_list_targets_for_feed_messages_effect = yes
+		}
+
+		#Feed messages for my lover secret target
+		scope:target = {
+			if = {
+				limit = {
+					exists = scope:targets_secret
+				}
+				#Save secret knowers and extended family members for feed messages
+				save_list_targets_for_secret_exposure_feed_messages_effect = { SECRET = scope:targets_secret CHARACTER = scope:target }
+			}
+
+			#Also send feed messages who know about target's sodomy/incest secret if relation is homosexual/incestuous
+			scope:target = { save_temporary_scope_as = other_lover }
+			save_additional_lover_secret_list_targets_for_feed_messages_effect = yes
+		}
+	}
+
+	every_in_list = {
+		list = send_exposed_secret_feed_message_list
+		save_scope_as = secret_expose_feed_message_scope
+
+		send_interface_message = {
+			type = secret_exposed_message
+			left_icon = scope:owner
+			right_icon = scope:target
+			title = secret_exposed_notification_effect_message
+			desc = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { scope:secret = { secret_type = secret_incest } }
+						desc = secret_exposed_notification_effect_message_incest
+					}
+					triggered_desc = {
+						trigger = { scope:secret = { secret_type = secret_witch } }
+						desc = secret_exposed_notification_effect_message_witch
+					}
+					triggered_desc = {
+						trigger = { scope:secret = { secret_type = secret_cannibal } }
+						desc = secret_exposed_notification_effect_message_cannibal
+					}
+					triggered_desc = {
+						trigger = { scope:secret = { secret_type = secret_non_believer } }
+						desc = secret_exposed_notification_effect_message_non_believer
+					}
+					triggered_desc = {
+						trigger = { scope:secret = { secret_type = secret_homosexual } }
+						desc = secret_exposed_notification_effect_message_homosexual
+					}
+					triggered_desc = {
+						trigger = { #Incest lover
+							scope:secret = { secret_type = secret_lover }
+							scope:owner = { relation_with_character_is_incestuous_in_faith_trigger = { CHARACTER = scope:target FAITH = scope:secret_expose_feed_message_scope.faith } }
+						}
+						desc = secret_exposed_notification_effect_message_lover_incest
+					}
+					triggered_desc = {
+						trigger = { #Sodomy lover
+							scope:secret = { secret_type = secret_lover }
+							scope:owner = { relation_with_character_is_sodomy_in_faith_trigger = { CHARACTER = scope:target FAITH = scope:secret_expose_feed_message_scope.faith } }
+						}
+						desc = secret_exposed_notification_effect_message_lover_sodomy
+					}
+					triggered_desc = {
+						trigger = { scope:secret = { secret_type = secret_lover } }
+						desc = secret_exposed_notification_effect_message_lover
+					}
+					triggered_desc = {
+						trigger = { scope:secret = { secret_type = secret_deviant } }
+						desc = secret_exposed_notification_effect_message_deviant
+					}
+					triggered_desc = { #Illegitimate child
+						trigger = {
+							scope:secret = {
+								OR = {
+									secret_type = secret_disputed_heritage
+									secret_type = secret_unmarried_illegitimate_child
+								}
+							}
+						}
+						desc = secret_exposed_notification_effect_message_illegitimate_child
+					}
+					triggered_desc = {
+						trigger = { scope:secret = { secret_type = secret_murder_attempt } }
+						desc = secret_exposed_notification_effect_message_murder_attempt
+					}
+					triggered_desc = {
+						trigger = {
+							scope:secret = { secret_type = secret_murder }
+							scope:owner != scope:secret_exposer
+						}
+						desc = secret_exposed_notification_effect_message_murder
+					}
+					triggered_desc = {
+						trigger = {
+							scope:secret = { secret_type = secret_murder }
+							scope:owner = scope:secret_exposer
+						}
+						desc = secret_exposed_notification_effect_message_known_murder
+					}
+					triggered_desc = {
+						trigger = {
+							scope:secret = { secret_type = secret_crypto_religionist }
+						}
+						desc = secret_exposed_notification_effect_message_faith
+					}
+					#AGOT Added
+					triggered_desc = {
+						trigger = {
+							scope:secret = { secret_type = secret_agot_wildling }
+							scope:owner = scope:secret_exposer
+						}
+						desc = secret_exposed_notification_effect_message_agot_wildling
+					}
+					triggered_desc = {
+						trigger = {
+							scope:secret = { secret_type = secret_agot_hidden_artifact }
+							scope:owner = scope:secret_exposer
+						}
+						desc = secret_exposed_notification_effect_message_hidden_artifact
+					}
+				}
+			}
+
+			if = {
+				limit = { has_hook_from_secret = scope:secret }
+				if = {
+					limit = {
+						has_hook_of_type = {
+							target = scope:owner
+							type = weak_blackmail_hook
+						}
+					}
+					remove_hook = {
+						target = scope:owner
+						type = weak_blackmail_hook
+					}
+				}
+				else_if = {
+					limit = {
+						has_hook_of_type = {
+							target = scope:owner
+							type = strong_blackmail_hook
+						}
+					}
+					remove_hook = {
+						target = scope:owner
+						type = strong_blackmail_hook
+					}
+				}
+			}
+		}
+	}
+
+	### Send toast to exposer ###
+	if = {
+		limit = {
+			trigger_if = {
+				limit = { exists = scope:target }
+				NOR = {
+					scope:secret_exposer = scope:target
+					scope:secret_exposer = scope:owner
+				}
+			}
+			trigger_else = {
+				scope:secret_exposer != scope:owner
+			}
+		}
+		scope:secret_exposer = {
+			save_scope_as = secret_expose_feed_message_scope
+			send_interface_toast = {
+				left_icon = scope:owner
+				right_icon = scope:target
+				title = secret_exposed_notification_effect_message
+
+				if = {
+					limit = { scope:secret = { secret_type = secret_incest } }
+					custom_tooltip = secret_exposed_notification_effect_message_incest.i_exposed
+				}
+				else_if = {
+					limit = { scope:secret = { secret_type = secret_witch } }
+					custom_tooltip = secret_exposed_notification_effect_message_witch.i_exposed
+				}
+				else_if = {
+					limit = { scope:secret = { secret_type = secret_cannibal } }
+					custom_tooltip = secret_exposed_notification_effect_message_cannibal.i_exposed
+				}
+				else_if = {
+					limit = { scope:secret = { secret_type = secret_non_believer } }
+					custom_tooltip = secret_exposed_notification_effect_message_non_believer.i_exposed
+				}
+				else_if = {
+					limit = { scope:secret = { secret_type = secret_homosexual } }
+					custom_tooltip = secret_exposed_notification_effect_message_homosexual.i_exposed
+				}
+				else_if = {
+					limit = { #Incest lover
+						scope:secret = { secret_type = secret_lover }
+						scope:owner = { relation_with_character_is_incestuous_in_faith_trigger = { CHARACTER = scope:target FAITH = scope:secret_expose_feed_message_scope.faith } }
+					}
+					custom_tooltip = secret_exposed_notification_effect_message_lover_incest.i_exposed
+				}
+				else_if = {
+					limit = { #Sodomy lover
+						scope:secret = { secret_type = secret_lover }
+						scope:owner = { relation_with_character_is_sodomy_in_faith_trigger = { CHARACTER = scope:target FAITH = scope:secret_expose_feed_message_scope.faith } }
+					}
+					custom_tooltip = secret_exposed_notification_effect_message_lover_sodomy.i_exposed
+				}
+				else_if = {
+					limit = { scope:secret = { secret_type = secret_lover } }
+					custom_tooltip = secret_exposed_notification_effect_message_lover.i_exposed
+				}
+				else_if = {
+					limit = { scope:secret = { secret_type = secret_deviant } }
+					custom_tooltip = secret_exposed_notification_effect_message_deviant.i_exposed
+				}
+				else_if = {
+					limit = {
+						scope:secret = {
+							OR = {
+								secret_type = secret_disputed_heritage
+								secret_type = secret_unmarried_illegitimate_child
+							}
+						}
+					}
+					custom_tooltip = secret_exposed_notification_effect_message_illegitimate_child.i_exposed
+				}
+				else_if = {
+					limit = { scope:secret = { secret_type = secret_murder_attempt } }
+					custom_tooltip = secret_exposed_notification_effect_message_murder_attempt.i_exposed
+				}
+				else_if = {
+					limit = { scope:secret = { secret_type = secret_murder } }
+					custom_tooltip = secret_exposed_notification_effect_message_murder.i_exposed
+				}
+				else_if = {
+					limit = { scope:secret = { secret_type = secret_crypto_religionist } }
+					custom_tooltip = secret_exposed_notification_effect_message_faith.i_exposed
+				}
+				#AGOT Added
+				else_if = {
+					limit = { scope:secret = { secret_type = secret_agot_wildling } }
+					custom_tooltip = secret_exposed_notification_effect_message_wildling.i_exposed
+				}
+				else_if = {
+					limit = { scope:secret = { secret_type = secret_agot_identity } }
+					custom_tooltip = secret_exposed_notification_effect_message_identity.i_exposed
+				}
+				else_if = {
+					limit = { scope:secret = { secret_type = secret_agot_hidden_artifact } }
+					custom_tooltip = secret_exposed_notification_effect_message_hidden_artifact.i_exposed
+				}
+
+				if = {
+					limit = { has_hook_from_secret = scope:secret }
+					remove_hook = {
+						target = scope:owner
+						type = weak_blackmail_hook
+					}
+				}
+				
+				if = {
+					limit = {
+						has_government = landless_adventurer_government
+						has_perk = court_of_shadows_perk
+					}
+					add_prestige = {
+						value = 100
+						multiply = {
+							value = scope:owner.highest_held_title_tier
+							add = 1
+						}
+						min = 50
+					}
+				}
+				
+				stress_impact = {
+					honest = medium_stress_impact_loss
+					just = medium_stress_impact_loss
+				}
+				
+				scope:owner = {
+					stress_impact = {
+						honest = medium_stress_impact_loss
+						just = medium_stress_impact_loss
+					}
+				}
+				
+				# If we're a clan this interaction affects unity
+				add_clan_unity_interaction_effect = {
+					CHARACTER = scope:secret_expose_feed_message_scope
+					TARGET = scope:owner
+					VALUE = major_unity_loss
+					DESC = clan_unity_secret_exposure.desc
+					REVERSE_NON_HOUSE_TARGET = no
+				}
+			}
+		}
+	}
+}

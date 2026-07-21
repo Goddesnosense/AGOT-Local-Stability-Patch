@@ -1,0 +1,75 @@
+﻿# AGOT Local Stability Patch 0.6.4
+# Rebase selectivo de scripted GUI de dragones.
+# Base AGOT 0.4.38; acceso MDE del heredero conservado.
+
+not_dragon_or_dragonrider = {
+	scope = character
+
+	is_shown = {
+		NOT = {
+			OR = {
+				has_trait = dragon
+				has_character_flag = currently_riding_dragon
+				has_character_flag = in_dragon_combat
+			}
+		}
+	}
+}
+
+move_or_remove_from_dragonpit = {
+	scope = character
+
+	is_shown = {
+		has_trait = dragon
+		exists = employer
+		OR = { # MDE Modified
+			employer = scope:owner
+			employer = scope:owner.primary_heir
+		}
+		#has_character_flag = owned_dragon
+		has_character_flag = in_dragonpit
+		scope:owner ?= {
+			agot_has_multiple_active_dragonpits = yes
+		}
+	}
+
+	ai_is_valid = {
+		has_trait = dragon
+		exists = employer
+		#has_character_flag = owned_dragon
+		has_character_flag = in_dragonpit
+	}
+
+	effect = {
+		agot_change_dragonpit_status = yes
+	}
+}
+
+remove_from_dragonpit = {
+	scope = character
+
+	is_shown = {
+		has_trait = dragon
+		exists = employer
+		OR = { # MDE Modified
+			employer = scope:owner
+			employer = scope:owner.primary_heir
+		}
+		#has_character_flag = owned_dragon
+		has_character_flag = in_dragonpit
+		scope:owner ?= {
+			agot_has_multiple_active_dragonpits = no
+		}
+	}
+
+	ai_is_valid = {
+		has_trait = dragon
+		exists = employer
+		#has_character_flag = owned_dragon
+		has_character_flag = in_dragonpit
+	}
+
+	effect = {
+		agot_change_dragonpit_status = yes
+	}
+}

@@ -1,0 +1,591 @@
+﻿# AGOT LOCAL STABILITY — DRAGON STORAGE COMPAT SAFE 0.5.4
+# 1. Restaura el movimiento compartido de dragones con jinete o bondee.
+# 2. Conserva la restricción MDE para no mover automáticamente el dragonpit del jugador.
+# 3. Hace idempotentes los dos escritores del almacenamiento dragon_id.
+# Este archivo carga después de 00_agot_dragon_effects.txt.
+
+agot_move_dragon_to_bondee_or_rider_effect = {
+	if = {
+		limit = { # Dragon has somehow left rider court
+			exists = $CURRENT_RIDER_OR_BONDEE$
+			$CURRENT_RIDER_OR_BONDEE$ = { is_alive = yes is_ruler = yes }
+			NOT = { court_owner = $CURRENT_RIDER_OR_BONDEE$ }
+		}
+		set_employer = $CURRENT_RIDER_OR_BONDEE$
+		if = {
+			limit = { NOT = { has_character_flag = dragon_put_in_different_pit } }
+			return_to_court = yes
+			# If the dragon's owner is landed and they're not in their court, free them from the pit and send them to their owner
+			if = {
+				limit = {
+					has_character_flag = in_dragonpit
+				}
+				save_scope_as = i_am_a_dragon_in_pit
+				agot_remove_from_dragonpit_skip_county_effects = { DRAGON = scope:i_am_a_dragon_in_pit }
+			}
+		}
+	}
+	else_if = { # If the rider does have a dragonpit in their new capital, remove the dragon from their pit and bring them to the rider's capital's dragonpit
+		limit = {
+			exists = $CURRENT_RIDER_OR_BONDEE$
+			$CURRENT_RIDER_OR_BONDEE$ = {
+				is_alive = yes
+				is_ruler = yes
+				is_ai = yes # Conserva el comportamiento MDE: no mover automáticamente el pit del jugador.
+				capital_county = {
+					agot_title_is_an_active_dragonpit = yes
+				}
+			}
+			court_owner = $CURRENT_RIDER_OR_BONDEE$
+			has_character_flag = in_dragonpit
+			NOT = { var:pitted_dragon_location = $CURRENT_RIDER_OR_BONDEE$.capital_county }
+			NOT = { has_character_flag = dragon_put_in_different_pit }
+		}
+		save_scope_as = i_am_a_dragon_in_pit
+		agot_remove_from_dragonpit_skip_county_effects = { DRAGON = scope:i_am_a_dragon_in_pit }
+		agot_send_to_dragonpit_no_event = {
+			DRAGON = scope:i_am_a_dragon_in_pit
+			DRAGONPIT_COUNTY = $CURRENT_RIDER_OR_BONDEE$.capital_county
+		}
+		$CURRENT_RIDER_OR_BONDEE$ = {
+			capital_county = {
+				save_scope_as = capital
+			}
+			send_interface_toast = {
+				title = agot_dragon_pit_moved_to_capital_pit.t
+				custom_tooltip = agot_dragon_pit_moved_to_capital_pit.tt
+				left_icon = scope:i_am_a_dragon_in_pit
+			}
+		}
+	}
+	else_if = { # If the rider does NOT have a dragonpit, remove the dragon from their pit (which is NOT held by their rider) and bring them to the rider's new court location
+		limit = {
+			exists = $CURRENT_RIDER_OR_BONDEE$
+			$CURRENT_RIDER_OR_BONDEE$ = {
+				is_alive = yes
+				is_ruler = yes
+				capital_county = {
+					agot_title_is_an_active_dragonpit = no
+				}
+			}
+			court_owner = $CURRENT_RIDER_OR_BONDEE$
+			has_character_flag = in_dragonpit
+			NOT = {
+				var:pitted_dragon_location.holder = $CURRENT_RIDER_OR_BONDEE$
+			}
+			NOT = { var:pitted_dragon_location = $CURRENT_RIDER_OR_BONDEE$.capital_county }
+		}
+		save_scope_as = i_am_a_dragon_in_pit
+		agot_remove_from_dragonpit_skip_county_effects = { DRAGON = scope:i_am_a_dragon_in_pit }
+	}
+	else_if = { # Sometimes when freed from the pit they will stick to that location instead of returning to their ruler-rider
+		limit = {
+			exists = $CURRENT_RIDER_OR_BONDEE$
+			$CURRENT_RIDER_OR_BONDEE$ = {
+				is_alive = yes
+				is_ruler = yes
+			}
+			court_owner = $CURRENT_RIDER_OR_BONDEE$
+			NOR = {
+				location = $CURRENT_RIDER_OR_BONDEE$.location
+				has_character_flag = in_dragonpit
+			}
+		}
+		set_location = $CURRENT_RIDER_OR_BONDEE$.location
+	}
+	else_if = {
+		limit = { # Dragon is wandering
+			NOT = { exists = court_owner }
+		}
+		if = { # If rider is in court, make dragon join court
+			limit = {
+				exists = $CURRENT_RIDER_OR_BONDEE$
+				exists = $CURRENT_RIDER_OR_BONDEE$.court_owner
+				$CURRENT_RIDER_OR_BONDEE$ = { # Rider is courtier
+					is_alive = yes
+					is_courtier_of = court_owner
+				}
+			}
+			set_employer = $CURRENT_RIDER_OR_BONDEE$.court_owner
+			return_to_court = yes
+		}
+		else_if = {
+			limit = {
+				exists = $CURRENT_RIDER_OR_BONDEE$
+				exists = $CURRENT_RIDER_OR_BONDEE$.court_owner
+				$CURRENT_RIDER_OR_BONDEE$ = { # Rider is visiting court
+					NOT = { is_courtier_of = court_owner }
+					is_alive = yes
+				}
+			}
+			$CURRENT_RIDER_OR_BONDEE$.court_owner = {
+				add_visiting_courtier = story_owner
+			}
+		}
+		# Else dragon and rider are both wandering and can continue till rider joins a court
+	}
+	else_if = {
+		limit = { # Rider is wandering
+			exists = court_owner
+			exists = $CURRENT_RIDER_OR_BONDEE$
+			$CURRENT_RIDER_OR_BONDEE$ = {
+				is_alive = yes
+			}
+			NOT = { exists = $CURRENT_RIDER_OR_BONDEE$.court_owner }
+		}
+		move_to_pool = yes
+		# If the dragonrider is wandering, free the dragon from the pit
+		if = {
+			limit = {
+				has_character_flag = in_dragonpit
+			}
+			save_scope_as = i_am_a_dragon_in_pit
+			agot_remove_from_dragonpit_skip_county_effects = { DRAGON = scope:i_am_a_dragon_in_pit }
+		}
+	}
+	else_if = {
+		limit = { # Dragon has left mutual court
+			exists = $CURRENT_RIDER_OR_BONDEE$
+			$CURRENT_RIDER_OR_BONDEE$ = {
+				is_alive = yes
+				is_ruler = no
+			}
+			NOT = { court_owner = $CURRENT_RIDER_OR_BONDEE$.court_owner }
+		}
+		set_employer = $CURRENT_RIDER_OR_BONDEE$.court_owner
+		return_to_court = yes
+		# If the dragonrider is NOT a ruler, and the dragon is NOT in the same court but IS pitted, release the dragon from the pit and move them to the rider's court
+		if = {
+			limit = {
+				has_character_flag = in_dragonpit
+			}
+			save_scope_as = i_am_a_dragon_in_pit
+			agot_remove_from_dragonpit_skip_county_effects = { DRAGON = scope:i_am_a_dragon_in_pit }
+		}
+	}
+}
+
+agot_dragon_transfer_vars_to_story_cycle_effect = {
+	$DRAGON$ = {
+		save_scope_as = dragon
+	}
+	# AGOT LOCAL DRAGON STORAGE COMPAT SAFE 0.5.4
+	# Impide crear un segundo story con el mismo dragon_id.
+	if = {
+		limit = {
+			NOT = {
+				AND = {
+					has_global_variable_list = gl_dragon_variable_storage
+					any_in_global_list = {
+						variable = gl_dragon_variable_storage
+						story_type = story_dragon_variable_storage
+						var:dragon_id ?= scope:dragon
+					}
+				}
+			}
+		}
+		create_character = {
+			name = Aegon
+			gender = male
+			employer = title:c_ruins.holder
+			trait = agot_dummy_trait
+			random_traits = no
+			faith = faith:fots_seven
+			culture = culture:northman
+			dynasty = generate
+			save_scope_as = char_to_transfer_stories_off_of
+			after_creation = {
+				title:c_ruins.holder = {
+					set_variable = {
+						name = transfered_dragon
+						value = scope:dragon
+					}
+				}
+				create_story = {
+					type = story_dragon_variable_storage
+					save_scope_as = dragon_var_story
+				}
+			}
+		}
+		add_to_global_variable_list = {
+			name = gl_dragon_variable_storage
+			target = scope:dragon_var_story
+		}
+		scope:char_to_transfer_stories_off_of = {
+			death = {
+				death_reason = death_drinking_wildfire
+			}
+		}
+		agot_dragon_tree_creation_effect = { DRAGON = scope:dragon }
+		if = {
+			limit = {
+				NOT = {
+					is_target_in_global_variable_list = {
+						name = living_dragons
+						target = scope:dragon
+					}
+				}
+			}
+			add_to_global_variable_list = {
+				name = living_dragons
+				target = scope:dragon
+			}
+		}
+	}
+	else = {
+		# El registro ya existe: no se vuelven a transferir ni retirar genes.
+		if = {
+			limit = {
+				NOT = {
+					is_target_in_global_variable_list = {
+						name = living_dragons
+						target = scope:dragon
+					}
+				}
+			}
+			add_to_global_variable_list = {
+				name = living_dragons
+				target = scope:dragon
+			}
+		}
+	}
+}
+
+agot_historical_dragon_transfer_vars_to_story_cycle_effect = {
+	$DRAGON$ = { save_scope_as = dragon }
+	# AGOT LOCAL DRAGON STORAGE COMPAT SAFE 0.5.4
+	# Impide crear un segundo story con el mismo dragon_id.
+	if = {
+		limit = {
+			NOT = {
+				AND = {
+					has_global_variable_list = gl_dragon_variable_storage
+					any_in_global_list = {
+						variable = gl_dragon_variable_storage
+						story_type = story_dragon_variable_storage
+						var:dragon_id ?= scope:dragon
+					}
+				}
+			}
+		}
+		create_character = {
+			name = Aegon
+			gender = male
+			employer = title:c_ruins.holder
+			trait = agot_dummy_trait
+			random_traits = no
+			faith = faith:fots_seven
+			culture = culture:northman
+			dynasty = generate
+			save_scope_as = char_to_transfer_stories_off_of
+			after_creation = {
+				title:c_ruins.holder = {
+					set_variable = {
+						name = transfered_dragon
+						value = scope:dragon
+					}
+				}
+				create_story = {
+					type = story_dragon_variable_storage
+					save_scope_as = story
+				}
+			}
+		}
+		scope:story = {
+			# Dragon Genes
+			set_variable = {
+				name = dragon_age
+				value = $dragon_age$
+			}
+			set_variable = {
+				name = dragon_size_base
+				value = 0
+			}
+			set_variable = {
+				name = gene_dragon_primary_color_value
+				value = $gene_dragon_primary_color_value$
+			}
+			set_variable = {
+				name = gene_dragon_primary_color_hue
+				value = $gene_dragon_primary_color_hue$
+			}
+			set_variable = {
+				name = gene_dragon_secondary_value
+				value = $gene_dragon_secondary_value$
+			}
+			set_variable = {
+				name = gene_dragon_secondary_hue
+				value = $gene_dragon_secondary_hue$
+			}
+			set_variable = {
+				name = gene_dragon_tertiary_value
+				value = $gene_dragon_tertiary_value$
+			}
+			set_variable = {
+				name = gene_dragon_tertiary_hue
+				value = $gene_dragon_tertiary_hue$
+			}
+			set_variable = {
+				name = gene_dragon_horn_color_value
+				value = $gene_dragon_horn_color_value$
+			}
+			set_variable = {
+				name = gene_dragon_horn_color_hue
+				value = $gene_dragon_horn_color_hue$
+			}
+			set_variable = {
+				name = gene_dragon_eye_color_value
+				value = $gene_dragon_eye_color_value$
+			}
+			set_variable = {
+				name = gene_dragon_eye_color_hue
+				value = $gene_dragon_eye_color_hue$
+			}
+			set_variable = {
+				name = gene_dragon_main_horn_shape_template
+				value = $gene_dragon_main_horn_shape_template$
+			}
+			set_variable = {
+				name = gene_dragon_main_horn_shape_value
+				value = $gene_dragon_main_horn_shape_value$
+			}
+			set_variable = {
+				name = gene_dragon_body_shading_template
+				value = $gene_dragon_body_shading_template$
+			}
+			set_variable = {
+				name = gene_dragon_body_shading_value
+				value = $gene_dragon_body_shading_value$
+			}
+			set_variable = {
+				name = gene_dragon_wings_shading_template
+				value = $gene_dragon_wings_shading_template$
+			}
+			set_variable = {
+				name = gene_dragon_wings_shading_value
+				value = $gene_dragon_wings_shading_value$
+			}
+			set_variable = {
+				name = gene_dragon_neck_length
+				value = $gene_dragon_neck_length$
+			}
+			set_variable = {
+				name = gene_dragon_metallic_scales_strength
+				value = $gene_dragon_metallic_scales_strength$
+			}
+			set_variable = {
+				name = gene_dragon_wounded
+				value = $gene_dragon_wounded$
+			}
+			set_variable = {
+				name = gene_dragon_old_neck
+				value = $gene_dragon_old_neck$
+			}
+			set_variable = {
+				name = gene_dragon_tail_length
+				value = $gene_dragon_tail_length$
+			}
+			set_variable = {
+				name = gene_dragon_center_fin_size
+				value = $gene_dragon_center_fin_size$
+			}
+			set_variable = {
+				name = gene_dragon_side_fin_size
+				value = $gene_dragon_side_fin_size$
+			}
+			set_variable = {
+				name = gene_dragon_crest_depth
+				value = $gene_dragon_crest_depth$
+			}
+			set_variable = {
+				name = gene_dragon_back_spike_size
+				value = $gene_dragon_back_spike_size$
+			}
+			set_variable = {
+				name = gene_dragon_neck_spike_size
+				value = $gene_dragon_neck_spike_size$
+			}
+			set_variable = {
+				name = gene_dragon_horns_eyebrow_length
+				value = $gene_dragon_horns_eyebrow_length$
+			}
+			set_variable = {
+				name = gene_dragon_horns_eyebrow
+				value = $gene_dragon_horns_eyebrow$
+			}
+			set_variable = {
+				name = gene_dragon_snout_length
+				value = $gene_dragon_snout_length$
+			}
+			set_variable = {
+				name = gene_dragon_snout_height
+				value = $gene_dragon_snout_height$
+			}
+			set_variable = {
+				name = gene_dragon_snout_width
+				value = $gene_dragon_snout_width$
+			}
+			set_variable = {
+				name = gene_dragon_snout_end_width
+				value = $gene_dragon_snout_end_width$
+			}
+			set_variable = {
+				name = gene_dragon_snout_profile
+				value = $gene_dragon_snout_profile$
+			}
+			set_variable = {
+				name = gene_dragon_chin_profile
+				value = $gene_dragon_chin_profile$
+			}
+			set_variable = {
+				name = gene_dragon_jaw_width
+				value = $gene_dragon_jaw_width$
+			}
+			set_variable = {
+				name = gene_dragon_upper_jaw_width
+				value = $gene_dragon_upper_jaw_width$
+			}
+			set_variable = {
+				name = gene_dragon_lower_jaw_width
+				value = $gene_dragon_lower_jaw_width$
+			}
+			set_variable = {
+				name = gene_dragon_lower_jaw_height
+				value = $gene_dragon_lower_jaw_height$
+			}
+			set_variable = {
+				name = gene_dragon_cheek_width
+				value = $gene_dragon_cheek_width$
+			}
+			set_variable = {
+				name = gene_dragon_head_roundness
+				value = $gene_dragon_head_roundness$
+			}
+			set_variable = {
+				name = gene_dragon_brow_width
+				value = $gene_dragon_brow_width$
+			}
+			set_variable = {
+				name = gene_dragon_outer_brow_height
+				value = $gene_dragon_outer_brow_height$
+			}
+			# Generate the dragons historical size Effect
+			set_local_variable = { name = count value = 0 }
+			while = {
+				limit = {
+					var:dragon_age > local_var:count
+				}
+				if = {
+					limit = {
+						local_var:count < 11
+					}
+					scope:dragon = { add_prowess_skill = 3 }
+					change_dragon_size_direct = {
+						VALUE = 3
+					}
+				}
+				else_if = {
+					limit = {
+						local_var:count < 15
+					}
+					scope:dragon = { add_prowess_skill = 2 }
+					change_dragon_size_direct = {
+						VALUE = 2
+					}
+				}
+				else = {
+					if = {
+						limit = {
+							scope:dragon = { has_character_flag = in_dragonpit }
+						}
+						random_list = {
+							20 = {}
+							80 = {
+								scope:dragon = { add_prowess_skill = 1 }
+								change_dragon_size_direct = {
+									VALUE = 1
+								}
+							}
+						}
+					}
+					else = {
+						scope:dragon = { add_prowess_skill = 1 }
+						change_dragon_size_direct = {
+							VALUE = 1
+						}
+					}
+				}
+				change_local_variable = {
+					name = count
+					add = 1
+				}
+			}
+			set_variable = { # This is identical to the the dragon_size scripted value, save for the scope:dragon = ... reference. Why it needs to be like this instead of scope:dragon.dragon_size...idk.
+				name = dragon_size
+				value = {
+					value = scope:story.var:dragon_size_base
+					# Dragon trait
+					if = {
+						limit = { scope:dragon = { has_trait = dragon} }
+						add = {
+							value = dragon_base_dragon_size_value
+						}
+					}
+					# Physical
+					if = {
+						limit = { scope:dragon = { has_trait = dragon_physique_good_3} }
+						multiply = {
+							value = dragon_physique_good_3_size_mult
+						}
+					}
+					else_if = {
+						limit = { scope:dragon = { has_trait = dragon_physique_good_2} }
+						multiply = {
+							value = dragon_physique_good_2_size_mult
+						}
+					}
+					else_if = {
+						limit = { scope:dragon = { has_trait = dragon_physique_good_1} }
+						multiply = {
+							value = dragon_physique_good_1_size_mult
+						}
+					}
+					else_if = {
+						limit = { scope:dragon = { has_trait = dragon_physique_bad_1} }
+						multiply = {
+							value = dragon_physique_bad_1_size_mult
+						}
+					}
+					else_if = {
+						limit = { scope:dragon = { has_trait = dragon_physique_bad_2} }
+						multiply = {
+							value = dragon_physique_bad_2_size_mult
+						}
+					}
+					else_if = {
+						limit = { scope:dragon = { has_trait = dragon_physique_bad_3} }
+						multiply = {
+							value = dragon_physique_bad_3_size_mult
+						}
+					}
+					if = {
+						limit = { scope:dragon = { has_trait = dragon_spindly} }
+						multiply = {
+							value = dragon_spindly_size_mult
+						}
+					}
+				}
+			}
+		}
+		add_to_global_variable_list = {
+			name = gl_dragon_variable_storage
+			target = scope:story
+		}
+		scope:char_to_transfer_stories_off_of = {
+			death = {
+				death_reason = death_drinking_wildfire
+			}
+		}
+		agot_dragon_tree_creation_effect = { DRAGON = scope:dragon }
+	}
+}

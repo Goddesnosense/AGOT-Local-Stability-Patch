@@ -1,0 +1,202 @@
+﻿# AGOT Local Stability Patch 0.6.0 — MDE dragon trait frequencies
+
+agot_give_random_physical_traits = {
+	# Physique traits
+	if = {
+		limit = {
+			NOR = {
+				has_trait = dragon_physique_good_3
+				has_inactive_trait = dragon_physique_good_3
+				has_trait = dragon_physique_good_2
+				has_inactive_trait = dragon_physique_good_2
+				has_trait = dragon_physique_good_1
+				has_inactive_trait = dragon_physique_good_1
+				has_trait = dragon_physique_bad_3
+				has_inactive_trait = dragon_physique_bad_3
+				has_trait = dragon_physique_bad_2
+				has_inactive_trait = dragon_physique_bad_2
+				has_trait = dragon_physique_bad_1
+				has_inactive_trait = dragon_physique_bad_1
+			}
+		}
+		random_list = {
+			88 = { }
+			1 = {
+				modifier = { # MDE Modified
+					OR = {
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_both
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_positive
+					}
+					add = dragon_gene_frequency_val
+				}
+				add_trait = dragon_physique_good_3
+			}
+			2 = {
+				modifier = { # MDE Modified
+					OR = {
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_both
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_positive
+					}
+					add = dragon_gene_frequency_val
+				}
+				add_trait = dragon_physique_good_2
+			}
+			3 = {
+				modifier = { # MDE Modified
+					OR = {
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_both
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_positive
+					}
+					add = dragon_gene_frequency_val
+				}
+				add_trait = dragon_physique_good_1
+			}
+			1 = {
+				modifier = { # MDE Modified
+					OR = {
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_negative
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_both
+					}
+					add = dragon_gene_frequency_val
+				}
+				add_trait = dragon_physique_bad_3
+			}
+			2 = {
+				modifier = { # MDE Modified
+					OR = {
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_negative
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_both
+					}
+					add = dragon_gene_frequency_val
+				}
+				add_trait = dragon_physique_bad_2
+			}
+			3 = {
+				modifier = { # MDE Modified
+					OR = {
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_negative
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_both
+					}
+					add = dragon_gene_frequency_val
+				}
+				add_trait = dragon_physique_bad_1
+			}
+		}
+	}
+	# Speed traits
+	if = {
+		limit = {
+			NOR = {
+				has_trait = dragon_swift
+				has_inactive_trait = dragon_swift
+				has_trait = dragon_slow
+				has_inactive_trait = dragon_slow
+			}
+		}
+		random_list = {
+			94 = { }
+			3 = {
+				modifier = { # MDE Modified
+					OR = {
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_both
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_positive
+					}
+					add = dragon_gene_frequency_val
+				}
+				add_trait = dragon_swift
+			}
+			3 = {
+				modifier = { # MDE Modified
+					OR = {
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_negative
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_both
+					}
+					add = dragon_gene_frequency_val
+				}
+				add_trait = dragon_slow
+			}
+		}
+	}
+	# Spindly trait
+	if = {
+		limit = {
+			NOR = {
+				has_trait = dragon_spindly
+				has_inactive_trait = dragon_spindly
+			}
+		}
+		random_list = {
+			99 = { }
+			1 = {
+				modifier = { # MDE Modified
+					has_game_rule = dragon_gene_frequency_naughty_or_nice_both
+					add = dragon_gene_frequency_val
+				}
+				add_trait = dragon_spindly
+			}
+		}
+	}
+	# Blind trait (once more fully implemented)
+	#random_list = {
+	#	99 = { }
+	#	1 = {
+	#		add_trait = dragon_blind
+	#	}
+	#}
+	# Aesthetic traits
+	if = {
+		limit = {
+			NOR = {
+				has_trait = dragon_majestic
+				has_inactive_trait = dragon_majestic
+				has_trait = dragon_ugly
+				has_inactive_trait = dragon_ugly
+			}
+		}
+		random_list = {
+			94 = { }
+			3 = {
+				modifier = { # MDE Modified
+					OR = {
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_both
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_positive
+					}
+					add = dragon_gene_frequency_val
+				}
+				add_trait = dragon_majestic
+			}
+			3 = {
+				modifier = { # MDE Modified
+					OR = {
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_negative
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_both
+					}
+					add = dragon_gene_frequency_val
+				}
+				add_trait = dragon_ugly
+			}
+		}
+	}
+	# Fertile trait
+	if = {
+		limit = {
+			NOR = {
+				has_trait = dragon_fertile
+				has_inactive_trait = dragon_fertile
+			}
+		}
+		random_list = {
+			98 = { }
+			2 = {
+				modifier = { # MDE Modified
+					OR = {
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_both
+						has_game_rule = dragon_gene_frequency_naughty_or_nice_positive
+					}
+					add = dragon_gene_frequency_val
+				}
+				add_trait = dragon_fertile
+			}
+		}
+	}
+}

@@ -1,0 +1,87 @@
+﻿# AGOT INDEPENDENT ERRORS FIX - SAFE 0.1.1
+# Reparación global y repetible de almacenamientos visuales de dragón.
+# No sobrescribe variables válidas.
+
+on_game_start_after_lobby = {
+	on_actions = {
+		agot_ls_dragon_gene_storage_repair_safe_011
+	}
+}
+
+monthly_global_pulse = {
+	on_actions = {
+		agot_ls_dragon_gene_storage_repair_safe_011
+	}
+}
+
+agot_ls_dragon_gene_storage_repair_safe_011 = {
+	trigger = {
+		agot_has_dragon_storage_system_global_list = yes
+	}
+
+	effect = {
+		every_in_global_list = {
+			variable = gl_dragon_variable_storage
+
+			if = {
+				limit = {
+					NOT = { has_variable = gene_dragon_tertiary_hue }
+				}
+				set_variable = {
+					name = gene_dragon_tertiary_hue
+					value = 0
+				}
+			}
+
+			if = {
+				limit = {
+					NOT = { has_variable = gene_dragon_tertiary_value }
+				}
+				set_variable = {
+					name = gene_dragon_tertiary_value
+					value = 0
+				}
+			}
+
+			if = {
+				limit = {
+					NOT = { has_variable = gene_dragon_body_shading_template }
+				}
+				set_variable = {
+					name = gene_dragon_body_shading_template
+					value = 1
+				}
+			}
+
+			if = {
+				limit = {
+					NOT = { has_variable = gene_dragon_wings_shading_template }
+				}
+				set_variable = {
+					name = gene_dragon_wings_shading_template
+					value = 1
+				}
+			}
+
+			if = {
+				limit = {
+					NOT = { has_variable = gene_dragon_metallic_scales_strength }
+				}
+				set_variable = {
+					name = gene_dragon_metallic_scales_strength
+					value = 0
+				}
+			}
+
+			if = {
+				limit = {
+					NOT = { has_variable = gene_dragon_wounded }
+				}
+				set_variable = {
+					name = gene_dragon_wounded
+					value = 0
+				}
+			}
+		}
+	}
+}

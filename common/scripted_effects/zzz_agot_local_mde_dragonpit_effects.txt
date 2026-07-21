@@ -1,0 +1,288 @@
+﻿# AGOT Local Stability Patch 0.5.7 - MDE dragonpit rebase
+# Corrige scope:dragon y la transición de dragonpit_ruler_law.
+
+agot_change_dragonpit_status = { # MDE Modified
+	root = { # AGOT Local Stability: preserve both scopes
+		save_scope_as = dragon
+		save_scope_as = button_selected_dragon
+	}
+	scope:owner = {
+		random_held_county = {
+			limit = {
+				any_county_province = {
+					has_any_dragonpits = yes
+				}
+			}
+			save_scope_as = dragon_pit_location
+		}
+	}
+
+	if = {
+		limit = { 
+			has_game_rule = use_dragon_pit_mover_yes 
+			scope:owner = {
+				is_ai = no
+			}
+		}
+		if = { #More Dragon Eggs
+			limit = {
+				has_character_flag = in_dragonpit
+			}
+			
+			scope:owner = {
+				trigger_event = more_dragon_eggs_events.0008
+				scope:selected_dragonpit_loc = {
+					save_scope_as = dragon_pit_location
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_character_flag = owned_dragon
+			}
+			scope:owner = {
+				trigger_event = more_dragon_eggs_events.0008
+				scope:selected_dragonpit_loc = {
+					save_scope_as = dragon_pit_location
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_character_flag = owned_dragon
+				}
+			}
+			agot_force_wild_dragon_into_dragonpit_effect = { DRAGON = root DRAGONPIT_HOLDER = scope:owner DRAGONPIT_COUNTY = scope:dragon_pit_location }
+		}
+	}
+	else = { #AGOT Base Game
+			scope:owner = {
+			if = {
+				limit = {
+					agot_has_multiple_active_dragonpits = yes
+				}
+				trigger_event = agot_choose_dragonpit_event.0001
+			}
+			else = { # If not, assume default AGOT logic
+				random_held_county = {
+					limit = {
+						OR = {
+							any_county_province = {
+								has_holding_type = castle_holding
+								has_building_or_higher = generic_dragon_pit_01
+							}
+							any_county_province = {
+								OR = {
+									has_building_or_higher = dragonpit_01 # Historical Version
+									has_building = dragonpit_ruins_03 # Fully Restored Ruin Version
+									has_building = agot_dragonmont_01 # Dragonmont Version
+								}
+							}
+						}
+						has_variable = has_dragonkeeper_order
+					}
+					save_scope_as = dragon_pit_location
+				}
+				scope:dragon = {
+					if = {
+						limit = {
+							has_character_flag = in_dragonpit
+						}
+						agot_remove_from_dragonpit_effect = { DRAGON = root DRAGONPIT_HOLDER = scope:owner DRAGONPIT_COUNTY = scope:dragon_pit_location }
+					}
+					else_if = {
+						limit = {
+							has_character_flag = owned_dragon
+						}
+						agot_send_to_dragonpit_effect = { DRAGON = root DRAGONPIT_HOLDER = scope:owner DRAGONPIT_COUNTY = scope:dragon_pit_location }
+					}
+					else_if = {
+						limit = {
+							NOT = {
+								has_character_flag = owned_dragon
+							}
+						}
+						agot_force_wild_dragon_into_dragonpit_effect = { DRAGON = root DRAGONPIT_HOLDER = scope:owner DRAGONPIT_COUNTY = scope:dragon_pit_location }
+					}
+				}
+			}
+		}
+	}
+}
+
+agot_dragonpit_access_law_close_family_effect = {
+	if = {
+		limit = {
+			has_realm_law = dragonpit_house_law
+		}
+		remove_realm_law = dragonpit_house_law
+		add_realm_law = dragonpit_close_family_law
+	}
+	else_if = {
+		limit = {
+			has_realm_law = dragonpit_dynasty_law
+		}
+		remove_realm_law = dragonpit_dynasty_law
+		add_realm_law = dragonpit_close_family_law
+	}
+	else_if = {
+		limit = {
+			has_realm_law = dragonpit_everyone_law
+		}
+		remove_realm_law = dragonpit_everyone_law
+		add_realm_law = dragonpit_close_family_law
+	}
+	else_if = { # MDE Modified
+		limit = {
+			has_realm_law = dragonpit_ruler_law
+		}
+		remove_realm_law = dragonpit_ruler_law
+		add_realm_law = dragonpit_close_family_law
+	}
+}
+
+agot_dragonpit_access_law_dynasty_effect = {
+	if = {
+		limit = {
+			has_realm_law = dragonpit_close_family_law
+		}
+		remove_realm_law = dragonpit_close_family_law
+		add_realm_law = dragonpit_dynasty_law
+	}
+	else_if = {
+		limit = {
+			has_realm_law = dragonpit_house_law
+		}
+		remove_realm_law = dragonpit_house_law
+		add_realm_law = dragonpit_dynasty_law
+	}
+	else_if = {
+		limit = {
+			has_realm_law = dragonpit_everyone_law
+		}
+		remove_realm_law = dragonpit_everyone_law
+		add_realm_law = dragonpit_dynasty_law
+	}
+	else_if = { # MDE Modified
+		limit = {
+			has_realm_law = dragonpit_ruler_law
+		}
+		remove_realm_law = dragonpit_ruler_law
+		add_realm_law = dragonpit_dynasty_law
+	}
+}
+
+agot_dragonpit_access_law_everyone_effect = {
+	if = {
+		limit = {
+			has_realm_law = dragonpit_close_family_law
+		}
+		remove_realm_law = dragonpit_close_family_law
+		add_realm_law = dragonpit_everyone_law
+	}
+	else_if = {
+		limit = {
+			has_realm_law = dragonpit_house_law
+		}
+		remove_realm_law = dragonpit_house_law
+		add_realm_law = dragonpit_everyone_law
+	}
+	else_if = {
+		limit = {
+			has_realm_law = dragonpit_dynasty_law
+		}
+		remove_realm_law = dragonpit_dynasty_law
+		add_realm_law = dragonpit_everyone_law
+	}
+	else_if = { # MDE Modified
+		limit = {
+			has_realm_law = dragonpit_ruler_law
+		}
+		remove_realm_law = dragonpit_ruler_law
+		add_realm_law = dragonpit_everyone_law
+	}
+}
+
+agot_dragonpit_access_law_house_effect = {
+	if = {
+		limit = {
+			has_realm_law = dragonpit_close_family_law
+		}
+		remove_realm_law = dragonpit_close_family_law
+		add_realm_law = dragonpit_house_law
+	}
+	else_if = {
+		limit = {
+			has_realm_law = dragonpit_dynasty_law
+		}
+		remove_realm_law = dragonpit_dynasty_law
+		add_realm_law = dragonpit_house_law
+	}
+	else_if = {
+		limit = {
+			has_realm_law = dragonpit_everyone_law
+		}
+		remove_realm_law = dragonpit_everyone_law
+		add_realm_law = dragonpit_house_law
+	}
+	else_if = { # MDE Modified
+		limit = {
+			has_realm_law = dragonpit_ruler_law
+		}
+		remove_realm_law = dragonpit_ruler_law
+		add_realm_law = dragonpit_house_law
+	}
+}
+
+agot_dragonpit_access_law_ruler_effect = { # MDE Modified
+	if = {
+		limit = {
+			has_realm_law = dragonpit_house_law
+		}
+		remove_realm_law = dragonpit_house_law
+		add_realm_law = dragonpit_ruler_law
+	}
+	else_if = {
+		limit = {
+			has_realm_law = dragonpit_dynasty_law
+		}
+		remove_realm_law = dragonpit_dynasty_law
+		add_realm_law = dragonpit_ruler_law
+	}
+	else_if = {
+		limit = {
+			has_realm_law = dragonpit_everyone_law
+		}
+		remove_realm_law = dragonpit_everyone_law
+		add_realm_law = dragonpit_ruler_law
+	}
+	else_if = { # AGOT Local Stability: corrected inverse transition
+		limit = {
+			has_realm_law = dragonpit_close_family_law
+		}
+		remove_realm_law = dragonpit_close_family_law
+		add_realm_law = dragonpit_ruler_law
+	}
+}
+
+agot_remove_from_dragonpit_no_event = {
+	$DRAGONPIT_COUNTY$ = {
+		remove_list_variable = {
+			name = dragons_in_pit
+			target = $DRAGON$
+		}
+		save_scope_as = dragon_pit_location
+	}
+	$DRAGON$ = {
+		remove_character_flag = in_dragonpit
+		remove_character_flag = in_dragonpen # MDE Modified
+		remove_character_modifier = agot_dragon_in_dragonpit
+		remove_variable = pitted_dragon_location
+		if = {
+			limit = { has_character_flag = dragon_put_in_different_pit }
+			remove_character_flag = dragon_put_in_different_pit
+		}
+		save_scope_as = removed_dragon
+	}
+}

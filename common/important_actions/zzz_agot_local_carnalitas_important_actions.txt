@@ -1,0 +1,125 @@
+﻿# AGOT Local Stability Patch 0.5.9
+# Restaura las acciones importantes autoritativas de CLR 0.11.0.
+
+action_carn_can_sex_interaction = {
+	combine_into_one = yes
+
+	check_create_action = {
+		if = {
+			limit = {
+				NOT = { has_game_rule = carn_sex_interaction_disabled }
+				trigger_if = {
+					limit = { has_character_flag = carn_sex_interaction_effect_cd }
+					has_game_rule = carnx_sex_interaction_effect_cd_disabled
+				}
+				is_adult = yes
+				carnx_is_sex_interaction_blocked_trigger = no
+				carn_can_have_sex_trigger = yes
+			}
+
+			every_consort = {
+				add_to_list = potential_partners
+			}
+			every_relation = {
+				type = lover
+				add_to_list = potential_partners
+			}
+			every_courtier = {
+				limit = {
+					carnx_is_slave_consort_of_trigger = { CHARACTER = root }
+				}
+				add_to_list = potential_partners
+			}
+			every_pool_character = {
+				province = root.location
+				limit = {
+					NOT = { this = root }
+					carn_is_working_as_prostitute_trigger = yes
+				}
+				add_to_list = potential_partners
+			}
+
+			every_in_list = {
+				list = potential_partners
+				limit = {
+					carnx_is_eligible_sex_target_trigger = { PLAYER = root }
+				}
+				try_create_important_action = {
+					important_action_type = action_carn_can_sex_interaction
+					actor = root
+					recipient = this
+				}
+			}
+		}
+	}
+
+	effect = {
+		open_interaction_window = {
+			interaction = carn_sex_interaction
+			actor = scope:actor
+			recipient = scope:recipient
+		}
+	}
+}
+
+dsi_demand_sex_important_interaction = {
+	combine_into_one = yes
+
+	check_create_action = {
+		if = {
+			limit = {
+				NOR = {
+					has_game_rule = carn_sex_interaction_disabled
+					has_game_rule = carn_content_consent_always
+				}
+				trigger_if = {
+					limit = { has_character_flag = carn_sex_interaction_effect_cd }
+					has_game_rule = carnx_sex_interaction_effect_cd_disabled
+				}
+				is_adult = yes
+				carnx_is_sex_interaction_blocked_trigger = no
+				carn_can_have_sex_trigger = yes
+			}
+
+			every_relation = {
+				type = slave
+				limit = {
+					NOT = { carnx_is_slave_consort_of_trigger = { CHARACTER = root } }
+				}
+				add_to_list = potential_partners
+			}
+			if = {
+				limit = {
+					OR = {
+						has_game_rule = carnx_sex_demand_sex_from_hooked_characters_all_hooks
+						has_game_rule = carnx_sex_demand_sex_from_hooked_characters_strong_hooks
+						has_trait = seducer
+					}
+				}
+				every_hooked_character = {
+					add_to_list = potential_partners
+				}
+			}
+
+			every_in_list = {
+				list = potential_partners
+				limit = {
+					carnx_is_eligible_demand_sex_target_trigger = { PLAYER = root }
+				}
+				try_create_important_action = {
+					important_action_type = dsi_demand_sex_important_interaction
+					actor = root
+					recipient = this
+				}
+			}
+		}
+	}
+
+	effect = {
+		open_interaction_window = {
+			interaction = dsi_demand_sex_interaction
+			actor = scope:actor
+			recipient = scope:recipient
+		}
+	}
+}

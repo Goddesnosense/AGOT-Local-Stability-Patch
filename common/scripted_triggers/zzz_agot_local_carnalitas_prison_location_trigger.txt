@@ -1,0 +1,14 @@
+﻿# AGOT Local Stability Patch 0.5.9
+# Compatibilidad de ubicación para la propia prisión.
+
+carnx_is_sex_target_at_valid_location_trigger = {
+	trigger_if = {
+		limit = { has_game_rule = carnx_sex_requires_same_location_enabled }
+		OR = {
+			is_at_same_location = $PARTNER$
+			is_in_pool_at = $PARTNER$.location
+			# El captor puede acceder a un personaje retenido en su propia prisión.
+			is_imprisoned_by = $PARTNER$
+		}
+	}
+}

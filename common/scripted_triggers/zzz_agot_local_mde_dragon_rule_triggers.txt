@@ -1,0 +1,225 @@
+﻿# AGOT Local Stability Patch 0.6.0 — MDE dragon rule triggers
+
+agot_can_tame_or_bond_or_etc_with_pitted_dragons = {
+	trigger_if = {
+		limit = {
+			$DRAGON$ = {
+				has_character_flag = in_dragonpit
+				has_variable = pitted_dragon_location
+			}
+			$ACTOR$ = {
+				has_variable_list = banned_dragonpit_locations
+			}
+		}
+		custom_tooltip = {
+			text = YOU_ARE_BANNED_FROM_THIS_DRAGONS_PIT
+			$ACTOR$ = {
+				NOT = {
+					is_target_in_variable_list = {
+						name = banned_dragonpit_locations
+						target = $DRAGON$.var:pitted_dragon_location
+					}
+				}
+			}
+		}
+	}
+	trigger_else_if = {
+		limit = {
+			$DRAGON$ = {
+				has_character_flag = in_dragonpit
+				has_variable = pitted_dragon_location
+			}
+			$ACTOR$ = {
+				has_variable = granted_access_to_dragonpit
+			}
+		}
+		OR = {
+			$ACTOR$.var:granted_access_to_dragonpit = $DRAGON$.var:pitted_dragon_location
+			$DRAGON$.var:pitted_dragon_location.holder = $ACTOR$
+		}
+	}
+	trigger_else_if = {
+		limit = {
+			$DRAGON$ = {
+				has_character_flag = in_dragonpit
+				has_variable = pitted_dragon_location
+			}
+			$DRAGON$.var:pitted_dragon_location.holder = {
+				has_realm_law = dragonpit_close_family_law
+			}
+		}
+		NOT = {
+			$DRAGON$.var:pitted_dragon_location.holder = {
+				is_at_war_with = $ACTOR$
+			}
+		}
+		custom_tooltip = {
+			text = DRAGONPIT_CLOSE_FAMILY
+			$ACTOR$ = {
+				is_close_family_of = $DRAGON$.var:pitted_dragon_location.holder
+			}
+		}
+	}
+	trigger_else_if = {
+		limit = {
+			$DRAGON$ = {
+				has_character_flag = in_dragonpit
+				has_variable = pitted_dragon_location
+			}
+			$DRAGON$.var:pitted_dragon_location.holder = {
+				has_realm_law = dragonpit_house_law
+			}
+		}
+		NOT = {
+			$DRAGON$.var:pitted_dragon_location.holder = {
+				is_at_war_with = $ACTOR$
+			}
+		}
+		custom_tooltip = {
+			text = DRAGONPIT_HOUSE
+			$ACTOR$.house = $DRAGON$.var:pitted_dragon_location.holder.house
+		}
+	}
+	trigger_else_if = {
+		limit = {
+			$DRAGON$ = {
+				has_character_flag = in_dragonpit
+				has_variable = pitted_dragon_location
+			}
+			$DRAGON$.var:pitted_dragon_location.holder = {
+				has_realm_law = dragonpit_dynasty_law
+			}
+		}
+		NOT = {
+			$DRAGON$.var:pitted_dragon_location.holder = {
+				is_at_war_with = $ACTOR$
+			}
+		}
+		custom_tooltip = {
+			text = DRAGONPIT_DYNASTY
+			$ACTOR$.dynasty = $DRAGON$.var:pitted_dragon_location.holder.dynasty
+		}
+	}
+	trigger_else_if = { # MDE Modified
+		limit = {
+			$DRAGON$ = {
+				has_character_flag = in_dragonpit
+				has_variable = pitted_dragon_location
+			}
+			$DRAGON$.var:pitted_dragon_location.holder = {
+				has_realm_law = dragonpit_ruler_law
+			}
+		}
+		NOT = {
+			$DRAGON$.var:pitted_dragon_location.holder = {
+				is_at_war_with = $ACTOR$
+			}
+		}
+		custom_tooltip = {
+			text = DRAGONPIT_RULER
+			$ACTOR$ = $DRAGON$.var:pitted_dragon_location.holder
+		}
+	}
+	trigger_else = {
+		always = yes
+	}
+}
+
+agot_cannot_use_dragon_egg = {
+	OR = {
+		AND = {
+			NOT = { has_game_rule = dragons_anyone }
+			agot_has_dragonblood_heritage = no
+		}
+		AND = { # MDE Modified
+			has_game_rule = can_ai_cradle_dragon_eggs_no
+			NOT = {
+				any_close_family_member = {
+					is_ai = no
+				}
+			}
+			is_ai = yes
+		}
+		has_trait = dragonrider
+		has_trait = dragonwidowed
+		any_relation = {
+			type = agot_dragon
+		}
+		any_character_artifact = {
+			has_variable = cradled_egg
+		}
+	}
+}
+
+agot_has_an_active_dragonpit = {
+	OR = { # MDE Modified
+		domicile ?= { has_domicile_parameter = camp_unlocks_dragonkeeper }
+		any_held_county = {
+			OR = {
+				any_county_province = {
+					has_holding_type = castle_holding
+					has_building_or_higher = generic_dragon_pit_01
+				}
+				any_county_province = {
+					OR = {
+						has_building_or_higher = dragonpit_01 # Historical Version
+						has_building = dragonpit_ruins_03 # Fully Restored Ruin Version
+						has_building = agot_dragonmont_01 # Dragonmont Version
+					}
+				}
+			}
+			has_variable = has_dragonkeeper_order
+		}
+	}
+}
+
+agot_has_any_dragonpit_access_law = {
+	OR = {
+		has_realm_law = dragonpit_close_family_law
+		has_realm_law = dragonpit_house_law
+		has_realm_law = dragonpit_dynasty_law
+		has_realm_law = dragonpit_everyone_law
+		has_realm_law = dragonpit_ruler_law # MDE Modified
+	}
+}
+
+allow_naming_of_dragon_trigger = {
+	save_temporary_scope_as = naming_parent
+	exists = $DRAGON$
+	is_ai = no
+	$DRAGON$.age < dragon_maturity_age
+	custom_tooltip = {
+		text = renaming_dragon_you_are_house_head_tt
+		OR = { # MDE Modified
+			OR = {
+				has_relation_agot_dragon = $DRAGON$
+				AND = {
+					is_house_head = yes
+					$DRAGON$ = {
+						any_relation = {
+							type = agot_dragon
+							is_alive = yes
+							is_ai = yes
+							house ?= scope:naming_parent.house
+						}
+					}
+				}
+			}
+			$DRAGON$ = {
+				AND = {
+					is_courtier_of = scope:naming_parent
+					has_character_flag = owned_dragon
+				}
+			}
+			$DRAGON$ = {
+				AND = {
+					has_character_flag = owned_dragon
+					is_courtier_of = $DRAGON$.var:pitted_dragon_location.holder
+					$DRAGON$.var:pitted_dragon_location.holder = {
+						target_is_liege_or_above = scope:naming_parent
+					}
+				}
+			}
+		}
+	}
+}

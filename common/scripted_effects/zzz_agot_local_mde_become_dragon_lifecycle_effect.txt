@@ -1,0 +1,434 @@
+﻿# AGOT Local Stability 0.6.5
+# Restores complete relationship and patron cleanup on dragon conversion.
+
+agot_become_the_dragon = {
+	if = {
+		limit = { has_trait = wrathful }
+		save_scope_as = dragon_aggressive
+	}
+	if = {
+		limit = { has_trait = calm }
+		save_scope_as = dragon_friendly
+	}
+	if = {
+		limit = { has_trait = shy }
+		save_scope_as = dragon_solitary
+	}
+	if = {
+		limit = { has_trait = gregarious }
+		save_scope_as = dragon_cooperative
+	}
+	if = {
+		limit = { has_trait = arrogant }
+		save_scope_as = dragon_imperious
+	}
+	if = {
+		limit = { has_trait = humble }
+		save_scope_as = dragon_supporting
+	}
+	if = {
+		limit = { has_trait = impatient }
+		save_scope_as = dragon_impulsive
+	}
+	if = {
+		limit = { has_trait = patient }
+		save_scope_as = dragon_calculating
+	}
+	if = {
+		limit = { has_trait = gluttonous }
+		save_scope_as = dragon_voracious
+	}
+	if = {
+		limit = { has_trait = temperate }
+		save_scope_as = dragon_restrained
+	}
+	if = {
+		limit = { has_trait = stubborn }
+		save_scope_as = dragon_defiant
+	}
+	if = {
+		limit = { has_trait = trusting }
+		save_scope_as = dragon_accepting
+	}
+	if = {
+		limit = { has_trait = sadistic }
+		save_scope_as = dragon_bloodthirsty
+	}
+	if = {
+		limit = { has_trait = paranoid }
+		save_scope_as = dragon_skittish
+	}
+	if = {
+		limit = { has_trait = cannibal }
+		save_scope_as = dragon_cannibal
+	}
+	if = {
+		limit = { has_trait = physique_good_1 }
+		save_scope_as = dragon_physique_good_1
+	}
+	if = {
+		limit = { has_trait = physique_good_2 }
+		save_scope_as = dragon_physique_good_2
+	}
+	if = {
+		limit = { has_trait = physique_good_3 }
+		save_scope_as = dragon_physique_good_3
+	}
+	if = {
+		limit = { has_trait = physique_bad_1 }
+		save_scope_as = dragon_physique_bad_1
+	}
+	if = {
+		limit = { has_trait = physique_bad_2 }
+		save_scope_as = dragon_physique_bad_2
+	}
+	if = {
+		limit = { has_trait = physique_bad_3 }
+		save_scope_as = dragon_physique_bad_3
+	}
+	if = {
+		limit = { has_trait = spindly }
+		save_scope_as = dragon_spindly
+	}
+	if = {
+		limit = { has_trait = fecund }
+		save_scope_as = dragon_fertile
+	}
+	if = {
+		limit = { has_trait = beauty_good }
+		save_scope_as = beauty_good
+	}
+	if = {
+		limit = { has_trait = beauty_bad }
+		save_scope_as = beauty_bad
+	}
+	if = {
+		limit = { diplomacy < 10 }
+		save_scope_as = education_dragon_3
+	}
+	else_if = {
+		limit = { diplomacy < 20 }
+		save_scope_as = education_dragon_4
+	}
+	else = {
+		save_scope_as = education_dragon_5
+	}
+	if = {
+		limit = {
+			is_ruler = yes
+		}
+		depose = yes
+	}
+	if = {
+		limit = {
+			is_married = yes
+		}
+		every_spouse = {
+			divorce = prev
+		}
+	}
+	if = {
+		limit = {
+			exists = betrothed
+		}
+		if = {
+			limit = {
+				has_been_promised_grand_wedding = yes
+			}
+			break_grand_wedding_betrothal_effect = yes
+		}
+		else = {
+			break_betrothal = betrothed
+		}
+	}
+	if = {
+		limit = {
+			any_relation = {
+				type = guardian
+				exists = this
+			}
+		}
+		every_relation = {
+			type = guardian
+			prev = {
+				remove_relation_guardian = prev
+			}
+		}
+	}
+	if = {
+		limit = {
+			any_relation = {
+				type = ward
+				exists = this
+			}
+		}
+		every_relation = {
+			type = ward
+			remove_relation_guardian = prev
+		}
+	}
+	if = {
+		limit = {
+			any_relation = {
+				type = lover
+				exists = this
+			}
+		}
+		every_relation = {
+			type = lover
+			remove_relation_lover = prev
+		}
+	}
+	if = {
+		limit = {
+			is_concubine = yes
+		}
+		this.concubinist = {
+			remove_concubine = prev
+		}
+	}
+	if = {
+		limit = {
+			number_of_concubines > 0
+		}
+		every_concubine = {
+			prev = {
+				remove_concubine = prev
+			}
+		}
+	}
+	if = {
+		limit = {
+			any_relation = {
+				type = agot_squire
+				exists = this
+			}
+		}
+		if = {
+			limit = {
+				has_character_modifier = agot_has_squire_modifier
+			}
+			remove_character_modifier = agot_has_squire_modifier
+		}
+		every_relation = {
+			type = agot_squire
+			remove_relation_agot_squire = prev
+			create_character_memory = {
+				type = agot_removed_me_as_squire
+				participants = {
+					knight = prev
+				}
+			}
+			random_owned_story = {
+				limit = {
+					story_type = story_agot_squire_ongoing
+				}
+				end_story = yes
+			}
+			remove_trait = squire
+		}
+	}
+	agot_wipe_all_patrons_effect = yes
+	if = {
+		limit = {
+			exists = house
+		}
+		house = {
+			save_scope_as = previous_house
+		}
+		set_to_lowborn = yes
+		set_house = scope:previous_house
+	}
+	if = {
+		limit = {
+			has_variable = current_dragon
+		}
+		save_scope_as = human_who_became_dragon
+		var:current_dragon = { save_scope_as = dragon }
+		agot_untame_dragon = {
+			OWNER = scope:human_who_became_dragon
+			DRAGON = scope:dragon
+		}
+		# Set up notify owner / would-be owner
+		if = {
+			limit = {
+				court_owner = scope:human_who_became_dragon
+				exists = scope:human_who_became_dragon.primary_title.current_heir
+			}
+			scope:human_who_became_dragon.primary_title.current_heir = {
+				trigger_event = {
+					id = agot_dragon.0020
+					days = 1
+				}
+			}
+		}
+		else = {
+			court_owner = {
+				trigger_event = {
+					id = agot_dragon.0020
+					days = 1
+				}
+			}
+		}
+	}
+	clear_traits = yes
+	refund_all_perks = yes
+	add_diplomacy_lifestyle_perk_points = -10
+	add_stewardship_lifestyle_perk_points = -10
+	add_martial_lifestyle_perk_points = -10
+	add_learning_lifestyle_perk_points = -10
+	add_intrigue_lifestyle_perk_points = -10
+	add_trait = dragon
+	if = {
+		limit = { exists = scope:dragon_aggressive }
+		add_trait = dragon_aggressive
+	}
+	if = {
+		limit = { exists = scope:dragon_friendly }
+		add_trait = dragon_friendly
+	}
+	if = {
+		limit = { exists = scope:dragon_solitary }
+		add_trait = dragon_solitary
+	}
+	if = {
+		limit = { exists = scope:dragon_cooperative }
+		add_trait = dragon_cooperative
+	}
+	if = {
+		limit = { exists = scope:dragon_imperious }
+		add_trait = dragon_imperious
+	}
+	if = {
+		limit = { exists = scope:dragon_supporting }
+		add_trait = dragon_supporting
+	}
+	if = {
+		limit = { exists = scope:dragon_impulsive }
+		add_trait = dragon_impulsive
+	}
+	if = {
+		limit = { exists = scope:dragon_calculating }
+		add_trait = dragon_calculating
+	}
+	if = {
+		limit = { exists = scope:dragon_voracious }
+		add_trait = dragon_voracious
+	}
+	if = {
+		limit = { exists = scope:dragon_restrained }
+		add_trait = dragon_restrained
+	}
+	if = {
+		limit = { exists = scope:dragon_defiant }
+		add_trait = dragon_defiant
+	}
+	if = {
+		limit = { exists = scope:dragon_accepting }
+		add_trait = dragon_accepting
+	}
+	if = {
+		limit = { exists = scope:dragon_bloodthirsty }
+		add_trait = dragon_bloodthirsty
+	}
+	if = {
+		limit = { exists = scope:dragon_skittish }
+		add_trait = dragon_skittish
+	}
+	if = {
+		limit = { exists = scope:dragon_cannibal }
+		add_trait = dragon_cannibal
+	}
+	if = {
+		limit = { exists = scope:dragon_physique_good_1 }
+		add_trait = dragon_physique_good_1
+	}
+	if = {
+		limit = { exists = scope:dragon_physique_good_2 }
+		add_trait = dragon_physique_good_2
+	}
+	if = {
+		limit = { exists = scope:dragon_physique_good_3 }
+		add_trait = dragon_physique_good_3
+	}
+	if = {
+		limit = { exists = scope:dragon_physique_bad_1 }
+		add_trait = dragon_physique_bad_1
+	}
+	if = {
+		limit = { exists = scope:dragon_physique_bad_2 }
+		add_trait = dragon_physique_bad_2
+	}
+	if = {
+		limit = { exists = scope:dragon_physique_bad_3 }
+		add_trait = dragon_physique_bad_3
+	}
+	if = {
+		limit = { exists = scope:dragon_spindly }
+		add_trait = dragon_spindly
+	}
+	if = {
+		limit = { exists = scope:dragon_fertile }
+		add_trait = dragon_fertile
+	}
+	if = {
+		limit = { exists = scope:beauty_good }
+		add_trait = dragon_majestic
+	}
+	if = {
+		limit = { exists = scope:beauty_bad }
+		add_trait = dragon_ugly
+	}
+	if = {
+		limit = { exists = scope:education_dragon_3 }
+		add_trait = education_dragon_3
+	}
+	if = {
+		limit = { exists = scope:education_dragon_4 }
+		add_trait = education_dragon_4
+	}
+	if = {
+		limit = { exists = scope:education_dragon_5 }
+		add_trait = education_dragon_5
+	}
+	if = {
+		limit = { this = character:Targaryen_1 }
+		add_trait = dragon_impulsive
+		add_trait = dragon_defiant
+		if = {
+			limit = { has_trait = education_dragon_3 }
+			remove_trait = education_dragon_3
+		}
+		if = {
+			limit = { has_trait = education_dragon_4 }
+			remove_trait = education_dragon_4
+		}
+		if = {
+			limit = { has_trait = education_dragon_5 }
+			remove_trait = education_dragon_5
+		}
+		add_trait = education_dragon_1
+	}
+	while = {
+		limit = {
+			number_of_personality_traits < 3
+		}
+		agot_give_random_dragon_personality_trait = yes
+	}
+	set_character_faith = faith:valyrian_pan_freehold
+	set_culture = culture:dragon_culture
+	create_story = story_dragon_alive
+	set_variable = {
+		name = dragon_age
+		value = age
+	}
+	agot_back_apply_dragon_aging_effect = yes
+	agot_gen_appearance_variables = yes
+	save_scope_as = dragon
+	agot_dragon_transfer_vars_to_story_cycle_effect = { DRAGON = scope:dragon }
+	agot_dragon_birth_magic_effect = yes
+	every_claim = { # Clear their claims
+		save_scope_as = processed_claim
+		PREV = { remove_claim = scope:processed_claim }
+	}
+}

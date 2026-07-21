@@ -1,0 +1,16 @@
+﻿# AGOT CULTURE NAME CRASH GUARD - SAFE 0.2.0
+# Protege la conversion de personajes con unknown_culture.
+# Mantiene el marcador temporal esperado por AGOT, pero no ejecuta cambios de cultura.
+
+agot_unknown_culture_conversion = {
+	if = {
+		limit = {
+			culture = culture:unknown_culture
+			NOT = { agot_is_dummy_character = yes }
+		}
+		add_character_flag = {
+			flag = converted_unknown_culture
+			days = 1
+		}
+	}
+}

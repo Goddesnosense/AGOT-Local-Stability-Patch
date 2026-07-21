@@ -1,0 +1,268 @@
+﻿# AGOT Local Stability Patch 0.6.2
+# Rebase selectivo del efecto de huevo de cuna canónico.
+# Evita crear un segundo embrión o personaje del mismo dragón.
+
+agot_spawn_canon_cradle_dragon_effect = {
+	$CRADLEMATE$ = { save_scope_as = owner }
+	if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Targaryen_13_b }
+			NOR = { # MDE Modified
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:anogaros
+				}
+				exists = character:dragon_anogaros
+			}
+		}
+		agot_spawn_anogaros_effect = yes
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Targaryen_13_d }
+			NOR = { # MDE Modified
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:archonei
+				}
+				exists = character:dragon_archonei
+			}
+		}
+		agot_spawn_archonei_effect = yes
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Belaerys_1 }
+			NOR = { # MDE Modified
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:terrax
+				}
+				exists = character:dragon_terrax
+			}
+		}
+		agot_spawn_terrax_effect = yes
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Targaryen_21 }
+			NOR = { # MDE Modified
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:meraxes
+				}
+				exists = character:dragon_meraxes
+			}
+		}
+		agot_spawn_meraxes_effect = yes
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Targaryen_30 }
+			NOR = { # MDE Modified
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:quicksilver
+				}
+				exists = character:dragon_quicksilver
+			}
+		}
+		agot_spawn_quicksilver_effect = yes
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Targaryen_35 }
+			NOR = { # MDE Modified
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:vermithor
+				}
+				exists = character:dragon_vermithor
+			}
+		}
+		agot_spawn_vermithor_effect = yes
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Targaryen_36 }
+			NOR = { # MDE Modified
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:silverwing
+				}
+				exists = character:dragon_silverwing
+			}
+		}
+		agot_spawn_silverwing_effect = yes
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Velaryon_35 }
+			NOR = { # MDE Modified
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:seasmoke
+				}
+				exists = character:dragon_seasmoke
+			}
+		}
+		agot_spawn_seasmoke_effect = yes
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Targaryen_75 }
+			NOR = { # MDE Modified
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:vermax
+				}
+				exists = character:dragon_vermax
+			}
+		}
+		agot_spawn_vermax_effect = yes
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Targaryen_76 }
+			NOR = { # MDE Modified
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:arrax
+				}
+				exists = character:dragon_arrax
+			}
+		}
+		agot_spawn_arrax_effect = yes
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Targaryen_77 }
+			NOR = { # MDE Modified
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:tyraxes
+				}
+				exists = character:dragon_tyraxes
+			}
+		}
+		agot_spawn_tyraxes_effect = yes
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Targaryen_78 }
+			NOR = { # MDE Modified
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:stormcloud
+				}
+				exists = character:dragon_stormcloud
+			}
+		}
+		agot_spawn_stormcloud_effect = yes
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Targaryen_69 }
+			NOR = { # MDE Modified
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:moondancer
+				}
+				exists = character:dragon_moondancer
+			}
+		}
+		agot_spawn_moondancer_effect = yes
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Targaryen_70 }
+		}
+		if = {
+			limit = { has_character_flag = hatched_wyrmling }
+			agot_spawn_morning_effect = yes
+		}
+		else = {
+			agot_spawn_rhaena_1_effect = yes
+			scope:dragon = {
+				trigger_event = { id = agot_dragon.9000 days = 1 }
+			}
+			remove_character_flag = hatched_canon_dragon
+			add_character_flag = hatched_wyrmling
+		}
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Targaryen_72 }
+			NOR = { # MDE Modified
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:shrykos
+				}
+				exists = character:dragon_shrykos
+			}
+		}
+		agot_spawn_shrykos_effect = yes
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Targaryen_71 }
+			NOR = { # MDE Modified 
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:morghul
+				}
+				exists = character:dragon_morghul
+			}
+		}
+		agot_spawn_morghul_effect = yes
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Velaryon_44 }
+			NOR = { # MDE Modified
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:laena_1
+				}
+				exists = character:dragon_laena_1
+			}
+		}
+		agot_spawn_laena_1_effect = yes
+		#needs murder events
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Targaryen_74 }
+			NOR = { # MDE Modified
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:nightfyre
+				}
+				exists = character:dragon_nightfyre
+			}
+		}
+		agot_spawn_nightfyre_effect = yes
+		#needs murder events
+	}
+	else_if = {
+		limit = {
+			scope:owner = { has_character_flag = is_Targaryen_9 }
+			NOR = { # MDE Modified
+				any_artifact = {
+					has_variable = dragon_embryo
+					this.var:dragon_embryo = flag:drogon
+				}
+				exists = character:dragon_drogon
+			}
+		}
+		agot_spawn_drogon_effect = yes
+	}
+	else = {
+		create_character = {
+			location = scope:owner.location
+			template = agot_dragon_hatchling_template
+			random_traits = no
+			save_scope_as = dragon
+		}
+	}
+}

@@ -1,0 +1,26 @@
+﻿# AGOT LOCAL STABILITY — DRAGON STORAGE COMPAT SAFE 0.5.4
+# Restaura el trigger de AGOT 0.4.38 eliminado por el override de More Dragon Eggs 55.1.
+# Fuente auditada: A Game of Thrones 0.4.38.
+
+agot_tamed_or_bonded_dragon_is_away_from_rider = {
+	OR = {
+		AND = { # I am in a location that is not the same as my rider
+			exists = $CURRENT_RIDER_OR_BONDEE$.location
+			OR = {
+				NOT = { location = $CURRENT_RIDER_OR_BONDEE$.location }
+				AND = {
+					has_character_flag = in_dragonpit
+					NOT = { var:pitted_dragon_location = $CURRENT_RIDER_OR_BONDEE$.location.county }
+				}
+			}
+		}
+		AND = { # I am wandering and my rider is not
+			NOT = { exists = court_owner }
+			exists = $CURRENT_RIDER_OR_BONDEE$.court_owner
+		}
+		AND = { # My rider is wandering and I am not
+			NOT = { exists = $CURRENT_RIDER_OR_BONDEE$.court_owner }
+			exists = court_owner
+		}
+	}
+}
