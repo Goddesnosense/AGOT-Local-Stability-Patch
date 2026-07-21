@@ -1,0 +1,7 @@
+﻿l_english:
+ unlock_de_gui_tt:0 "Unlock this value so the randomizer can modify it."
+ lock_de_gui_tt:0 "Lock this value so the randomizer cannot modify it."
+ lock_all_gui_tt:0 "Lock all values so the randomizer cannot modify them."
+ unlock_all_gui_tt:0 "Unlock all values so the randomizer can modify them."
+ DRAGON_DESIGNER_RANDOMIZE_TOOLTIP:0 "#T Randomize Dragon Appearance#!\nCompletely randomize this dragon's appearance, regardless of egg color."
+ DRAGON_DESIGNER_RANDOMIZE_BY_EGG_COLOR_TOOLTIP:0 "#T Randomize Dragon Appearance by Egg Color#!\nRandomize this dragon as though it had hatched from another egg of the same color. This option is unavailable when no egg color is stored."

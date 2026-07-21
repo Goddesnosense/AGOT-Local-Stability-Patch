@@ -1,0 +1,19 @@
+﻿l_english:
+ tradition_agot_vineman:0 "Lords of the Vine"
+ tradition_agot_vineman_name:0 "Lords of the Vine"
+ tradition_agot_vineman_desc:0 "The vineyards and gardens of the Reach are institutions of prestige, sustenance, and power. Their rulers protect viticulture, patronize court gardeners, and turn feasts, ports, and fertile coasts into foundations of prosperity."
+
+ carn_tradition_placeholder:0 "Carnalitas Compatibility — Internal"
+ carn_tradition_placeholder_name:0 "Carnalitas Compatibility — Internal"
+ carn_tradition_placeholder_desc:0 "Internal compatibility tradition used by Carnalitas. It is blocked from normal adoption and should not be selected manually."
+ culture_parameter_carn_no_consequences_for_extramarital_sex_with_others:0 "Extramarital sex with other people incurs no penalties"
+ culture_parameter_carn_no_consequences_for_extramarital_sex_with_me:0 "Other characters are not penalized for extramarital sex with members of this culture"
+ culture_parameter_carn_prostitution_accepted:0 "Prostitution is legal"
+ culture_parameter_carn_more_good_prostitution_events:0 "Favorable prostitution-related events are more common"
+ culture_parameter_lustful_trait_more_common:0 "The [GetTrait('lustful').GetName( GetNullCharacter )] trait is more common"
+ culture_parameter_allows_polygamy:0 "The culture allows polygamy"
+ culture_parameter_allows_concubinage:0 "The culture allows concubinage"
+
+ culture_parameter_agot_ldhe_harem_noble_capacity:0 "The culture recognizes noble harem capacity"
+ culture_parameter_agot_ldhe_harem_royal_capacity:0 "The culture recognizes royal harem capacity"
+ culture_parameter_agot_ldhe_harem_imperial_capacity:0 "The culture recognizes imperial harem capacity"

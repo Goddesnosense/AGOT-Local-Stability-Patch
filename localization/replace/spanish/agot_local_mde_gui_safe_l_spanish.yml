@@ -1,0 +1,7 @@
+﻿l_spanish:
+ unlock_de_gui_tt:0 "Desbloquear este valor para que el aleatorizador pueda modificarlo."
+ lock_de_gui_tt:0 "Bloquear este valor para que el aleatorizador no pueda modificarlo."
+ lock_all_gui_tt:0 "Bloquear todos los valores para que el aleatorizador no pueda modificarlos."
+ unlock_all_gui_tt:0 "Desbloquear todos los valores para que el aleatorizador pueda modificarlos."
+ DRAGON_DESIGNER_RANDOMIZE_TOOLTIP:0 "#T Aleatorizar la apariencia del dragón#!\nAleatoriza por completo la apariencia de este dragón, sin importar el color del huevo."
+ DRAGON_DESIGNER_RANDOMIZE_BY_EGG_COLOR_TOOLTIP:0 "#T Aleatorizar la apariencia según el color del huevo#!\nAleatoriza este dragón como si hubiera nacido de otro huevo del mismo color. La opción no estará disponible cuando no exista un color de huevo guardado."
