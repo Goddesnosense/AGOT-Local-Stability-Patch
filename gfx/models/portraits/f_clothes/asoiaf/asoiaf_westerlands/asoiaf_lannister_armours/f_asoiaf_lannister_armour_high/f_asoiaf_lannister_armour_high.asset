@@ -1,0 +1,38 @@
+pdxmesh = {
+	name = "f_asoiaf_lannister_armour_high_mesh"
+	file = "f_asoiaf_lannister_armour_high.mesh"
+
+
+	meshsettings = {
+		name = "f_asoiaf_lannister_armour_highShape"
+		index = 0
+		texture_diffuse = "asoiaf_lannister_armour_high_diffuse.dds"
+		texture_normal = "asoiaf_lannister_armour_high_normal.dds"
+		texture_specular = "asoiaf_lannister_armour_dynast_properties.dds"
+		shader = "portrait_attachment_pattern_alpha_to_coverage"
+		shader_file = "gfx/FX/jomini/portrait.shader"
+	}
+	meshsettings = {
+		name = "f_asoiaf_lannister_armour_highShape"
+		index = 1
+		texture_diffuse = "asoiaf_lannister_armour_dynast_sword_diffuse.dds"
+		texture_normal = "asoiaf_lannister_armour_dynast_sword_normal.dds"
+		texture_specular = "asoiaf_lannister_armour_dynast_sword_properties.dds"
+		shader = "portrait_attachment"
+		shader_file = "gfx/FX/jomini/portrait.shader"
+	}
+}
+entity = {
+	name = "female_clothes_asoiaf_lannister_armour_high_entity"
+	pdxmesh = "f_asoiaf_lannister_armour_high_mesh"
+
+
+	game_data = {
+        portrait_entity_user_data = {
+            portrait_accessory = {
+				pattern_mask = "gfx/models/portraits/m_clothes/asoiaf/asoiaf_westerlands/asoiaf_lannister_armours/asoiaf_lannister_armour_high/asoiaf_lannister_armour_high_mask_pattern.dds"    #Any 4-channel texture. Each channel will be used to mask a pattern from the variation object
+				variation = "asoiaf_lannister_armour_high"    #A "variation" object in gfx/portraits/accessory_variations/
+            }
+        }
+    }
+}

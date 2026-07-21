@@ -1,0 +1,448 @@
+﻿types carn_widget {
+	# Carnalitas lactation icon
+	type carn_widget_lactation = icon {
+		datacontext = "[GetScriptedGui( 'carn_lactation_gui' )]"
+		visible = "[ScriptedGui.IsShown( GuiScope.SetRoot( Character.MakeScope ).End )]"
+		size = { 23 23 }
+		texture = "gfx/interface/icons/icon_carn_lactation_gui.dds"
+		tooltip = "carn_lactation_gui_tooltip"
+	}
+	# Carnalitas slaves row in tabs
+	type carn_widget_slaves = widget {
+		name = "carnalitas_slaves_row"
+		visible = "[GreaterThan_int32( GetDataModelSize(CharacterWindow.GetRelationsOfType( GetRelation( 'slave' ) )), '(int32)0' )]"
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = expanding
+		minimumsize = { -1 110 }
+		maximumsize = { -1 110 }
+		scissor = yes
+
+		# Carnalitas: show slaves
+		hbox = {
+			layoutpolicy_horizontal = expanding
+
+			vbox_character_row_relationship_item = {
+				name = "slaves"
+				visible = "[GreaterThan_int32( GetDataModelSize(CharacterWindow.GetRelationsOfType( GetRelation( 'slave' ) )), '(int32)0' )]"
+				layoutpolicy_vertical = expanding
+				layoutpolicy_horizontal = expanding
+
+				blockoverride "portrait_datamodel" {
+					datamodel = "[CharacterWindow.GetRelationsOfType( GetRelation( 'slave' ) )]"
+				}
+
+				blockoverride "header_text"
+				{
+					text = "game_concept_slaves"
+				}
+
+				blockoverride "remaining_items"
+				{
+					visible = "[GreaterThan_int32( GetDataModelSize(CharacterWindow.GetRelationsOfType( GetRelation( 'slave' ) )), '(int32)7' )]"
+					text = "[GetNumberAbove_int32( GetDataModelSize(CharacterWindow.GetRelationsOfType( GetRelation( 'slave' ) )), '(int32)7' )|=]"
+				}
+
+				blockoverride "expand_button_inside" {
+					visible = "[GreaterThan_int32( GetDataModelSize(CharacterWindow.GetRelationsOfType( GetRelation( 'slave' ) )), '(int32)7' )]"
+					onclick = "[CharacterWindow.ToggleExpandedRelation( 'slaves' )]"
+				}
+			}
+		}
+	}
+	# Carnalitas secondary spouses extended
+	type carn_widget_sec_spouses_extended = widget {
+		name = "secondary_spouses_extended"
+		# show if there are more than 4 spouses
+		visible = "[GreaterThan_int32( Character.GetMaxSpouses, '(int32)4' )]"
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = expanding
+		minimumsize = { -1 110 }
+		maximumsize = { -1 110 }
+		scissor = yes
+
+		hbox = {
+			vbox_character_row_item = {
+				name = "secondary_spouses"
+
+				blockoverride "portrait_datamodel" {
+					datamodel = "[CharacterWindow.GetSecondarySpouses]"
+				}
+
+				blockoverride "gridbox_slots" {
+					maxverticalslots = 1
+					maxhorizontalslots = 5
+				}
+
+				blockoverride "header_text"
+				{
+					text = "carn_cv_spouses_heading"
+				}
+
+				blockoverride "remaining_items"	{
+					visible = "[GreaterThan_int32( GetDataModelSize(CharacterWindow.GetSecondarySpouses), '(int32)5' )]"
+					text = "[GetNumberAbove_int32( GetDataModelSize(CharacterWindow.GetSecondarySpouses), '(int32)5' )|=]"
+				}
+
+				blockoverride "expand_button_inside" {
+					visible = "[GreaterThan_int32( GetDataModelSize(CharacterWindow.GetSecondarySpouses), '(int32)5' )]"
+					onclick = "[CharacterWindow.ToggleExpandedRelation( 'spouses' )]"
+				}
+
+				blockoverride "find_partner"
+				{
+					fixedgridbox = {
+						maxverticalslots = 1
+						maxhorizontalslots = 1
+						name = "potential"
+						datamodel = "[GetNullCharacterDataModel( Character.CalcUnusedSecondarySpouseSlots )]"
+						visible = "[Character.IsPlayerInteractionShown('marry_off_interaction')]"
+
+						flipdirection = yes
+						addcolumn = 85
+						addrow = 90
+
+						item = {
+							container = {
+								portrait_head_small = {
+									visible = "[Not( ObjectsEqual( GetPlayer, CharacterWindow.GetCharacter ) )]"
+									blockoverride "portrait_button_template_onclick"
+									{
+										onclick = "[CharacterWindow.GetCharacter.OpenPlayerInteraction('marry_off_interaction')]"
+									}
+									blockoverride "portrait_button_template_tooltip"
+									{
+										tooltip = "CHARACTER_WINDOW_FIND_SPOUSE"
+									}
+									blockoverride "onclick"
+									{
+										onclick = "[CharacterWindow.GetCharacter.OpenPlayerInteraction('marry_off_interaction')]"
+
+										button_icon = {
+											parentanchor = center
+											alwaystransparent = yes
+											size = { 20 20 }
+											position = {-5 -5}
+											texture = "gfx/interface/icons/flat_icons/plus.dds"
+										}
+									}
+								}
+
+								portrait_head_small = {
+									visible = "[ObjectsEqual( GetPlayer, CharacterWindow.GetCharacter )]"
+									blockoverride "portrait_button_template_onclick"
+									{
+										onclick = "[CharacterWindow.GetCharacter.OpenPlayerInteraction('marry_off_interaction')]"
+									}
+									blockoverride "portrait_button_template_tooltip"
+									{
+										tooltip = "CHARACTER_WINDOW_FIND_SPOUSE_SELF"
+									}
+									blockoverride "onclick"
+									{
+										onclick = "[CharacterWindow.GetCharacter.OpenPlayerInteraction('marry_off_interaction')]"
+
+										button_icon = {
+											parentanchor = center
+											alwaystransparent = yes
+											size = { 26 26 }
+											position = {-5 0}
+											texture = "gfx/interface/icons/flat_icons/plus.dds"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			expand = {}
+		}
+	}
+	# Carnalitas consorts extended
+	type carn_widget_consorts_extended = widget {
+		name = "consorts_extended"
+		# show if there are more than 3 consorts, or
+		# there are both secondary spouses and consorts
+		visible = "[Or( GreaterThan_int32( Character.GetMaxConsorts, '(int32)3' ), And( GreaterThan_int32( Character.GetMaxSpouses, '(int32)1' ), GreaterThan_int32( Character.GetMaxConsorts, '(int32)0' ) ) )]"
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = expanding
+		minimumsize = { -1 110 }
+		maximumsize = { -1 110 }
+		scissor = yes
+
+		hbox = {
+			vbox_character_row_item = {
+				name = "consorts"
+
+
+				blockoverride "portrait_datamodel" {
+					datamodel = "[CharacterWindow.GetConcubines]"
+				}
+
+				blockoverride "gridbox_slots" {
+					maxverticalslots = 1
+					maxhorizontalslots = 5
+				}
+
+				blockoverride "header_text"
+				{
+					text = "carn_cv_concubines_heading" # edited to be gender neutral.
+				}
+
+				blockoverride "remaining_items"	{
+					visible = "[GreaterThan_int32( GetDataModelSize(CharacterWindow.GetConcubines), '(int32)5' )]"
+					text = "[GetNumberAbove_int32( GetDataModelSize(CharacterWindow.GetConcubines), '(int32)5' )|=]"
+				}
+
+				blockoverride "expand_button_inside" {
+					visible = "[GreaterThan_int32( GetDataModelSize(CharacterWindow.GetConcubines), '(int32)5' )]"
+					onclick = "[CharacterWindow.ToggleExpandedRelation( 'concubines' )]"
+				}
+
+				blockoverride "find_partner"
+				{
+					fixedgridbox = {
+						maxverticalslots = 1
+						maxhorizontalslots = 1
+						name = "potential"
+						datamodel = "[GetNullCharacterDataModel( Character.CalcUnusedConsortSlots )]"
+						visible = "[Character.IsPlayerInteractionShown('find_concubine')]"
+
+						flipdirection = yes
+						addcolumn = 85
+						addrow = 90
+						item = {
+							container = {
+								portrait_head_small = {
+									blockoverride "portrait_button_template_onclick"
+									{
+										onclick = "[CharacterWindow.GetCharacter.OpenPlayerInteraction('find_concubine')]"
+
+										button_plus = {
+											parentanchor = center
+											alwaystransparent = yes
+										}
+									}
+									blockoverride "portrait_button_template_tooltip"
+									{
+										tooltip = "[CharacterWindow.GetCharacter.GetPlayerInteractionTooltip('find_concubine')]"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			expand = {}
+		}
+	}
+	# Carnalitas lovers extended
+	type carn_widget_lovers_extended = widget {
+		name = "lovers_extended"
+		# show if we're adults and we either have a lot of lovers or a lot of wards
+		visible = "[And( CharacterWindow.GetCharacter.IsAdult, Or( GreaterThan_int32( GetDataModelSize(CharacterWindow.GetRelationsOfType( GetRelation( 'lover' ) )), '(int32)3' ), GreaterThan_int32( GetDataModelSize(CharacterWindow.GetRelationsOfType( GetRelation( 'ward' ) )), '(int32)2' ) ) )]"
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = expanding
+		minimumsize = { -1 110 }
+		maximumsize = { -1 110 }
+		scissor = yes
+
+		hbox = {
+			layoutpolicy_horizontal = expanding
+
+			vbox_character_row_relationship_item = {
+				name = "lovers"
+				layoutpolicy_vertical = expanding
+				layoutpolicy_horizontal = expanding
+
+				blockoverride "portrait_datamodel" {
+					datamodel = "[CharacterWindow.GetRelationsOfType( GetRelation( 'lover' ) )]"
+				}
+
+				blockoverride "header_text"
+				{
+					text = "LOVERS_LABEL"
+				}
+
+				blockoverride "remaining_items"
+				{
+					visible = "[GreaterThan_int32( GetDataModelSize(CharacterWindow.GetRelationsOfType( GetRelation( 'lover' ) )), '(int32)7' )]"
+					text = "[GetNumberAbove_int32( GetDataModelSize(CharacterWindow.GetRelationsOfType( GetRelation( 'lover' ) )), '(int32)7' )|=]"
+				}
+
+				blockoverride "expand_button_inside" {
+					visible = "[GreaterThan_int32( GetDataModelSize(CharacterWindow.GetRelationsOfType( GetRelation( 'lover' ) )), '(int32)7' )]"
+					onclick = "[CharacterWindow.ToggleExpandedRelation( 'lovers' )]"
+				}
+			}
+
+			expand = {}
+		}
+	}
+	# Carnalitas wards row item extended
+	type carn_widget_wards_row_item_extended = vbox_character_row_item {
+		name = "wards_extended"
+		# show if we're adults and
+		# we have a lot of wards
+		visible = "[And( CharacterWindow.GetCharacter.IsAdult, GreaterThan_int32( GetDataModelSize(CharacterWindow.GetRelationsOfType( GetRelation( 'ward' ) )), '(int32)2' ) )]"
+		layoutpolicy_vertical = expanding
+
+		blockoverride "portrait_datamodel" {
+			datamodel = "[CharacterWindow.GetRelationsOfType( GetRelation( 'ward' ) )]"
+		}
+
+		blockoverride "header_text"
+		{
+			text = "WARDS_LABEL"
+		}
+
+		blockoverride "remaining_items"
+		{
+			visible = "[GreaterThan_int32( GetDataModelSize(CharacterWindow.GetRelationsOfType( GetRelation( 'ward' ) )), '(int32)5' )]"
+			text = "[GetNumberAbove_int32( GetDataModelSize(CharacterWindow.GetRelationsOfType( GetRelation( 'ward' ) )), '(int32)5' )|=]"
+		}
+
+		blockoverride "expand_button_inside" {
+			visible = "[GreaterThan_int32( GetDataModelSize(CharacterWindow.GetRelationsOfType( GetRelation( 'ward' ) )), '(int32)5' )]"
+			onclick = "[CharacterWindow.ToggleExpandedRelation( 'wards' )]"
+		}
+
+		### WARD FINDER
+		blockoverride "find_partner"
+		{
+
+			### FIND WARD FOR ME
+			fixedgridbox = {
+				name = "educate_ward"
+				datamodel = "[GetNullCharacterDataModel( CharacterWindow.CalcUnusedRelationSlots( GetRelation( 'ward' ), '(int32)2' ) )]"
+				visible = "[Character.IsPlayerInteractionShown('educate_child_interaction')]"
+
+				flipdirection = yes
+				addcolumn = 85
+				addrow = 90
+				maxverticalslots = 1
+
+				item = {
+					container = {
+						portrait_head_small = {
+							blockoverride "portrait_button_template_onclick"
+							{
+								onclick = "[CharacterWindow.GetCharacter.OpenPlayerInteraction( 'educate_child_interaction' )]"
+
+								button_icon = {
+									parentanchor = center
+									alwaystransparent = yes
+									size = { 26 26 }
+									position = {-2 -4}
+									texture = "gfx/interface/icons/flat_icons/plus.dds"
+								}
+							}
+							blockoverride "portrait_button_template_tooltip"
+							{
+								tooltip = "[CharacterWindow.GetCharacter.GetPlayerInteractionTooltip( 'educate_child_interaction' )]"
+							}
+						}
+					}
+				}
+			}
+
+			### FIND WARD FOR COURTIER
+			fixedgridbox = {
+				name = "find_ward"
+				datamodel = "[GetNullCharacterDataModel( CharacterWindow.CalcUnusedRelationSlots( GetRelation( 'ward' ), '(int32)2' ) )]"
+				visible = "[Character.IsPlayerInteractionShown('offer_ward_interaction')]"
+
+				flipdirection = yes
+				addcolumn = 85
+				addrow = 90
+				maxverticalslots = 1
+
+				item = {
+					container = {
+						portrait_head_small = {
+							blockoverride "portrait_button_template_onclick"
+							{
+								onclick = "[CharacterWindow.GetCharacter.OpenPlayerInteraction( 'offer_ward_interaction' )]"
+								enabled = "[CharacterWindow.GetCharacter.IsPlayerInteractionValid( 'offer_ward_interaction' )]"
+
+								button_icon = {
+									parentanchor = center
+									alwaystransparent = yes
+									size = { 20 20 }
+									position = {-2 -5}
+									texture = "gfx/interface/icons/flat_icons/plus.dds"
+								}
+							}
+							blockoverride "portrait_button_template_tooltip"
+							{
+								tooltip = "[CharacterWindow.GetCharacter.GetPlayerInteractionTooltip( 'offer_ward_interaction' )]"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	# Carnalitas slave owner
+	type carn_widget_slave_owner = vbox_character_row_item {
+		name = "slave_owner"
+		visible = "[GreaterThan_int32( GetDataModelSize(CharacterWindow.GetRelationsOfType( GetRelation( 'slave_owner' ) )), '(int32)0' )]"
+		layoutpolicy_vertical = expanding
+
+		blockoverride "portrait_datamodel" {
+			datamodel = "[CharacterWindow.GetRelationsOfType( GetRelation( 'slave_owner' ) )]"
+		}
+
+		blockoverride "header_text"
+		{
+			text = "[slave_owner|E]"
+		}
+
+		blockoverride "expand_button" {}
+	}
+	# Carnalitas Fetish UI
+	type carn_widget_fetishes = icon {
+		datacontext = "[GetScriptedGui( 'carn_fetish_gui' )]"
+		visible = "[ScriptedGui.IsShown( GuiScope.SetRoot( Character.MakeScope ).AddScope( 'player', GetPlayer.MakeScope ).End )]"
+		size = { 20 20 }
+		texture = "gfx/interface/icons/icon_carn_fetish_gui.dds"
+		tooltipwidget = {
+			container = {
+				using = GeneralTooltipSetup
+				alwaystransparent = no
+				widget = {
+					name = "background"
+					using = DefaultTooltipBackground
+					size = { 100% 100% }
+					alwaystransparent = no
+				}
+				vbox = {
+					margin = { 20 20 }
+					margin_top = 10
+					layoutpolicy_horizontal = expanding
+					alwaystransparent = no
+
+					text_single = {
+						layoutpolicy_horizontal = growing
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+						using = DefaultTooltipText
+						alwaystransparent = no
+						text = "carn_fetish_gui_title"
+					}
+
+					text_single = {
+						layoutpolicy_horizontal = growing
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+						using = DefaultTooltipText
+						alwaystransparent = no
+						datacontext = "[GetScriptedGui( 'carn_fetish_gui_list' )]"
+						visible = "[ScriptedGui.IsShown( GuiScope.SetRoot( Character.MakeScope ).End )]"
+						text = "[ScriptedGui.BuildTooltip( GuiScope.SetRoot( Character.MakeScope ).End ) ]"
+					}
+				}
+			}
+		}
+	}
+}
