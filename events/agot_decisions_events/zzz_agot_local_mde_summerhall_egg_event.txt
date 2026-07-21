@@ -1,0 +1,89 @@
+﻿# AGOT Local Stability Patch 0.6.1 — Summerhall egg discovery
+
+agot_minor_decisions_events.0004 = {
+	type = character_event
+	title = agot_minor_decisions_events.0004.t
+	desc = {
+		desc = agot_minor_decisions_events.0004.desc
+		triggered_desc = {
+			trigger = { exists = scope:newly_created_artifact }
+			desc = agot_minor_decisions_events.0004.desc_egg
+		}
+	}
+	theme = mental_break
+	override_background = { reference = plains }
+	left_portrait = {
+		character = root
+		scripted_animation = mde_holding_dragon_egg_animation # MDE Modified
+	}
+
+	artifact = {
+		position = lower_right_portrait
+		target = scope:newly_created_artifact
+	}
+
+	immediate =  { # MDE Modified
+		if = {
+			limit = { 
+				has_game_rule = absolute_spawn 
+				NOT = { has_global_variable = summerhall_egg_found }
+				NAND = {
+					has_game_rule = ai_can_not_get_eggs
+					is_ai = yes
+				}
+			}
+			character:dragon_morning = { save_scope_as = dragon_parent }
+			clear_saved_scope = dragon_parent_other
+			create_artifact_dragon_egg_greengrey_effect = { OWNER = root }
+			set_global_variable = summerhall_egg_found
+		}
+		else_if = {
+			limit = { 
+				has_game_rule = ai_can_not_get_eggs
+				is_ai = yes
+			}
+		}
+		else_if = {
+			limit = { has_game_rule = no_spawns }
+		}
+		else = {
+			random_list = {
+				99 = {
+					modifier = {
+						add = 100
+						has_game_rule = very_unlikely_spawn
+					}
+					modifier = {
+						add = 200
+						has_game_rule = extremely_unlikely_spawn
+					}
+				}
+				1 = {
+
+					modifier = {
+						add = 10
+						has_trait = dragon_dreams
+					}
+					modifier = {
+						add = 5
+						has_game_rule = fairly_likely_spawn
+					}
+					modifier = {
+						add = 70
+						has_game_rule = very_likely_spawn
+					}
+					character:dragon_morning = { save_scope_as = dragon_parent }
+					clear_saved_scope = dragon_parent_other
+					create_artifact_dragon_egg_greengrey_effect = { OWNER = root }
+					set_global_variable = summerhall_egg_found
+				}
+			}
+		}
+	}
+
+	option = {
+		name = agot_minor_decisions_events.0004.a
+		add_prestige = medium_prestige_loss
+		add_stress = major_stress_loss
+	}
+}

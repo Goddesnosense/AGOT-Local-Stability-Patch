@@ -1,0 +1,590 @@
+﻿# AGOT Local Stability Patch 0.5.7 - MDE hatching events rebase
+# Evita consumir huevos protegidos y barrer dragones jóvenes ajenos.
+
+agot_dragon_hatching.0001 = { #knowledge activity hatch start
+	type = activity_event
+	title = agot_dragon_hatching.0001.t
+	desc = agot_dragon_hatching.0001.desc
+	theme = dragon
+
+
+	widget = {
+		is_shown = {
+			is_ai = no
+		}
+		gui = "mde_hatching_egg_selection" # MDE Modified
+		container = "custom_widgets_container"
+	}
+
+	left_portrait = {
+		character = root
+		animation = throne_room_writer
+	}
+
+	immediate = { # AGOT Local Stability: only eggs exposed by activity on_start
+		every_in_list = {
+			variable = possible_artifacts
+			root = {
+				add_to_variable_list = {
+					name = mde_egg_hatching_remove_list
+					target = prev
+				}
+			}
+		}
+	}
+
+	option = {
+		name = agot_dragon_hatching.0001.opt.a
+		custom_tooltip = agot_dragon_hatching.preparations.tt
+		scope:activity = {
+			set_variable = {
+				name = selected_egg
+				value = root.var:selected_artifact
+			}
+		}
+		var:selected_artifact = {
+			set_variable = agot_artifact_cannot_gift
+		}
+		every_in_list = { # MDE Modified
+			variable = mde_egg_hatching_remove_list
+			set_variable = extra_egg_to_hatch
+		}
+	}
+
+	after = {
+		every_in_list = { # MDE Modified
+			list = mde_egg_hatching_remove_list
+			set_variable = extra_egg_to_hatch
+		}
+		clear_variable_list = possible_artifacts
+		clear_variable_list = mde_egg_hatching_remove_list # MDE Modified
+		remove_variable = selected_artifact
+	}
+}
+
+agot_dragon_hatching.0002 = { #esoteric activity hatch start
+	type = activity_event
+	title = agot_dragon_hatching.0002.t
+	desc = agot_dragon_hatching.0002.desc
+	theme = dragon
+
+
+	widget = {
+		is_shown = {
+			is_ai = no
+		}
+		gui = "mde_hatching_egg_selection" # MDE Modified
+		container = "custom_widgets_container"
+	}
+
+	left_portrait = {
+		character = root
+		animation = throne_room_writer
+	}
+
+	immediate = { # AGOT Local Stability: only eggs exposed by activity on_start
+		every_in_list = {
+			variable = possible_artifacts
+			root = {
+				add_to_variable_list = {
+					name = mde_egg_hatching_remove_list
+					target = prev
+				}
+			}
+		}
+		
+	}
+
+	option = {
+		name = agot_dragon_hatching.0002.opt.a
+		custom_tooltip = agot_dragon_hatching.preparations.tt
+		scope:activity = {
+			set_variable = {
+				name = selected_egg
+				value = root.var:selected_artifact
+			}
+		}
+		var:selected_artifact = {
+			set_variable = agot_artifact_cannot_gift
+		}
+		every_in_list = { # MDE Modified
+			variable = mde_egg_hatching_remove_list
+			set_variable = extra_egg_to_hatch
+		}
+	}
+
+	after = {
+		every_in_list = { # MDE Modified
+			list = mde_egg_hatching_remove_list
+			set_variable = extra_egg_to_hatch
+		}
+		clear_variable_list = possible_artifacts
+		clear_variable_list = mde_egg_hatching_remove_list # MDE Modified
+		remove_variable = selected_artifact
+	}
+}
+
+agot_dragon_hatching.0101 = { # Host
+	type = activity_event #character_event
+	title = agot_dragon_hatching.0101.t
+	desc = agot_dragon_hatching.0101.desc
+	theme = dragon
+	left_portrait = {
+		character = root
+		animation = fear
+	}
+	artifact = {
+		target = scope:egg
+		position = lower_center_portrait
+	}
+
+	immediate = {
+		scope:activity.var:selected_egg = { save_scope_as = egg }
+	}
+
+	option = {
+		name = agot_dragon_hatching.0101.opt.a
+		display_hatching_bad_outcome_results = yes
+		action_hatching_bad_outcome_results = yes
+		destroy_artifact = scope:egg
+		if = { # MDE Modified
+			limit = {
+				NOT = {
+					has_game_rule = can_hatch_multiple_dragons_no
+				}
+			}
+			every_character_artifact = {
+				limit = {
+					has_variable = dragon_egg
+					has_variable = extra_egg_to_hatch
+				}
+				destroy_artifact = this
+			}
+		}
+		stress_impact = {
+			base = medium_stress_impact_gain
+			arrogant = medium_stress_impact_gain
+			brave = minor_stress_impact_loss
+			ambitious = medium_stress_impact_gain
+			diligent = minor_stress_impact_gain
+		}
+		hidden_effect = {
+			scope:activity = { skip_activity_phase = yes }
+		}
+	}
+}
+
+agot_dragon_hatching.0201 = { # Host
+	type = activity_event #character_event
+	title = agot_dragon_hatching.0201.t
+	desc = agot_dragon_hatching.0201.desc
+	theme = dragon
+	left_portrait = {
+		character = root
+		animation = fear
+	}
+	artifact = {
+		target = scope:egg
+		position = lower_center_portrait
+	}
+
+	immediate = {
+		scope:activity.var:selected_egg = { save_scope_as = egg }
+	}
+
+	option = {
+		name = agot_dragon_hatching.0201.opt.a
+		stress_impact = {
+			base = medium_stress_impact_gain
+			arrogant = medium_stress_impact_gain
+			brave = minor_stress_impact_loss
+			ambitious = medium_stress_impact_gain
+			diligent = minor_stress_impact_gain
+		}
+		display_hatching_bad_outcome_results = yes
+		action_hatching_bad_outcome_results = yes
+		destroy_artifact = scope:egg
+		if = { # MDE Modified
+			limit = {
+				NOT = {
+					has_game_rule = can_hatch_multiple_dragons_no
+				}
+			}
+			every_character_artifact = {
+				limit = {
+					has_variable = dragon_egg
+					has_variable = extra_egg_to_hatch
+				}
+				destroy_artifact = this
+			}
+		}
+		hidden_effect = {
+			scope:activity = { skip_activity_phase = yes }
+		}
+	}
+}
+
+agot_dragon_hatching.0303 = { # Host - egg is destroyed
+	type = activity_event #character_event
+	title = agot_dragon_hatching.0303.t
+	desc = agot_dragon_hatching.0303.desc
+	theme = dragon
+	left_portrait = {
+		character = root
+		animation = stress
+	}
+	artifact = {
+		target = scope:egg
+		position = lower_center_portrait
+	}
+
+	immediate = {
+		scope:activity.var:selected_egg = { save_scope_as = egg }
+	}
+
+	option = {
+		name = agot_dragon_hatching.0303.opt.a
+		stress_impact = {
+			base = minor_stress_impact_gain
+			arrogant = minor_stress_impact_gain
+			ambitious = medium_stress_impact_gain
+			diligent = minor_stress_impact_gain
+		}
+		destroy_artifact = scope:egg
+		if = { # MDE Modified
+			limit = {
+				NOT = {
+					has_game_rule = can_hatch_multiple_dragons_no
+				}
+			}
+			every_character_artifact = {
+				limit = {
+					has_all_variables = {
+						name = dragon_egg
+						name = extra_egg_to_hatch
+					}
+				}
+				destroy_artifact = this
+			}
+		}
+		hidden_effect = {
+			scope:activity = { skip_activity_phase = yes }
+		}
+	}
+}
+
+agot_dragon_hatching.0401 = { # Host
+	type = activity_event #character_event
+	title = agot_dragon_hatching.0401.t
+	desc = agot_dragon_hatching.0401.desc
+	theme = dragon
+	left_portrait = {
+		character = root
+		animation = admiration
+	}
+	right_portrait = {
+		character = scope:dragon_first # MDE Modified
+		animation = dragon_main
+		camera = camera_dragon_event_standing_baby
+
+		#Add this so dragon fits within event window
+		outfit_tags = { linear_camera_zoom }
+	}
+
+	immediate = {
+		scope:activity.var:selected_egg = { save_scope_as = alternative_egg_scope } # "egg" as a scope causes problems. Too many eggs in the basket
+		hidden_effect = {
+			if = { # MDE Modified
+				limit = {
+					scope:host = {
+						NOR = {
+							has_trait = dragonrider
+							has_trait = dragonwidowed
+						}
+					}
+				}
+				agot_spawn_bonded_hatchling_from_egg_effect = {
+					OWNER = scope:host
+					EGG = scope:alternative_egg_scope
+				}
+			}
+			else = {
+				agot_spawn_owned_hatchling_from_egg_effect = { OWNER = scope:host EGG = scope:alternative_egg_scope }
+			}
+			scope:dragon = {
+				add_trait = dragon_destined
+				save_scope_as = dragon_first
+				add_to_list = hatched_dragons
+			}
+			if = {
+				limit = {
+					OR = {
+						scope:activity.var:sacrifice_type = flag:life_myself
+						scope:activity.var:sacrifice_type = flag:life_leader
+						scope:activity.var:sacrifice_type = flag:life_attendee
+						scope:activity.var:sacrifice_type = flag:life_prisoner
+						scope:activity.var:sacrifice_type = flag:life_everyone
+					}
+				}
+				scope:dragon = { add_trait = dragon_destined }
+			}
+			if = { # MDE Modified
+				limit = { has_game_rule = can_hatch_multiple_dragons_yes_all }
+				every_character_artifact = { # Destroy other eggs too
+					limit = {
+						has_variable = dragon_egg
+						has_variable = extra_egg_to_hatch
+					}
+					save_scope_as = this_egg
+					agot_spawn_owned_hatchling_from_egg_effect = { OWNER = scope:host EGG = scope:this_egg }
+					scope:dragon = {
+						add_trait = dragon_destined
+						add_to_list = hatched_dragons
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						NOT = {
+							has_game_rule = can_hatch_multiple_dragons_no
+						}
+					}
+					every_character_artifact = {
+						limit = {
+							has_variable = dragon_egg
+							has_variable = extra_egg_to_hatch
+						}
+						save_scope_as = this_egg
+						random_list = {
+							5 = {
+								modifier = {
+									has_game_rule = can_hatch_multiple_dragons_yes_25_percent
+									add = 20
+								}
+								modifier = {
+									has_game_rule = can_hatch_multiple_dragons_yes_50_percent
+									add = 45
+								}
+								modifier = {
+									has_game_rule = can_hatch_multiple_dragons_yes_75_percent
+									add = 70
+								}
+								modifier = {
+									has_game_rule = can_hatch_multiple_dragons_yes_95_percent
+									add = 90
+								}
+								modifier = {
+									has_variable = dragon_embryo
+									agot_canon_dragons_enabled = yes
+									has_game_rule = canon_dragon_egg_hatch_likelihood_less_likely
+									factor = 0.5
+								}
+								modifier = {
+									has_variable = dragon_embryo
+									agot_canon_dragons_enabled = yes
+									has_game_rule = canon_dragon_egg_hatch_likelihood_more_likely
+									factor = 2
+								}
+								modifier = {
+									has_variable = dragon_embryo
+									agot_canon_dragons_enabled = yes
+									has_game_rule = canon_dragon_egg_hatch_likelihood_common
+									factor = 5
+								}
+								agot_spawn_owned_hatchling_from_egg_effect = { OWNER = scope:host EGG = scope:this_egg }
+								scope:dragon = {
+									add_trait = dragon_destined
+									add_to_list = hatched_dragons
+								}
+
+							}
+							95 = {
+								modifier = {
+									has_game_rule = can_hatch_multiple_dragons_yes_25_percent
+									add = -20
+								}
+								modifier = {
+									has_game_rule = can_hatch_multiple_dragons_yes_50_percent
+									add = -45
+								}
+								modifier = {
+									has_game_rule = can_hatch_multiple_dragons_yes_75_percent
+									add = -70
+								}
+								modifier = {
+									has_game_rule = can_hatch_multiple_dragons_yes_95_percent
+									add = -90
+								}
+								modifier = {
+									has_variable = dragon_embryo
+									agot_canon_dragons_enabled = yes
+									has_game_rule = canon_dragon_egg_hatch_likelihood_guaranteed
+									factor = 0
+								}
+								save_scope_as = this_egg
+								hidden_effect = {
+									root = { destroy_owned_artifact = scope:this_egg }
+								}
+							}
+						}
+					}
+				}
+			}
+			set_variable = {
+				name = additional_prestige
+				value = 9000
+			}
+			every_in_list = { # AGOT Local Stability: only dragons spawned by this event
+				variable = hatched_dragons
+				if = {
+					limit = { NOT = { has_trait = dragon_destined } }
+					add_trait = dragon_destined
+				}
+				root = {
+					change_variable = {
+						name = additional_prestige
+						add = 1000
+					}
+				}
+			}
+		}
+		scope:activity = {
+			set_variable = {
+				name = hatched_dragon
+				value = scope:dragon_first # MDE Modified
+			}
+		}
+		play_music_cue = mood_rhaenyra
+	}
+
+	option = {
+		name = agot_dragon_hatching.0401.opt.a
+		custom_tooltip = agot_dragon_hatching.0401.opt.a_tt
+		if = {
+			limit = {
+				has_activity_intent = hatch_dragon_intent
+			}
+			complete_activity_intent = yes
+		}
+		every_in_list = { # MDE Modified
+			list = hatched_dragons
+			save_scope_as = dragon
+			custom_tooltip = dragon_has_hatched_tt
+		}
+		add_prestige = var:additional_prestige
+		dynasty = { add_dynasty_prestige = 1000 }
+		add_legitimacy = 1000
+		gain_legitimizing_legend_seed_tooltip_effect = yes
+		stress_impact = {
+			base = major_stress_impact_loss
+		}
+		hidden_effect = {
+			legend_seed_great_deed_dynasty_effect = yes
+			agot_inform_dragon_egg_hatched_effect = yes
+			scope:activity = { skip_activity_phase = yes }
+		}
+	}
+	option = {
+		name = agot_dragon_hatching.0401.opt.b
+		custom_tooltip = agot_dragon_hatching.0401.opt.a_tt
+		if = {
+			limit = {
+				has_activity_intent = hatch_dragon_intent
+			}
+			complete_activity_intent = yes
+		}
+		if = {
+			limit = {
+				root = {
+					is_female = no
+				}
+			}
+			give_nickname = nick_agot_the_father_of_dragons
+		}
+		else = {
+			give_nickname = nick_agot_the_mother_of_dragons
+		}
+		every_in_list = {
+			list = hatched_dragons
+			save_scope_as = dragon
+			custom_tooltip = dragon_has_hatched_tt
+			change_variable = {
+				name = additional_prestige
+				add = 1000
+			}
+		}
+		add_prestige = var:additional_prestige
+		dynasty = { add_dynasty_prestige = 1000 }
+		add_legitimacy = 1000
+		gain_legitimizing_legend_seed_tooltip_effect = yes
+		stress_impact = {
+			base = major_stress_impact_loss
+		}
+		hidden_effect = {
+			legend_seed_great_deed_dynasty_effect = yes
+			agot_inform_dragon_egg_hatched_effect = yes
+			scope:activity = { skip_activity_phase = yes }
+		}
+	}
+}
+
+agot_dragon_hatching.9999 = { # Kill host via sacrifice if they should be dead
+	type = activity_event
+	hidden = yes
+	immediate = {
+		# Match this with the result of the events above
+		if = {
+			limit = {
+				OR = {
+					scope:activity.var:outcome = flag:catastrophe
+					scope:activity.var:outcome = flag:disaster
+					AND = {
+						scope:activity.var:outcome = flag:nothing
+						scope:activity.var:egg_status = flag:egg_cracked
+					}
+				}
+			}
+			# Destroy the egg if failed
+			destroy_artifact = scope:activity.var:selected_egg
+			if = { # MDE Modified
+				limit = {
+					NOT = {
+						has_game_rule = can_hatch_multiple_dragons_no
+					}
+				}
+				every_character_artifact = {
+					limit = {
+						has_all_variables = {
+							name = dragon_egg
+							name = extra_egg_to_hatch
+						}
+					}
+					destroy_artifact = this
+				}
+			}
+		}
+		if = {
+			limit = {
+				scope:activity.var:outcome = flag:success
+			}
+			# Hatch the dragon
+			agot_spawn_wild_hatchling_from_egg_effect = {
+				EGG = scope:activity.var:selected_egg
+			}
+			# Set the dragon as the hatched dragon
+			scope:activity = {
+				set_variable = {
+					name = hatched_dragon
+					value = scope:dragon
+				}
+			}
+			# Send notifications to players
+			agot_inform_dragon_egg_hatched_effect = yes
+		}
+		death = {
+			death_reason = death_dragon_hatching_sacrifice
+			killer = scope:host
+		}
+	}
+}

@@ -1,0 +1,15 @@
+﻿AGOT CULTURE NAME CRASH GUARD - SAFE 0.2.0
+Fecha de instalacion: 07/16/2026 10:18:35
+AGOT fuente SHA-256: ef844cce2e3a62297704b06e63c6a4134beda47c9f68589c4fe12e59abee5854
+CSR on_action SHA-256: 667f89760706e94043f51152b4309a4e0ebd0b0a9db8ca6f971797d8cc631690
+
+Proteccion 1:
+- Evita cambios de cultura desde agot_unknown_culture_conversion.
+- Mantiene el marcador converted_unknown_culture.
+
+Proteccion 2:
+- Anula solo carnx_child_birth_name_effect.
+- Conserva nacimiento, parentesco, casa, dinastia, fe, cultura y rasgos.
+- El menor puede conservar el nombre generado antes del cambio cultural.
+
+Respaldo: D:\Paradox Interactive\Crusader Kings III\BACKUPS_MODS_MANUALES\AGOT_CULTURE_NAME_CRASH_GUARD_SAFE_020_20260716_101835

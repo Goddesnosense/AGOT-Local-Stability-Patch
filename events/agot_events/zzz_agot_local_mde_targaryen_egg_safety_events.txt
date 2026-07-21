@@ -1,0 +1,924 @@
+﻿# AGOT Local Stability Patch 0.6.6
+# Safe Targaryen/Daenerys egg transfer and hatching rebase.
+# Base: AGOT 0.4.38 + More Dragon Eggs.
+
+agot_targaryen_exile_invasion.0300 = {
+	hidden = yes
+	immediate = {
+		# Remove obsolete global state left by older MDE versions.
+		remove_global_variable = no_dany_eggs
+
+		if = {
+			limit = {
+				illyrio_has_eggs_for_exiles = yes
+				NOT = {
+					has_game_rule = agot_faegon_identity_open_blackfyre
+				}
+			}
+			character:Mopatis_1 = {
+				save_scope_as = egg_granter
+				random_character_artifact = {
+					limit = { has_variable = dragon_egg }
+					save_scope_as = dany_transfer_egg_1
+					add_to_list = dany_invasion_eggs
+				}
+				random_character_artifact = {
+					limit = {
+						has_variable = dragon_egg
+						this != scope:dany_transfer_egg_1
+					}
+					save_scope_as = dany_transfer_egg_2
+					add_to_list = dany_invasion_eggs
+				}
+				random_character_artifact = {
+					limit = {
+						has_variable = dragon_egg
+						this != scope:dany_transfer_egg_1
+						this != scope:dany_transfer_egg_2
+					}
+					add_to_list = dany_invasion_eggs
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				any_artifact = {
+					has_variable = dragon_egg
+					has_variable = dragon_embryo
+					OR = {
+						var:dragon_embryo = flag:drogon
+						var:dragon_embryo = flag:viserion
+						var:dragon_embryo = flag:rhaegal
+					}
+					this.artifact_owner = {
+						any_character_artifact = {
+							has_variable = dragon_egg
+							has_variable = dragon_embryo
+							var:dragon_embryo = flag:drogon
+						}
+						any_character_artifact = {
+							has_variable = dragon_egg
+							has_variable = dragon_embryo
+							var:dragon_embryo = flag:viserion
+						}
+						any_character_artifact = {
+							has_variable = dragon_egg
+							has_variable = dragon_embryo
+							var:dragon_embryo = flag:rhaegal
+						}
+					}
+				}
+			}
+			random_artifact = {
+				limit = {
+					has_variable = dragon_egg
+					has_variable = dragon_embryo
+					OR = {
+						var:dragon_embryo = flag:drogon
+						var:dragon_embryo = flag:viserion
+						var:dragon_embryo = flag:rhaegal
+					}
+					this.artifact_owner = {
+						any_character_artifact = {
+							has_variable = dragon_egg
+							has_variable = dragon_embryo
+							var:dragon_embryo = flag:drogon
+						}
+						any_character_artifact = {
+							has_variable = dragon_egg
+							has_variable = dragon_embryo
+							var:dragon_embryo = flag:viserion
+						}
+						any_character_artifact = {
+							has_variable = dragon_egg
+							has_variable = dragon_embryo
+							var:dragon_embryo = flag:rhaegal
+						}
+					}
+				}
+				artifact_owner = {
+					save_scope_as = egg_granter
+					random_character_artifact = {
+						limit = {
+							has_variable = dragon_egg
+							has_variable = dragon_embryo
+							var:dragon_embryo = flag:drogon
+						}
+						add_to_list = dany_invasion_eggs
+					}
+					random_character_artifact = {
+						limit = {
+							has_variable = dragon_egg
+							has_variable = dragon_embryo
+							var:dragon_embryo = flag:viserion
+						}
+						add_to_list = dany_invasion_eggs
+					}
+					random_character_artifact = {
+						limit = {
+							has_variable = dragon_egg
+							has_variable = dragon_embryo
+							var:dragon_embryo = flag:rhaegal
+						}
+						add_to_list = dany_invasion_eggs
+					}
+				}
+			}
+		}
+		else = {
+			create_character = {
+				location = title:b_mummer_lane.title_province
+				faith = title:b_mummer_lane.faith
+				culture = title:b_mummer_lane.culture
+				age = { 35 45 }
+				random_traits_list = {
+					count = 1
+					education_stewardship_1 = {}
+					education_stewardship_2 = {}
+					education_stewardship_3 = {}
+					education_stewardship_4 = {}
+				}
+				dynasty = generate
+				random_traits = yes
+				gender_female_chance = 50
+				stewardship = {
+					min_template_decent_skill
+					max_template_decent_skill
+				}
+				prowess = { 2 10 }
+				martial = { 2 10 }
+				diplomacy = { 5 13 }
+				learning = { 5 13 }
+				save_scope_as = egg_granter
+				after_creation = {
+					set_variable = agot_delete_char
+				}
+			}
+		}
+		trigger_event = agot_targaryen_exile_invasion.0301
+	}
+}
+
+agot_targaryen_exile_invasion.0301 = {
+	type = character_event
+	title = agot_targaryen_exile_invasion.0301.t
+	desc = agot_targaryen_exile_invasion.0301.desc
+	override_icon = {
+		reference = "gfx/interface/icons/event_types/type_war.dds"
+	}
+	theme = war
+	left_portrait = {
+		character = scope:egg_granter
+		animation = toast_goblet
+	}
+	right_portrait = {
+		character = root
+		animation = disbelief
+	}
+	artifact = {
+		target = scope:egg_1
+		position = lower_left_portrait
+	}
+	artifact = {
+		target = scope:egg_2
+		position = lower_right_portrait
+	}
+	artifact = {
+		target = scope:egg_3
+		position = lower_center_portrait
+	}
+	immediate = {
+		# Migrate a save made after the old MDE .0300 event.
+		if = {
+			limit = {
+				list_size:dany_invasion_eggs < 3
+				list_size:eggs_to_transfer > 0
+			}
+			if = {
+				limit = {
+					any_in_list = {
+						list = eggs_to_transfer
+						has_variable = dragon_embryo
+						var:dragon_embryo = flag:drogon
+					}
+					any_in_list = {
+						list = eggs_to_transfer
+						has_variable = dragon_embryo
+						var:dragon_embryo = flag:viserion
+					}
+					any_in_list = {
+						list = eggs_to_transfer
+						has_variable = dragon_embryo
+						var:dragon_embryo = flag:rhaegal
+					}
+				}
+				random_in_list = {
+					list = eggs_to_transfer
+					limit = {
+						has_variable = dragon_embryo
+						var:dragon_embryo = flag:drogon
+					}
+					add_to_list = dany_invasion_eggs
+				}
+				random_in_list = {
+					list = eggs_to_transfer
+					limit = {
+						has_variable = dragon_embryo
+						var:dragon_embryo = flag:viserion
+					}
+					add_to_list = dany_invasion_eggs
+				}
+				random_in_list = {
+					list = eggs_to_transfer
+					limit = {
+						has_variable = dragon_embryo
+						var:dragon_embryo = flag:rhaegal
+					}
+					add_to_list = dany_invasion_eggs
+				}
+			}
+			else = {
+				random_in_list = {
+					list = eggs_to_transfer
+					save_scope_as = dany_legacy_egg_1
+					add_to_list = dany_invasion_eggs
+				}
+				random_in_list = {
+					list = eggs_to_transfer
+					limit = { this != scope:dany_legacy_egg_1 }
+					save_scope_as = dany_legacy_egg_2
+					add_to_list = dany_invasion_eggs
+				}
+				random_in_list = {
+					list = eggs_to_transfer
+					limit = {
+						this != scope:dany_legacy_egg_1
+						this != scope:dany_legacy_egg_2
+					}
+					add_to_list = dany_invasion_eggs
+				}
+			}
+		}
+
+		if = {
+			limit = {
+				list_size:dany_invasion_eggs > 2
+			}
+			every_in_list = {
+				list = dany_invasion_eggs
+				set_owner = root
+				set_variable = {
+					name = destined_eggs
+					value = yes
+				}
+				set_variable = {
+					name = agot_artifact_cannot_gift
+					value = yes
+				}
+				set_variable = {
+					name = dany_invasion_selected_egg
+					value = yes
+				}
+				generated_eggs_cleanup_effect = yes
+				add_to_list = generated_eggs
+			}
+		}
+		else = {
+			# Mark pre-existing eggs so only the three eggs created below
+			# can enter the ceremony.
+			every_character_artifact = {
+				limit = { has_variable = dragon_egg }
+				set_variable = {
+					name = dany_invasion_preexisting_egg
+					value = yes
+				}
+			}
+			agot_spawn_laid_egg = {
+				OWNER_SCOPE = root
+				AMOUNT_OF_EGGS_TO_SPAWN = 3
+				DRAGON_PARENT = character:dragon_pythax
+			}
+			every_character_artifact = {
+				limit = {
+					has_variable = dragon_egg
+					NOT = {
+						has_variable = dany_invasion_preexisting_egg
+					}
+				}
+				set_variable = {
+					name = destined_eggs
+					value = yes
+				}
+				set_variable = {
+					name = agot_artifact_cannot_gift
+					value = yes
+				}
+				set_variable = {
+					name = dany_invasion_selected_egg
+					value = yes
+				}
+				set_variable = {
+					name = dany_invasion_fallback_egg
+					value = yes
+				}
+				generated_eggs_cleanup_effect = yes
+				add_to_list = generated_eggs
+			}
+			every_character_artifact = {
+				limit = {
+					has_variable = dany_invasion_preexisting_egg
+				}
+				remove_variable = dany_invasion_preexisting_egg
+			}
+			custom_tooltip = agot_targaryen_exile_invasion.0301.generated_eggs
+		}
+
+		every_in_list = {
+			list = generated_eggs
+			limit = {
+				has_variable = dany_invasion_selected_egg
+			}
+			if = {
+				limit = {
+					NOT = { exists = scope:egg_1 }
+				}
+				save_scope_as = egg_1
+			}
+			else_if = {
+				limit = {
+					NOT = { exists = scope:egg_2 }
+				}
+				save_scope_as = egg_2
+			}
+			else_if = {
+				limit = {
+					NOT = { exists = scope:egg_3 }
+				}
+				save_scope_as = egg_3
+			}
+		}
+
+		if = {
+			limit = {
+				player_heir.house ?= root.house
+			}
+			player_heir = { save_scope_as = heir }
+		}
+	}
+
+	# A wonderful gift
+	option = {
+		name = agot_targaryen_exile_invasion.0301.a
+		custom_tooltip = agot_targaryen_exile_invasion.0301.teaser_eggs
+		ai_chance = {
+			base = 75
+			ai_value_modifier = {
+				ai_boldness = 2
+				ai_greed = -2
+			}
+		}
+	}
+
+
+	after = {
+		trigger_event = { id = agot_targaryen_exile_invasion.0600 days = 7 }
+		hidden_effect = {
+			if = {
+				limit = {
+					scope:egg_granter = {
+						has_variable = agot_delete_char
+					}
+				}
+				scope:egg_granter = {
+					death = {
+						death_reason = death_vanished
+					}
+				}
+			}
+		}
+	}
+}
+
+agot_targaryen_exile_invasion.0604 = {
+	type = character_event
+	title = agot_targaryen_exile_invasion.0604.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					hatching_ceremony_succeeded = yes
+					var:status_602 ?= flag:self_blood_donor
+				}
+				desc = agot_targaryen_exile_invasion.0604.desc_self
+			}
+			triggered_desc = {
+				trigger = {
+					var:hatching_ceremony = flag:failure
+					var:status_602 ?= flag:self_blood_donor
+				}
+				desc = agot_targaryen_exile_invasion.0604.desc_self_fail
+			}
+			triggered_desc = {
+				trigger = {
+					hatching_ceremony_succeeded = yes
+					OR = {
+						var:status_602 ?= flag:sacrifice
+						var:status_602 ?= flag:heir_sacrifice
+					}
+				}
+				desc = agot_targaryen_exile_invasion.0604.desc_sacrifice
+			}
+			triggered_desc = {
+				trigger = {
+					var:hatching_ceremony = flag:failure
+					OR = {
+						var:status_602 ?= flag:sacrifice
+						var:status_602 ?= flag:heir_sacrifice
+					}
+				}
+				desc = agot_targaryen_exile_invasion.0604.desc_sacrifice_fail
+			}
+			triggered_desc = {
+				trigger = {
+					hatching_ceremony_succeeded = yes
+					var:status_602 ?= flag:heir_blood_donor
+				}
+				desc = agot_targaryen_exile_invasion.0604.desc_blood_donation
+			}
+			triggered_desc = {
+				trigger = {
+					var:hatching_ceremony = flag:failure
+					var:status_602 ?= flag:heir_blood_donor
+				}
+				desc = agot_targaryen_exile_invasion.0604.desc_blood_donation_fail
+			}
+		}
+	}
+	override_background = {
+		reference = wilderness
+	}
+	override_effect_2d = {
+		reference = smoke
+	}
+	theme = dragon
+	left_portrait = {
+		character = root
+		animation = disbelief
+	}
+	right_portrait = {
+		character = scope:guide
+		animation = stress
+	}
+	lower_left_portrait = {
+		trigger = {
+			exists = scope:dragon_1
+		}
+		character = scope:dragon_1
+	}
+	lower_center_portrait = {
+		trigger = {
+			OR = {
+				exists = scope:dragon_2
+				exists = scope:sacrifice
+				exists = scope:heir_blood_donor
+			}
+		}
+		character = scope:center_portrait_0604
+	}
+	lower_right_portrait = {
+		trigger = {
+			exists = scope:dragon_3
+		}
+		character = scope:dragon_3
+	}
+	immediate = {
+		# Reactions to ceremony options
+		if = {
+			limit = {
+				exists = scope:heir_blood_donor
+			}
+			scope:heir_blood_donor = {
+				increase_wounds_effect = { REASON = burned }
+			}
+			scope:heir_blood_donor = {
+				add_opinion = {
+					target = root
+					modifier = agot_hurt_me_for_a_ritual
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				var:status_602 = flag:self_blood_donor
+			}
+			increase_wounds_effect = { REASON = burned }
+		}
+		if = {
+			limit = {
+				exists = scope:sacrifice
+			}
+			scope:sacrifice = {
+				death = {
+					death_reason = death_sacrificed
+					killer = root
+				}
+			}
+			add_trait = murderer
+			add_kinslayer_trait_or_nothing_effect = { VICTIM = scope:sacrifice }
+			every_courtier = {
+				limit = {
+					this != scope:guide
+					this != scope:sacrifice
+				}
+				add_opinion = {
+					target = root
+					modifier = agot_sacrificed_member_of_court
+				}
+			}
+		}
+		# Handle Dragon Spawning
+		if = {
+			limit = {
+				hatching_ceremony_succeeded = yes
+			}
+			if = {
+				limit = {
+					OR = {
+						any_in_list = {
+							list = generated_eggs
+							has_variable = dany_invasion_fallback_egg
+						}
+						AND = {
+							has_global_variable = no_dany_eggs
+							any_in_list = {
+								list = generated_eggs
+								has_variable = genned_eggs
+							}
+							NOT = {
+								any_in_list = {
+									list = generated_eggs
+									has_variable = dany_invasion_selected_egg
+								}
+							}
+						}
+					}
+					agot_canon_dragons_enabled = yes
+					OR = {
+						scope:heir_blood_donor ?= {
+							has_character_flag = is_Targaryen_9
+						}
+						has_character_flag = is_Targaryen_9
+					}
+				}
+				agot_spawn_drogon_effect = yes
+				return_canon_dragons_to_court = yes
+				scope:dragon = { add_to_list = dany_hatched_dragons }
+				clear_saved_scope = dragon
+				agot_spawn_viserion_effect = yes
+				return_canon_dragons_to_court = yes
+				scope:dragon = { add_to_list = dany_hatched_dragons }
+				clear_saved_scope = dragon
+				agot_spawn_rhaegal_effect = yes
+				return_canon_dragons_to_court = yes
+				scope:dragon = { add_to_list = dany_hatched_dragons }
+				every_in_list = {
+					list = generated_eggs
+					limit = {
+						has_variable = destined_eggs
+					}
+					save_scope_as = egg
+					custom_tooltip = {
+						text = agot_dragon_hatched_from_egg_effect_tt
+						agot_remove_dragon_egg = { EGG = this }
+					}
+				}
+				if = {
+					limit = {
+						scope:heir_blood_donor ?= {
+							NOT = {
+								has_character_flag = hatched_canon_dragon
+							}
+						}
+					}
+					scope:heir_blood_donor ?= {
+						add_character_flag = hatched_canon_dragon
+					}
+				}
+				else_if = {
+					limit = {
+						has_character_flag = is_Targaryen_9
+						NOT = {
+							has_character_flag = hatched_canon_dragon
+						}
+					}
+					add_character_flag = hatched_canon_dragon
+				}
+			}
+			else = {
+				every_in_list = {
+					list = generated_eggs
+					limit = {
+						has_variable = destined_eggs
+					}
+					agot_spawn_owned_hatchling_from_egg_effect = {
+						OWNER = root EGG = this
+					}
+					scope:dragon = {
+						add_to_list = dany_hatched_dragons
+					}
+				}
+			}
+			# Only dragons created by this ceremony may fill the portraits.
+			every_in_list = {
+				list = dany_hatched_dragons
+				if = {
+					limit = {
+						NOT = { exists = scope:dragon_1 }
+					}
+					save_scope_as = dragon_1
+				}
+				else_if = {
+					limit = {
+						NOT = { exists = scope:dragon_2 }
+					}
+					save_scope_as = dragon_2
+				}
+				else_if = {
+					limit = {
+						NOT = { exists = scope:dragon_3 }
+					}
+					save_scope_as = dragon_3
+				}
+			}
+		}
+		else = {
+			every_in_list = {
+				list = generated_eggs
+				limit = {
+					has_variable = destined_eggs
+				}
+				agot_remove_dragon_egg = { EGG = this }
+			}
+		}
+
+		# Get center portrait
+		if = {
+			limit = { exists = scope:dragon_2 }
+			scope:dragon_2 = {
+				save_scope_as = center_portrait_0604
+			}
+		}
+		else_if = {
+			limit = { exists = scope:sacrifice }
+			scope:sacrifice = {
+				save_scope_as = center_portrait_0604
+			}
+		}
+		else_if = {
+			limit = { exists = scope:heir_blood_donor }
+			scope:heir_blood_donor = {
+				save_scope_as = center_portrait_0604
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				hatching_ceremony_succeeded = yes
+			}
+			text = agot_targaryen_exile_invasion.0604.a
+		}
+		name = {
+			trigger = {
+				var:hatching_ceremony = flag:failure
+			}
+			text = agot_targaryen_exile_invasion.0604.b
+		}
+		if = {
+			limit = {
+				hatching_ceremony_succeeded = yes
+			}
+			if = {
+				limit = {
+					exists = scope:egg_owner
+				}
+				scope:egg_owner = {
+					save_scope_as = hatcher
+				}
+			}
+			else = {
+				save_scope_as = hatcher
+			}
+			every_player = {
+				limit = {
+					this != root
+					AND = {
+						exists = title:h_the_iron_throne.holder
+						this != title:h_the_iron_throne.holder
+					}
+				}
+				trigger_event = agot_targaryen_exile_invasion.0305
+			}
+			title:h_the_iron_throne.holder ?= {
+				trigger_event = agot_targaryen_exile_invasion.0306
+			}
+		}
+		else = {
+			increase_wounds_no_death_effect = { REASON = hatching_sacrifice }
+			hidden_effect = {
+				scope:guide = {
+					death = {
+						death_reason = death_vanished
+					}
+				}
+			}
+		}
+	}
+
+	after = {
+		if = {
+			limit = {
+				hatching_ceremony_succeeded = yes
+			}
+			every_in_list = {
+				list = dany_hatched_dragons
+				if = {
+					limit = { agot_is_canon_dragon = no }
+					agot_clear_dragon_genetic_traits_effect = yes
+				}
+				add_trait = dragon_destined
+				add_to_global_variable_list = {
+					name = targaryen_exiles_destined_dragons
+					target = this
+				}
+				if = {
+					limit = {
+						exists = scope:egg_owner
+						scope:egg_owner = { is_alive = yes }
+					}
+					hidden_effect = {
+						set_relation_agot_story_dragon = scope:egg_owner
+					}
+				}
+				else = {
+					hidden_effect = {
+						set_relation_agot_story_dragon = root
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				var:hatching_ceremony ?= flag:special_option_enabled
+			}
+			# Build Special Traits
+			if = {
+				limit = {
+					var:status_602 ?= flag:heir_sacrifice
+				}
+				random_in_list = {
+					list = dany_hatched_dragons
+					limit = {
+						agot_is_canon_dragon = no
+					}
+					add_trait = dragon_physique_good_3
+					add_trait = dragon_fertile
+				}
+			}
+			else_if = {
+				limit = {
+					var:status_602 ?= flag:sacrifice
+				}
+				hidden_effect = {
+					random_list = {
+						25 = {
+							# Nothing
+						}
+						75 = {
+							every_in_list = {
+								list = dany_hatched_dragons
+								limit = {
+									agot_is_canon_dragon = no
+								}
+								random_list = {
+									1 = {
+										add_trait = dragon_physique_good_3
+									}
+									1 = {
+										add_trait = dragon_physique_good_2
+									}
+									1 = {
+										add_trait = dragon_physique_good_1
+									}
+									1 = {
+										add_trait = dragon_physique_bad_3
+									}
+									1 = {
+										add_trait = dragon_physique_bad_2
+									}
+									1 = {
+										add_trait = dragon_physique_bad_1
+									}
+									1 = {
+										add_trait = dragon_swift
+									}
+									1 = {
+										add_trait = dragon_slow
+									}
+									1 = {
+										add_trait = dragon_spindly
+									}
+									1 = {
+										add_trait = dragon_majestic
+									}
+									1 = {
+										add_trait = dragon_ugly
+									}
+									1 = {
+										add_trait = dragon_fertile
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						var:status_602 ?= flag:self_blood_donor
+						var:status_602 ?= flag:heir_blood_donor
+					}
+				}
+				every_in_list = {
+					list = dany_hatched_dragons
+					limit = {
+						agot_is_canon_dragon = no
+					}
+					hidden_effect = { agot_give_random_physical_traits = yes }
+				}
+			}
+		}
+		if = { # Order of Operations, give heir their dragon
+			limit = {
+				hatching_ceremony_succeeded = yes
+			}
+			# Heir grabs their own dragon if you used their blood
+			if = {
+				limit = {
+					exists = scope:heir_blood_donor
+				}
+				if = {
+					limit = {
+						scope:heir_blood_donor = { is_male = yes }
+					}
+					scope:heir_blood_donor = { give_nickname = nick_agot_the_father_of_dragons }
+				}
+				else = {
+					scope:heir_blood_donor = { give_nickname = nick_agot_the_mother_of_dragons }
+				}
+				if = {
+					limit = {
+						agot_canon_dragons_enabled = yes
+						scope:heir_blood_donor = {
+							has_character_flag = is_Targaryen_9
+						}
+						any_in_list = {
+							list = dany_hatched_dragons
+							is_character_dragon_drogon = yes
+						}
+					}
+					random_in_list = {
+						list = dany_hatched_dragons
+						limit = {
+							is_character_dragon_drogon = yes
+						}
+						save_scope_as = heir_blood_donor_dragon
+					}
+				}
+				else = {
+					random_in_list = {
+						list = dany_hatched_dragons
+						weight = {
+							base = 1
+							modifier = {
+								add = 500
+								has_good_genetic_trait = yes
+							}
+						}
+						save_scope_as = heir_blood_donor_dragon
+					}
+				}
+				agot_bond_dragon_relation_effect = {
+					ACTOR = scope:heir_blood_donor
+					DRAGON = scope:heir_blood_donor_dragon
+				}
+			}
+			# If successful, trigger next event
+			trigger_event = agot_targaryen_exile_invasion.0605
+		}
+		# Clear obsolete MDE state after success or failure.
+		remove_global_variable = no_dany_eggs
+	}
+}

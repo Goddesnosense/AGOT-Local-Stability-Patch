@@ -1,0 +1,22 @@
+﻿AGOT INDEPENDENT ERRORS FIX - SAFE 0.1.0
+Fecha de instalacion: 07/16/2026 11:10:17
+
+Correccion 1 - clima y escuderos:
+- location_has_harsh_winter_trigger opera directamente sobre provincia.
+- Elimina el Wrong scope province de accolade_squire_training_effect.
+
+Correccion 2 - Armies of Westeros:
+- riverlands_patrols usa type = heavy_cavalry.
+- El archivo instalado esta normalizado a UTF-8 BOM.
+
+Correccion 3 - genes de dragon:
+- Se ejecuta una migracion una sola vez.
+- No sobrescribe variables validas.
+- Completa seis variables ausentes en gl_dragon_variable_storage.
+- En una partida existente se aplica en el primer quarterly_playable_pulse.
+
+IMPORTANTE:
+- El instalador no edita partidas.
+- La migracion de genes si se guarda dentro de la partida despues de ejecutarse.
+
+Respaldo: D:\Paradox Interactive\Crusader Kings III\BACKUPS_MODS_MANUALES\AGOT_INDEPENDENT_ERRORS_FIX_SAFE_010_20260716_111016

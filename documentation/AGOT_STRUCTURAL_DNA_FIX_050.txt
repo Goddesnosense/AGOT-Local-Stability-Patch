@@ -1,0 +1,54 @@
+﻿AGOT LOCAL STABILITY STRUCTURAL + DNA FIX 0.5.1
+
+Aplicado sobre el playset AGOT de 56 mods auditado el 17/07/2026.
+
+CAMBIOS
+
+1. AGOT+ / AGOT+ CBO TEST DNA
+- 14 archivos test_dna actualizados.
+- 289 definiciones superiores conservadas.
+- 0 llaves desbalanceadas.
+- 0 genes o templates inválidos según el schema efectivo auditado.
+- 1719 líneas renombradas.
+- 346 líneas obsoletas retiradas.
+- 32 templates dragon_horns_none sustituidos por template neutro vacío.
+- 2 templates hair_afro_no_beard migrados a hair_afro.
+
+2. DIVINE INTERVENTION AGOT
+- 1601 llamadas:
+  fix_variable_error = { X = ... }
+  pasan a:
+  fix_variable_error = { ERROR = ... }
+
+3. DINASTÍA ROWE
+- Añadida la llave final ausente a:
+  common/dynasties/00_agot_dyn_westerlands.txt
+
+4. BOOKMARK DAEMON
+- bookmark_236_daemon.txt declara ahora:
+  bookmark_236_daemon
+- El bookmark_239_daemon de Mari permanece sin cambios.
+
+5. GREYJOY / IRONBORN
+- Copia en tiempo de instalación la malla existente:
+  asoiaf_greyjoy_legs_bs_no_left_leg.mesh
+  a la carpeta virtual del asset Ironborn COA.
+
+6. LOTD CBO
+- Corrige la referencia inexistente:
+  m_legwear_secular_western_com_01_bs_clothes.mesh
+- Usa la malla existente:
+  m_legwear_secular_western_com_01_bs_clothed.mesh
+
+NO INCLUIDO TODAVÍA
+- Rebase de las 308 definiciones DNA históricas ausentes de AGOT CBO Patch.
+- Protección completa de los 36 dragon script_values restantes.
+- Rebase integral de AGOT More Dragon Eggs.
+
+INSTALACIÓN
+El instalador verifica los hashes exactos de todos los archivos fuente antes
+de modificar AGOT Local Stability Patch. Si cualquier mod se actualizó, aborta.
+
+BACKUP
+Se crea un backup restaurable en:
+D:\Paradox Interactive\Crusader Kings III\BACKUPS_MODS_MANUALES

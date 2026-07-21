@@ -1,0 +1,849 @@
+﻿# AGOT Local Stability Patch 0.6.3
+# Ninepenny Kings / Summerhall selective rebase.
+# Base: AGOT 0.4.38; retained rules: More Dragon Eggs.
+# No political/title/history imports.
+
+agot_ninepenny.0060 = { #Saan Approaches Maelys with Valyrian Scrolls
+	type = character_event
+	title = agot_ninepenny.0060.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					character:Saan_1 = { is_alive = yes }
+				}
+				desc = agot_ninepenny.0060.desc
+			}
+			desc = agot_ninepenny.0060.desc_alt
+		}
+	}
+
+	theme = dragon
+
+	override_background = {
+		reference = fp1_ocean
+	}
+
+	left_portrait = {
+		character = root
+		animation = personality_callous
+	}
+
+	right_portrait = {
+		character = scope:saan
+		trigger = {
+			character:Saan_1 = { is_alive = yes }
+		}
+		animation = throne_room_messenger_3
+	}
+
+	artifact = {
+		trigger = { exists = scope:newly_created_artifact }
+		target = scope:newly_created_artifact
+		position = lower_center_portrait
+	}
+
+	trigger = {
+		any_character_artifact = {
+			has_variable = dragon_egg
+		}
+	}
+
+	immediate = {
+		character:Saan_1 = {
+			save_scope_as = saan
+		}
+		character:Blackfyre_15 = {
+			save_scope_as = maenar
+		}
+
+		if = {
+			limit = {
+				character:Saan_1 = { is_alive = yes }
+			}
+
+			hidden_effect = {
+				character:Saan_1 = {
+					agot_create_artifact_saans_scrolls_effect = { OWNER = character:Saan_1 }
+				}
+			}
+
+			show_as_tooltip = {
+				character:Blackfyre_14 = {
+					agot_create_artifact_saans_scrolls_effect = { OWNER = character:Blackfyre_14 }
+				}
+			}
+
+			scope:newly_created_artifact = {
+				set_variable = {
+					name = suppress_artifact_notifications
+					value = yes
+					days = 1
+				}
+				set_variable = {
+					name = gifted_artifact
+					value = yes
+					days = 1825
+				}
+				set_owner = {
+					target = character:Blackfyre_14
+					history = {
+						location = character:Blackfyre_14.location
+						actor = character:Saan_1
+						recipient = character:Blackfyre_14
+						type = given
+					}
+				}
+				save_scope_as = gifted_artifact
+			}
+		}
+		else = {
+			character:Blackfyre_14 = {
+				agot_create_artifact_saans_scrolls_effect = { OWNER = character:Blackfyre_14 }
+			}
+
+			scope:newly_created_artifact = {
+				set_variable = {
+					name = suppress_artifact_notifications
+					value = yes
+					days = 1
+				}
+				set_variable = {
+					name = gifted_artifact
+					value = yes
+					days = 1825
+				}
+				save_scope_as = gifted_artifact
+			}
+		}
+	}
+
+	option = { #Burn my son alive poggers
+		name = agot_ninepenny.0060.a
+		custom_tooltip = agot_ninepenny.0060.a.tt
+
+		trigger = {
+			character:Blackfyre_15 ?= {
+				is_alive = yes
+			}
+		}
+
+		trigger_event = agot_ninepenny.0061
+
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = agot_historic_outcome_2
+			}
+			modifier = { # MDE Modified
+				has_game_rule = maelys_will
+				add = 100
+			}
+			modifier = {
+				has_game_rule = maelys_wont
+				factor = 0
+			}
+		}
+	}
+
+	option = { #Thanks 4 scrolls bro
+		name = agot_ninepenny.0060.b
+		custom_tooltip = abandon_hatching_tt
+		every_character_artifact = {
+			limit = { has_variable = agot_artifact_cannot_gift }
+			remove_variable = agot_artifact_cannot_gift
+		}
+
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = agot_nonhistoric_outcome_2
+			}
+		}
+	}
+}
+
+agot_ninepenny.0061 = { #Maelys sets his son up in flames
+	type = character_event
+	title = agot_ninepenny.0061.t
+	desc = agot_ninepenny.0061.desc
+
+	theme = dragon
+
+	override_background = {
+		reference = bp1_bonfire
+	}
+
+	left_portrait = {
+		character = root
+		animation = personality_callous
+	}
+
+	right_portrait = {
+		character = scope:saan
+		animation = throne_room_messenger_3
+	}
+
+	lower_center_portrait = scope:maenar
+
+	immediate = {
+		random_owned_story = {
+			limit = {
+				story_type = story_agot_ninepenny_kings
+			}
+			save_scope_as = ninepenny_story
+		}
+		character:Saan_1 = {
+			save_scope_as = saan
+		}
+		character:Blackfyre_15 = {
+			save_scope_as = maenar
+		}
+		random_character_artifact = {
+			limit = { has_variable = dragon_egg }
+			set_variable = {
+				name = selected_egg_for_hatching
+				value = yes
+			}
+			save_scope_as = egg
+		}
+	}
+
+	option = { #Burn my son alive poggers
+		name = agot_ninepenny.0061.a
+		custom_tooltip = agot_ninepenny.0061.a.tt
+
+		character:Blackfyre_15 = { save_scope_as = sacrifice }
+
+		hidden_effect = {
+			if = { # MDE Modified
+				limit = { has_game_rule = maelys_guaranteed }
+				save_scope_as = dragon_hatched
+			}
+			else = {
+				random = {
+					chance = 15
+					modifier = {
+						has_game_rule = agot_story_historical_events_weighted_outcomes
+						factor = 0.5
+					}
+					modifier = {
+						has_game_rule = agot_story_historical_events_historical_outcomes
+						factor = 0
+					}
+					modifier = {
+						has_game_rule = maelys_very_likely
+						factor = 5
+					}
+					modifier = {
+						has_game_rule = maelys_not
+						factor = 0
+					}
+					save_scope_as = dragon_hatched
+				}
+			}
+			
+			if = {
+				limit = { exists = scope:dragon_hatched }
+				trigger_event = agot_ninepenny.9000
+			}
+			else = {
+				random_list = {
+					1 = { }
+					1 = { add_character_flag = agot_ninepenny.0062.rage }
+				}
+				trigger_event = agot_ninepenny.0062
+			}
+		}
+	}
+}
+
+agot_ninepenny.0063 = {
+	type = character_event
+	title = agot_ninepenny.0063.t
+	desc = agot_ninepenny.0063.desc
+
+	theme = dragon
+
+	override_background = {
+		reference = bp1_bonfire
+	}
+
+	left_portrait = {
+		character = root
+		animation = ecstasy
+	}
+
+	lower_center_portrait = scope:maenar
+
+	right_portrait = {
+		character = scope:maelys_dragon
+		animation = dragon_main
+		camera = camera_dragon_event_standing
+
+		#Add this so dragon fits within event window
+		outfit_tags = { linear_camera_zoom }
+	}
+	immediate = {
+		scope:maenar = {
+			death = {
+				death_reason = death_hatching_sacrifice
+				killer = root
+			}
+		}
+		every_character_artifact = { # Destroy other eggs too
+			limit = {
+				has_variable = dragon_egg
+				NOT = { has_variable = selected_egg_for_hatching }
+			}
+			root = { destroy_owned_artifact = prev }
+		}
+		every_in_list = {
+			list = hatched_dragons
+			save_scope_as = dragon
+			custom_tooltip = dragon_has_hatched_tt
+		}
+	}
+
+	option = {
+		name = agot_ninepenny.0063.a
+
+		add_prestige = 10000
+
+		random_list = {
+			20 = { }
+			60 = {
+				add_trait = fire_obsessed
+			}
+			10 = {
+				add_trait = possessed_1
+			}
+			10 = {
+				add_trait = lunatic_1
+			}
+		}
+
+		# Inform players what happened
+		save_scope_as = maelys
+		every_player = {
+			limit = {
+				NOT = {
+					this = root
+					this = character:Targaryen_122
+				}
+			}
+			trigger_event = agot_ninepenny.0064
+		}
+
+		character:Targaryen_122 = {
+			trigger_event = agot_ninepenny.0065
+		}
+	}
+}
+
+agot_ninepenny.9000 = {
+	hidden = yes
+
+	immediate = {
+		agot_spawn_bonded_hatchling_from_egg_effect = { OWNER = root EGG = scope:egg }
+		scope:dragon = {
+			agot_clear_dragon_genetic_traits_effect = yes
+			add_trait = dragon_physique_good_3
+			add_trait = dragon_ugly
+			if = {
+				limit = { NOT = { has_trait = dragon_destined } }
+				add_trait = dragon_destined
+			}
+			save_scope_as = maelys_dragon
+			add_to_list = hatched_dragons
+		}
+		if = {
+			limit = {
+				NOT = { has_game_rule = can_hatch_multiple_dragons_no }
+			}
+			every_character_artifact = {
+				limit = {
+					has_variable = dragon_egg
+					NOT = { has_variable = selected_egg_for_hatching }
+				}
+				save_scope_as = this_egg
+				if = {
+					limit = { has_game_rule = can_hatch_multiple_dragons_yes_all }
+					agot_spawn_owned_hatchling_from_egg_effect = { OWNER = root EGG = scope:this_egg }
+					scope:dragon = {
+						if = {
+							limit = { NOT = { has_trait = dragon_destined } }
+							add_trait = dragon_destined
+						}
+						add_to_list = hatched_dragons
+					}
+				}
+				else = {
+					random_list = {
+						5 = {
+							modifier = {
+								has_game_rule = can_hatch_multiple_dragons_yes_25_percent
+								add = 20
+							}
+							modifier = {
+								has_game_rule = can_hatch_multiple_dragons_yes_50_percent
+								add = 45
+							}
+							modifier = {
+								has_game_rule = can_hatch_multiple_dragons_yes_75_percent
+								add = 70
+							}
+							modifier = {
+								has_game_rule = can_hatch_multiple_dragons_yes_95_percent
+								add = 90
+							}
+							modifier = {
+								has_variable = dragon_embryo
+								agot_canon_dragons_enabled = yes
+								has_game_rule = canon_dragon_egg_hatch_likelihood_less_likely
+								factor = 0.5
+							}
+							modifier = {
+								has_variable = dragon_embryo
+								agot_canon_dragons_enabled = yes
+								has_game_rule = canon_dragon_egg_hatch_likelihood_more_likely
+								factor = 2
+							}
+							modifier = {
+								has_variable = dragon_embryo
+								agot_canon_dragons_enabled = yes
+								has_game_rule = canon_dragon_egg_hatch_likelihood_common
+								factor = 5
+							}
+							agot_spawn_owned_hatchling_from_egg_effect = { OWNER = root EGG = scope:this_egg }
+							scope:dragon = {
+								if = {
+									limit = { NOT = { has_trait = dragon_destined } }
+									add_trait = dragon_destined
+								}
+								add_to_list = hatched_dragons
+							}
+						}
+						95 = {
+							modifier = {
+								has_game_rule = can_hatch_multiple_dragons_yes_25_percent
+								add = -20
+							}
+							modifier = {
+								has_game_rule = can_hatch_multiple_dragons_yes_50_percent
+								add = -45
+							}
+							modifier = {
+								has_game_rule = can_hatch_multiple_dragons_yes_75_percent
+								add = -70
+							}
+							modifier = {
+								has_game_rule = can_hatch_multiple_dragons_yes_95_percent
+								add = -90
+							}
+							modifier = {
+								has_variable = dragon_embryo
+								agot_canon_dragons_enabled = yes
+								has_game_rule = canon_dragon_egg_hatch_likelihood_guaranteed
+								factor = 0
+							}
+						}
+					}
+				}
+			}
+		}
+		trigger_event = agot_ninepenny.0063
+	}
+}
+
+agot_ninepenny.9100 = {
+	hidden = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { has_game_rule = summerhall_not }
+				random_list = {
+					1 = { trigger_event = agot_ninepenny.1015 }
+					1 = { trigger_event = agot_ninepenny.1006 }
+				}
+			}
+			else_if = {
+				limit = { has_game_rule = summerhall_seven_wild }
+				title:c_ruins.holder = {
+					trigger_event = {
+						id = agot_ninepenny.9101
+						years = 1
+					}
+				}
+				trigger_event = agot_ninepenny.1006
+			}
+			else = {
+				if = {
+					limit = {
+						OR = {
+							has_game_rule = summerhall_guaranteed
+							has_game_rule = summerhall_guaranteed_all_seven
+						}
+					}
+					save_scope_as = no_tragedy
+					save_scope_as = dragon_hatched
+				}
+				else_if = {
+					limit = { has_game_rule = summerhall_very_likely }
+					random = {
+						chance = 50
+						save_scope_as = no_tragedy
+						save_scope_as = dragon_hatched
+					}
+				}
+				else = {
+					#chance of no tragedy
+					random = {
+						chance = 0
+						modifier = {
+							maelys_yes_sacrifice_yes = yes
+							add = 92
+						}
+						modifier = {
+							maelys_yes_sacrifice_no = yes
+							add = 70
+						}
+						modifier = {
+							maelys_no_sacrifice_yes = yes
+							add = 50
+						}
+						modifier = {
+							maelys_no_sacrifice_no = yes
+							add = 63
+						}
+						modifier = {
+							has_game_rule = agot_story_historical_events_weighted_outcomes
+							factor = 0.5
+						}
+						modifier = {
+							has_game_rule = agot_story_historical_events_historical_outcomes
+							factor = 0
+						}
+						save_scope_as = no_tragedy
+						random = {
+							chance = 0
+							modifier = {
+								maelys_yes_sacrifice_yes = yes
+								add = 98 #total 90
+							}
+							modifier = {
+								maelys_yes_sacrifice_no = yes
+								add = 21 #total 15
+							}
+							modifier = {
+								maelys_no_sacrifice_yes = yes
+								add = 50 #total 25
+							}
+							modifier = {
+								maelys_no_sacrifice_no = yes
+								add = 13 #total 8
+							}
+							save_scope_as = dragon_hatched
+						}
+					}
+				}
+				#Maelys hatched already, three heads of the dragon
+				if = {
+					limit = {
+						exists = scope:dragon_hatched
+						any_in_global_list = {
+							variable = living_dragons
+							exists = this
+						}
+					}
+					random_character_artifact = {
+						limit = {
+							prev = character:Targaryen_122
+							has_variable = dragon_egg
+							var:dragon_egg_color ?= flag:greengrey
+						}
+						alternative_limit = {
+							has_variable = dragon_egg
+						}
+						set_variable = {
+							name = selected_egg_for_hatching
+							value = yes
+						}
+						save_scope_as = egg
+					}
+					add_character_flag = summerhall_hatched_dragon_three
+					#3 eggs hatch
+					# Bond at least one
+					agot_spawn_bonded_hatchling_from_egg_effect = { OWNER = root EGG = scope:egg }
+					if = {
+						limit = {
+							scope:sacrifice ?= character:Targaryen_2
+						}
+						scope:dragon = {
+							agot_clear_dragon_genetic_traits_effect = yes
+							add_trait = dragon_swift
+							add_trait = dragon_majestic
+						}
+					}
+					scope:dragon = {
+						if = {
+							limit = { NOT = { has_trait = dragon_destined } }
+							add_trait = dragon_destined
+						}
+						save_scope_as = dragon_first
+						add_to_list = hatched_dragons
+					}
+					add_character_flag = summerhall_hatched_dragon_multiple
+					if = {
+						limit = { has_game_rule = summerhall_guaranteed_all_seven }
+						every_character_artifact = {
+							limit = {
+								has_all_variables = {
+									name = dragon_egg
+									name = agot_artifact_cannot_gift
+								}
+								NOT = { has_variable = selected_egg_for_hatching }
+							}
+							save_scope_as = this_egg
+							summerhall_extra_dragons_creation_effect = yes
+							scope:dragon = {
+								if = {
+									limit = { NOT = { has_trait = dragon_destined } }
+									add_trait = dragon_destined
+								}
+								add_to_list = hatched_dragons
+							}
+						}
+					}
+					else = {
+						random_character_artifact = {
+							limit = { has_variable = dragon_egg }
+							summerhall_extra_dragons_creation_effect = yes
+							scope:dragon = {
+								if = {
+									limit = { NOT = { has_trait = dragon_destined } }
+									add_trait = dragon_destined
+								}
+								add_to_list = hatched_dragons
+							}
+						}
+						random_character_artifact = {
+							limit = { has_variable = dragon_egg }
+							summerhall_extra_dragons_creation_effect = yes
+							scope:dragon = {
+								if = {
+									limit = { NOT = { has_trait = dragon_destined } }
+									add_trait = dragon_destined
+								}
+								add_to_list = hatched_dragons
+							}
+						}
+					}
+					every_character_artifact = {
+						limit = {
+							has_all_variables = {
+								name = dragon_egg
+								name = agot_artifact_cannot_gift
+							}
+						}
+						root = { destroy_owned_artifact = prev }
+					}
+					trigger_event = agot_ninepenny.1012
+				}
+				#Random dragons hatch
+				else_if = {
+					limit = {
+						exists = scope:dragon_hatched
+					}
+					random_character_artifact = {
+						limit = {
+							prev = character:Targaryen_122
+							has_variable = dragon_egg
+							var:dragon_egg_color ?= flag:greengrey
+						}
+						alternative_limit = {
+							has_variable = dragon_egg
+						}
+						set_variable = {
+							name = selected_egg_for_hatching
+							value = yes
+						}
+						save_scope_as = egg
+					}
+					#random eggs hatch
+					# Bond at least one
+					agot_spawn_bonded_hatchling_from_egg_effect = { OWNER = root EGG = scope:egg }
+					if = {
+						limit = {
+							scope:sacrifice ?= character:Targaryen_2
+						}
+						scope:dragon = {
+							agot_clear_dragon_genetic_traits_effect = yes
+							add_trait = dragon_swift
+							add_trait = dragon_majestic
+						}
+					}
+					scope:dragon = {
+						if = {
+							limit = { NOT = { has_trait = dragon_destined } }
+							add_trait = dragon_destined
+						}
+						save_scope_as = dragon_first
+						add_to_list = hatched_dragons
+					}
+					# Create others
+					every_character_artifact = {
+						limit = {
+							has_all_variables = {
+								name = dragon_egg
+								name = agot_artifact_cannot_gift
+							}
+							NOT = { has_variable = selected_egg_for_hatching }
+						}
+						save_scope_as = this_egg
+						if = {
+							limit = {
+								OR = {
+									has_game_rule = summerhall_guaranteed_all_seven
+									has_game_rule = can_hatch_multiple_dragons_yes_all
+								}
+							}
+							summerhall_extra_dragons_creation_effect = yes
+							root = { add_character_flag = summerhall_hatched_dragon_multiple }
+							scope:dragon = {
+								if = {
+									limit = { NOT = { has_trait = dragon_destined } }
+									add_trait = dragon_destined
+								}
+								add_to_list = hatched_dragons
+							}
+						}
+						else_if = {
+							limit = { has_game_rule = can_hatch_multiple_dragons_no }
+							root = { destroy_owned_artifact = scope:this_egg }
+						}
+						else = {
+							random_list = {
+								5 = {
+									modifier = {
+										has_game_rule = can_hatch_multiple_dragons_yes_25_percent
+										add = 20
+									}
+									modifier = {
+										has_game_rule = can_hatch_multiple_dragons_yes_50_percent
+										add = 45
+									}
+									modifier = {
+										has_game_rule = can_hatch_multiple_dragons_yes_75_percent
+										add = 70
+									}
+									modifier = {
+										has_game_rule = can_hatch_multiple_dragons_yes_95_percent
+										add = 90
+									}
+									modifier = {
+										has_variable = dragon_embryo
+										agot_canon_dragons_enabled = yes
+										has_game_rule = canon_dragon_egg_hatch_likelihood_less_likely
+										factor = 0.5
+									}
+									modifier = {
+										has_variable = dragon_embryo
+										agot_canon_dragons_enabled = yes
+										has_game_rule = canon_dragon_egg_hatch_likelihood_more_likely
+										factor = 2
+									}
+									modifier = {
+										has_variable = dragon_embryo
+										agot_canon_dragons_enabled = yes
+										has_game_rule = canon_dragon_egg_hatch_likelihood_common
+										factor = 5
+									}
+									summerhall_extra_dragons_creation_effect = yes
+									root = { add_character_flag = summerhall_hatched_dragon_multiple }
+									scope:dragon = {
+										if = {
+											limit = { NOT = { has_trait = dragon_destined } }
+											add_trait = dragon_destined
+										}
+										add_to_list = hatched_dragons
+									}
+								}
+								95 = {
+									modifier = {
+										has_game_rule = can_hatch_multiple_dragons_yes_25_percent
+										add = -20
+									}
+									modifier = {
+										has_game_rule = can_hatch_multiple_dragons_yes_50_percent
+										add = -45
+									}
+									modifier = {
+										has_game_rule = can_hatch_multiple_dragons_yes_75_percent
+										add = -70
+									}
+									modifier = {
+										has_game_rule = can_hatch_multiple_dragons_yes_95_percent
+										add = -90
+									}
+									modifier = {
+										has_variable = dragon_embryo
+										agot_canon_dragons_enabled = yes
+										has_game_rule = canon_dragon_egg_hatch_likelihood_guaranteed
+										factor = 0
+									}
+									root = { destroy_owned_artifact = scope:this_egg }
+								}
+							}
+						}
+					}
+					trigger_event = agot_ninepenny.1012
+				}
+				#Non-lethal failure
+				else_if = {
+					limit = {
+						exists = scope:no_tragedy
+					}
+					trigger_event = agot_ninepenny.1015
+				}
+				else = {
+					random = {
+						chance = 0
+						modifier = {
+							maelys_yes_sacrifice_yes = yes
+							add = 63 #total 5
+						}
+						modifier = {
+							maelys_yes_sacrifice_no = yes
+							add = 7 #total 2
+						}
+						modifier = {
+							maelys_no_sacrifice_yes = yes
+							add = 10 #total 5
+						}
+						modifier = {
+							maelys_no_sacrifice_no = yes
+							add = 8 #total 2
+						}
+						modifier = {
+							has_game_rule = agot_story_historical_events_weighted_outcomes
+							factor = 0.5
+						}
+						modifier = {
+							has_game_rule = agot_story_historical_events_historical_outcomes
+							factor = 0
+						}
+						title:c_ruins.holder = {
+							trigger_event = {
+								id = agot_ninepenny.9101
+								years = 1
+							}
+						}
+					}
+					trigger_event = agot_ninepenny.1006
+				}
+			}
+		}
+	}
+}

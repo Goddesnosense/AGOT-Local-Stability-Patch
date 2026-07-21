@@ -1,0 +1,34 @@
+﻿AGOT LOCAL STABILITY — DRAGON GENE SAFETY SAFE 0.5.2
+
+OBJETIVO
+Eliminar las 72 lecturas inseguras detectadas en los 36 gene_*_svalue
+que todavía no estaban protegidos y reforzar también los seis bloques
+protegidos anteriormente.
+
+ALCANCE
+- 42 definiciones gene_*_svalue protegidas.
+- 84 lecturas de dragon_var_story_val.
+- 84 comprobaciones exists.
+- 84 comprobaciones has_variable del gen leído.
+- 42 comprobaciones has_variable = current_dragon.
+- 42 restricciones has_trait = dragon para la rama del dragón.
+- 39 fallbacks de valor 0.
+- 3 fallbacks de template con valor 1:
+  main_horn_shape, body_shading y wings_shading.
+
+NO MODIFICA
+- gl_dragon_variable_storage.
+- Variables válidas ya guardadas.
+- Eventos de creación de dragones.
+- More Dragon Eggs.
+- Partidas guardadas.
+- Los tres script_values no incluidos:
+  dragon_age, dragon_size y gene_dragonrider_size.
+
+COMPORTAMIENTO
+Cuando existe almacenamiento válido, el resultado visual es el mismo.
+Cuando falta el registro o la variable, el script devuelve un fallback
+seguro en vez de leer un scope inexistente.
+
+REQUISITO
+Debe haberse instalado antes SAFE 0.5.1-StructuralDNA.

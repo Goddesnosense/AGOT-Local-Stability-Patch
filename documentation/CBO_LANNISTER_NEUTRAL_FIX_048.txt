@@ -1,0 +1,22 @@
+﻿AGOT / CBO — Lannister Neutral Asset Fix 0.4.8
+Installed: 07/13/2026 13:29:13
+
+Reason:
+The minidump still reported that the muscular blend-shape mesh had
+fewer meshes than the base Lannister high-armour object.
+
+Containment:
+All nine blend-shape registrations and all nine body attributes for
+this single female Lannister high-armour entity are disabled.
+
+Preserved:
+- Base mesh
+- Two meshsettings/material slots
+- Entity name
+- Pattern mask and variation data
+
+Expected visual side effect:
+This armour will keep a neutral body shape instead of morphing with
+pregnant, fat, gaunt, muscular, old, dwarf, infant or breast-size genes.
+
+No original AGOT+ or CBO files were modified.

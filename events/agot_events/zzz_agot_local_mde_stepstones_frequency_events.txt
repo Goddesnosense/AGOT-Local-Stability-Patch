@@ -1,0 +1,38 @@
+﻿# AGOT Local Stability 0.6.5
+# MDE Stepstones frequency rebase with zero-frequency loop guard.
+
+agot_adventurers_events.0001 = {
+	scope = none
+	hidden = yes
+
+	immediate = {
+		if = { # MDE Modified
+			limit = { stepstone_invasion_years > 0 }
+			trigger_event = {
+				id = agot_adventurers_events.0002
+				years = stepstone_invasion_years
+			}
+		}
+	}
+}
+
+agot_adventurers_events.0002 = {
+	scope = none
+	hidden = yes
+
+	immediate = {
+		#Launch the adventurer spawning events.
+		trigger_event = {
+			id = agot_adventurers_events.0003
+			days = { 0 365 }
+		}
+		# Trigger the next wave only while the rule is enabled.
+		if = {
+			limit = { stepstone_invasion_years > 0 }
+			trigger_event = {
+				id = agot_adventurers_events.0002
+				years = stepstone_invasion_years
+			}
+		}
+	}
+}

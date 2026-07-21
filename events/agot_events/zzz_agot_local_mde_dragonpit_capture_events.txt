@@ -1,0 +1,553 @@
+﻿# AGOT Local Stability Patch 0.6.1 — configurable dragon capture cooldown
+
+agot_dragon_pits.1200 = {
+	type = character_event
+	title = agot_dragon_pits.1200.t
+	desc = agot_dragon_pits.1200.desc
+
+	theme = dragon
+	override_background = { reference = agot_dragonpit }
+
+	left_portrait = {
+		character = root
+		animation = marshal
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				employs_court_position = head_dragonkeeper_court_position
+			}
+			random_court_position_holder = {
+				type = head_dragonkeeper_court_position
+				save_scope_as = head_dragonkeeper
+			}
+		}
+	}
+
+	# Have the Dragonkeepers face the beast
+	option = {
+		name = agot_dragon_pits.1200.a
+		trigger = {
+			employs_court_position = head_dragonkeeper_court_position
+		}
+		scope:head_dragonkeeper = {
+			duel = {
+				skills = { learning }
+				value = high_skill_rating
+				55 = {
+					desc = agot_dragon_pits.1200.a.success
+					compare_modifier = {
+						value = scope:duel_value
+						multiplier = 3.5
+						min = -25
+					}
+					modifier = {
+						add = 10
+						knows_language = language_agot_valyrian
+					}
+					modifier = {
+						add = {
+							value = 0
+							add = scope:head_dragonkeeper.aptitude:head_dragonkeeper_court_position
+							multiply = 6.5
+						}
+					}
+					modifier = {
+						add = {
+							value = 0
+							add = {
+								value = scope:head_dragonkeeper.dragonblood_percent
+							}
+							divide = 5
+						}
+						agot_is_dragonblood_character = yes
+					}
+					modifier = {
+						add = scope:wild_dragon.temperament
+					}
+					modifier = {
+						add = scope:wild_dragon.taming_chance
+					}
+					modifier = {
+						add = 30
+						scope:wild_dragon = { agot_dragon_is_wounded_or_ill_trigger = yes }
+					}
+					modifier = {
+						add = 20
+						scope:wild_dragon = {
+							dragon_passes_vibe_check_for_capturing = yes
+						}
+					}
+					root = {
+						send_interface_toast = {
+							title = agot_dragon_pits.1200.a.success
+							left_icon = scope:wild_dragon
+							scope:head_dragonkeeper = {
+								add_prestige = medium_prestige_gain
+							}
+						}
+					}
+					scope:wild_dragon = {
+						agot_set_as_owned_dragon = { OWNER = root DRAGON = scope:wild_dragon}
+						agot_send_to_dragonpit_effect = { DRAGON = scope:wild_dragon DRAGONPIT_HOLDER = root DRAGONPIT_COUNTY = scope:dragon_pit_location }
+					}
+				}
+				45 = {
+					desc = agot_dragon_pits.1200.a.failure
+					compare_modifier = {
+						value = scope:duel_value
+						multiplier = -3.5
+						min = -25
+					}
+					modifier = {
+						add = scope:wild_dragon.dread
+					}
+					modifier = {
+						add = 25
+						scope:wild_dragon = {
+							dragon_is_menacing_or_mean = yes
+						}
+					}
+					root = {
+						send_interface_toast = {
+							title = agot_dragon_pits.1200.a.failure
+							left_icon = scope:wild_dragon
+							random_list = {
+								60 = {
+									scope:head_dragonkeeper = {
+										custom_tooltip = {
+											text = reason_death_dragon_burned_keeper
+											death = {
+												death_reason = death_dragon_fire
+												killer = scope:wild_dragon
+											}
+										}
+									}
+								}
+								40 = {
+									scope:head_dragonkeeper = {
+										custom_tooltip = {
+											text = reason_death_dragon_ate_keeper
+											death = {
+												death_reason = death_dragon_ate
+												killer = scope:wild_dragon
+											}
+										}
+									}
+								}
+								10 = {
+									scope:head_dragonkeeper = {
+										increase_wounds_effect = { REASON = dragon }
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = agot_capture_dragon_cd_tt
+		set_variable = {
+			name = capture_cd
+			value = yes
+			days = capture_cd_val # MDE Modified
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+	# Face the beast yourself
+	option = {
+		name = agot_dragon_pits.1200.b
+		trigger = {
+			is_adult = yes
+		}
+		duel = {
+			skills = { learning prowess }
+			value = high_skill_rating
+			50 = {
+				desc = agot_dragon_pits.1200.a.success
+				compare_modifier = {
+					value = scope:duel_value
+					multiplier = 3.5
+					min = -25
+				}
+				modifier = {
+					add = root.var:dragonlore
+					exists = root.var:dragonlore
+				}
+				modifier = {
+					add = {
+						value = 0
+						add = {
+							value = root.dragonblood_percent
+						}
+						divide = 3
+					}
+					agot_is_dragonblood_character = yes
+				}
+				modifier = {
+					add = 10
+					knows_language = language_agot_valyrian
+				}
+				modifier = {
+					add = scope:wild_dragon.temperament
+				}
+				modifier = {
+					add = scope:wild_dragon.taming_chance
+				}
+				modifier = {
+					add = 25
+					scope:wild_dragon = { agot_dragon_is_wounded_or_ill_trigger = yes }
+				}
+				modifier = {
+					add = 15
+					scope:wild_dragon = {
+						dragon_passes_vibe_check_for_capturing = yes
+					}
+				}
+				send_interface_toast = {
+					title = agot_dragon_pits.1200.a.success
+					left_icon = scope:wild_dragon
+					add_prestige = medium_prestige_gain
+				}
+				scope:wild_dragon = {
+					agot_set_as_owned_dragon = { OWNER = root DRAGON = scope:wild_dragon}
+					agot_send_to_dragonpit_effect = { DRAGON = scope:wild_dragon DRAGONPIT_HOLDER = root DRAGONPIT_COUNTY = scope:dragon_pit_location }
+				}
+
+			}
+			50 = {
+				desc = agot_dragon_pits.1200.a.failure
+				compare_modifier = {
+					value = scope:duel_value
+					multiplier = -3.5
+					min = -25
+				}
+				modifier = {
+					add = scope:wild_dragon.dread
+				}
+				modifier = {
+					add = 25
+					scope:wild_dragon = {
+						dragon_is_menacing_or_mean = yes
+					}
+				}
+				send_interface_toast = {
+					title = agot_dragon_pits.1200.a.failure
+					left_icon = scope:wild_dragon
+					random_list = {
+						60 = {
+							root = {
+								custom_tooltip = {
+									text = reason_death_dragon_burned
+									death = {
+										death_reason = death_dragon_fire
+										killer = scope:wild_dragon
+									}
+								}
+							}
+						}
+						40 = {
+							root = {
+								custom_tooltip = {
+									text = reason_death_dragon_ate
+									death = {
+										death_reason = death_dragon_ate
+										killer = scope:wild_dragon
+									}
+								}
+							}
+						}
+						10 = {
+							root = {
+								increase_wounds_effect = { REASON = dragon }
+							}
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = agot_capture_dragon_cd_tt
+		set_variable = {
+			name = capture_cd
+			value = yes
+			days = capture_cd_val # MDE Modified
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 5
+				has_trait = eccentric
+			}
+		}
+	}
+	# Have your captains try
+	option = {
+		name = agot_dragon_pits.1200.c
+		trigger = {
+			any_knight = {
+				vassal_can_be_used_to_force_dragon_into_pit = yes
+				count > 0
+			}
+			NOT = { exists = var:si_selected_character }
+		}
+		trigger_event = agot_dragon_pits.1201
+		ai_chance = {
+			base = 5
+		}
+	}
+	# Actually, nevermind
+	option = {
+		name = agot_dragon_pits.1200.d
+	}
+}
+
+agot_dragon_pits.1201 = {
+	type = character_event
+	title = agot_dragon_pits.1201.t
+	desc = agot_dragon_pits.1201.desc
+
+	theme = dragon
+	override_background = { reference = agot_dragonpit }
+
+	widget = {
+		is_shown = {
+			is_ai = no
+		}
+		gui = "agot_character_selection_two_options"
+		container = "custom_widgets_container"
+	}
+
+	left_portrait = {
+		character = root
+		animation = marshal
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				is_ai = no
+			}
+			every_knight = {
+				limit = {
+					vassal_can_be_used_to_force_dragon_into_pit = yes
+				}
+				root = {
+					add_to_variable_list = {
+						name = possible_characters
+						target = prev
+					}
+					set_variable = { name = si_selected_character value = prev }
+				}
+			}
+		}
+		else = {
+			random_knight = {
+				limit = {
+					vassal_can_be_used_to_force_dragon_into_pit = yes
+				}
+				save_scope_as = knight
+			}
+		}
+	}
+
+	# Have your captains try
+	option = {
+		name = agot_dragon_pits.1201.a
+		if = {
+			limit = {
+				is_ai = no
+			}
+			var:si_selected_character = {
+				save_scope_as = knight
+				remove_variable = si_selecting_character
+			}
+			remove_variable = si_selected_character
+			clear_variable_list = possible_characters
+		}
+		random_list = {
+			30 = {
+				trigger = {
+					scope:wild_dragon = { dragon_is_menacing_or_mean = yes }
+				}
+				send_interface_toast = {
+					title = agot_dragon_pits.1201.refusal.t
+					custom_tooltip = agot_dragon_pits.1201.refusal.desc
+					left_icon = scope:wild_dragon
+				}
+				modifier = {
+					add = 100
+					scope:knight = {
+						has_trait = craven
+					}
+				}
+			}
+			70 = {
+				scope:knight = {
+					duel = {
+						skills = { prowess }
+						target = scope:wild_dragon
+						45 = {
+							desc = agot_dragon_pits.1200.a.success
+							compare_modifier = {
+								value = scope:duel_value
+								multiplier = 3.5
+								min = -25
+							}
+							modifier = {
+								add = scope:knight.var:dragonlore
+								exists = scope:knight.var:dragonlore
+							}
+							# Dragonblood
+							modifier = {
+								add = {
+									value = 0
+									add = {
+										value = scope:knight.dragonblood_percent
+									}
+									divide = 5
+								}
+								agot_is_dragonblood_character = yes
+							}
+							modifier = {
+								add = 10
+								knows_language = language_agot_valyrian
+							}
+							modifier = {
+								add = scope:wild_dragon.temperament
+							}
+							modifier = {
+								add = scope:wild_dragon.taming_chance
+							}
+							modifier = {
+								add = 25
+								scope:wild_dragon = { agot_dragon_is_wounded_or_ill_trigger = yes }
+							}
+							modifier = {
+								add = 15
+								scope:wild_dragon = {
+									dragon_passes_vibe_check_for_capturing = yes
+								}
+							}
+							root = {
+								send_interface_toast = {
+									title = agot_dragon_pits.1200.a.success
+									left_icon = scope:wild_dragon
+									scope:knight = {
+										add_prestige = medium_prestige_gain
+									}
+								}
+							}
+							scope:wild_dragon = {
+								agot_set_as_owned_dragon = { OWNER = root DRAGON = scope:wild_dragon}
+								agot_send_to_dragonpit_effect = { DRAGON = scope:wild_dragon DRAGONPIT_HOLDER = root DRAGONPIT_COUNTY = scope:dragon_pit_location }
+							}
+						}
+						55 = {
+							desc = agot_dragon_pits.1200.a.failure
+							compare_modifier = {
+								value = scope:duel_value
+								multiplier = -3.5
+								min = -25
+							}
+							modifier = {
+								add = scope:wild_dragon.dread
+							}
+							modifier = {
+								add = 25
+								scope:wild_dragon = {
+									dragon_is_menacing_or_mean = yes
+								}
+							}
+							root = {
+								send_interface_toast = {
+									title = agot_dragon_pits.1200.a.failure
+									left_icon = scope:wild_dragon
+									random_list = {
+										60 = {
+											scope:knight = {
+												death = {
+													death_reason = death_dragon_fire
+													killer = scope:wild_dragon
+												}
+											}
+										}
+										40 = {
+											scope:knight = {
+												death = {
+													death_reason = death_dragon_ate
+													killer = scope:wild_dragon
+												}
+											}
+										}
+										10 = {
+											scope:knight = {
+												increase_wounds_effect = { REASON = dragon }
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				modifier = {
+					add = 50
+					scope:knight = {
+						OR = {
+							has_trait = loyal
+							root = {
+								has_usable_hook = this
+							}
+						}
+					}
+				}
+				modifier = {
+					add = 30
+					scope:knight = {
+						OR = {
+							has_trait = ambitious
+							has_trait = brave
+						}
+					}
+				}
+				modifier = {
+					add = 30
+					scope:knight = {
+						has_trait = dragonslayer
+					}
+				}
+				modifier = {
+					add = 20
+					dragon_passes_vibe_check_for_capturing = yes
+				}
+				modifier = {
+					add = 50
+					scope:wild_dragon = { dragon_is_menacing_or_mean = no }
+				}
+			}
+		}
+		custom_tooltip = agot_capture_dragon_cd_tt
+		set_variable = {
+			name = capture_cd
+			value = yes
+			days = capture_cd_val # MDE Modified
+		}
+	}
+	# Actually, nevermind
+	option = {
+		name = agot_dragon_pits.1200.d
+		if = {
+			limit = {
+				is_ai = no
+			}
+			var:si_selected_character = {
+				remove_variable = si_selecting_character
+			}
+			remove_variable = si_selected_character
+			clear_variable_list = possible_characters
+		}
+	}
+}

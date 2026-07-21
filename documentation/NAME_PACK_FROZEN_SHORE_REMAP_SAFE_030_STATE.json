@@ -1,0 +1,53 @@
+﻿{
+    "Version":  "0.3.0",
+    "InstalledAt":  "2026-07-16T16:07:42.9857182+02:00",
+    "BackupPath":  "D:\\Paradox Interactive\\Crusader Kings III\\BACKUPS_MODS_MANUALES\\AGOT_NAME_PACK_FROZEN_SHORE_REMAP_SAFE_030_20260716_160742",
+    "Items":  [
+                  {
+                      "Key":  "Target",
+                      "Relative":  "common\\culture\\cultures\\00_agot_cul_wildling.txt",
+                      "HadPrevious":  false
+                  },
+                  {
+                      "Key":  "OldNameList",
+                      "Relative":  "common\\culture\\name_lists\\00_agot_name_lists_first_man.txt",
+                      "HadPrevious":  true
+                  },
+                  {
+                      "Key":  "OldEquiv",
+                      "Relative":  "common\\culture\\name_equivalency\\zz_agot_wildling_animals_full_equivalency_safe_020.txt",
+                      "HadPrevious":  true
+                  },
+                  {
+                      "Key":  "OldNamePackDoc",
+                      "Relative":  "documentation\\NAME_PACK_WILDLING_LIST_COMPAT_SAFE_010.txt",
+                      "HadPrevious":  true
+                  },
+                  {
+                      "Key":  "OldNamePackState",
+                      "Relative":  "documentation\\NAME_PACK_WILDLING_LIST_COMPAT_SAFE_010_STATE.json",
+                      "HadPrevious":  true
+                  },
+                  {
+                      "Key":  "OldEquivDoc",
+                      "Relative":  "documentation\\WILDLING_ANIMAL_EQUIVALENCY_FULL_SAFE_020.txt",
+                      "HadPrevious":  true
+                  },
+                  {
+                      "Key":  "OldEquivState",
+                      "Relative":  "documentation\\WILDLING_ANIMAL_EQUIVALENCY_FULL_SAFE_020_STATE.json",
+                      "HadPrevious":  true
+                  },
+                  {
+                      "Key":  "Doc",
+                      "Relative":  "documentation\\NAME_PACK_FROZEN_SHORE_REMAP_SAFE_030.txt",
+                      "HadPrevious":  false
+                  },
+                  {
+                      "Key":  "State",
+                      "Relative":  "documentation\\NAME_PACK_FROZEN_SHORE_REMAP_SAFE_030_STATE.json",
+                      "HadPrevious":  false
+                  }
+              ],
+    "PayloadSHA256":  "2b71305051cfd4b28a2d23201476b070faf3c74181dde2db91ad68fac20dc175"
+}

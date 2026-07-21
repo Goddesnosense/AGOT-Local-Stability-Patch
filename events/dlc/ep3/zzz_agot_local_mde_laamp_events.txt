@@ -1,0 +1,333 @@
+﻿# AGOT Local Stability Patch 0.6.0 — MDE landless inheritance rules
+
+ep3_laamps.0010 = {
+	type = character_event
+	window = fullscreen_event
+	title = ep3_laamps.0010.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					any_sibling = { count >= 2 }
+				}
+				desc = ep3_laamps.0010.multi
+			}
+			desc = ep3_laamps.0010.single
+		}
+		desc = ep3_laamps.0010.desc
+		triggered_desc = {
+			trigger = { exists = scope:inheritor_1 }
+			desc = ep3_laamps.0010.inheritor_1
+		}
+		triggered_desc = {
+			trigger = { exists = scope:inheritor_2 }
+			desc = ep3_laamps.0010.inheritor_2
+		}
+		triggered_desc = {
+			trigger = { exists = scope:inheritor_3 }
+			desc = ep3_laamps.0010.inheritor_3
+		}
+		desc = ep3_laamps.0010.laamp
+	}
+	theme = realm
+	left_portrait = {
+		character = root
+		animation = personality_cynical
+	}
+	right_portrait = {
+		character = scope:potential_laamp
+		animation = marshal
+		outfit_tags = { military_outfit }
+	}
+	lower_right_portrait = scope:deceased
+	override_background = { reference = ep3_fullscreen_adventurer_positive }
+	cooldown = { years = 25 }
+
+	trigger = {
+		is_ai = no
+		NOT = { has_character_flag = become_laamp_event_cooldown }
+		NOT = { has_game_rule = can_children_be_landless_never } # MDE Modified
+		NAND = {
+			has_game_rule = can_children_be_landless_not_targaryen
+			dynasty = dynasty:dynn_Targaryen
+		}
+	}
+
+	immediate = {
+		play_music_cue = adventure_begin_cue
+		add_character_flag = {
+			flag = become_laamp_event_cooldown
+			days = 5
+		}
+		# Save highest inherited title
+		ordered_held_title = {
+			limit = { ep3_laamp_inheritor_title_trigger = yes }
+			order_by = tier
+			position = 0
+			save_scope_as = inherited
+		}
+		# Save inheritors for loc
+		every_sibling = {
+			limit = {
+				any_held_title = { ep3_laamp_inheritor_title_trigger = yes }
+				NAND = { # MDE Modified
+					has_game_rule = can_children_be_landless_not_dragonrider
+					has_trait = dragonrider
+				}
+			}
+			add_to_list = inheritors
+		}
+		ordered_in_list = {
+			list = inheritors
+			order_by = age
+			max = 3
+			check_range_bounds = no
+			if = {
+				limit = { exists = scope:inheritor_2 }
+				save_scope_as = inheritor_3
+			}
+			else_if = {
+				limit = { exists = scope:inheritor_1 }
+				save_scope_as = inheritor_2
+			}
+			else = { save_scope_as = inheritor_1 }
+			ordered_held_title = {
+				limit = { ep3_laamp_inheritor_title_trigger = yes }
+				order_by = tier
+				position = 0
+				if = {
+					limit = { exists = scope:inherited_2 }
+					save_scope_as = inherited_3
+				}
+				else_if = {
+					limit = { exists = scope:inherited_1 }
+					save_scope_as = inherited_2
+				}
+				else = { save_scope_as = inherited_1 }
+			}
+		}
+		scope:potential_laamp = {
+			create_landless_adventurer_title_effect = {
+				REASON = flag:succession
+				FLAVOR_CHAR = root
+			}
+			adventurer_prestige_reset_effect = yes
+		}
+	}
+
+	option = {
+		name = ep3_laamps.0010.a
+	}
+
+	option = {
+		name = ep3_laamps.0010.b
+		add_internal_flag = special
+		set_player_character = scope:potential_laamp
+	}
+}
+
+ep3_laamps.0011 = {
+	type = character_event
+	hidden = yes
+
+	trigger = {
+		save_temporary_scope_as = heir_temp
+		any_sibling = {
+			ep3_laamp_interesting_sibling_trigger = { COMPARISON = scope:heir_temp }
+		}
+		NOT = { has_game_rule = can_children_be_landless_never } # MDE Modified
+		NAND = {
+			has_game_rule = can_children_be_landless_not_targaryen
+			dynasty = dynasty:dynn_Targaryen
+		}
+	}
+
+	immediate = {
+		save_scope_as = heir
+		# Save potential laamp
+		ordered_sibling = {
+			limit = {
+				ep3_laamp_interesting_sibling_trigger = { COMPARISON = scope:heir }
+				NAND = { # MDE Modified
+					has_game_rule = can_children_be_landless_not_dragonrider
+					has_trait = dragonrider
+				}
+			}
+			order_by = ep3_laamp_chance_score_value
+			save_scope_as = potential_laamp
+		}
+		random = {
+			chance = 0
+			#AGOT Disabled
+			#modifier = { # Bonus for players
+			#	is_ai = no
+			#	add = 25
+			#}
+			modifier = { add = scope:potential_laamp.ep3_laamp_chance_score_value }
+			if = {
+				limit = {
+					is_ai = yes
+					ai_can_valid_to_create_laamp_trigger = yes
+				}
+				scope:potential_laamp = {
+					create_landless_adventurer_title_effect = {
+						REASON = flag:succession
+						FLAVOR_CHAR = scope:heir
+					}
+				}
+				if = { # Debug tracking
+					limit = { exists = global_var:ai_succession_laamp_count }
+					change_global_variable = {
+						name = ai_succession_laamp_count
+						add = 1
+					}
+				}
+				else = {
+					set_global_variable = {
+						name = ai_succession_laamp_count
+						value = 1
+					}
+				}
+				debug_log = "AI became adventurer by succession"
+				debug_log_scopes = yes
+			}
+			else = { trigger_event = ep3_laamps.0010 }
+		}
+	}
+}
+
+ep3_laamps.0030 = {
+	type = character_event
+	window = fullscreen_event
+	title = ep3_laamps.0030.t
+	desc = {
+		desc = ep3_laamps.0030.desc
+		first_valid = {
+			triggered_desc = {
+				trigger = { exists = scope:laamp_heir }
+				desc = ep3_laamps.0030.heir
+			}
+			triggered_desc = {
+				trigger = { exists = scope:laamp_liege }
+				desc = ep3_laamps.0030.liege
+			}
+			desc = ep3_laamps.0030.new
+		}
+	}
+	theme = realm
+	left_portrait = {
+		character = root
+		animation = marshal
+	}
+	lower_right_portrait = scope:laamp_inheritor
+	override_background = { reference = ep3_fullscreen_adventurer_positive }
+	cooldown = { days = 5 }
+
+	trigger = { # MDE Modified
+		exists = scope:laamp_inheritor 
+		OR = {
+			has_game_rule = can_children_be_landless_default
+			AND = {
+				has_game_rule = can_children_be_landless_not_dragonrider
+				root = {
+					NOT = { has_trait = dragonrider }
+				}
+			}
+			AND = {
+				has_game_rule = can_children_be_landless_not_targaryen
+				root = {
+					NOT = { dynasty = dynasty:dynn_Targaryen }
+				}
+			}
+		}
+	}
+
+	immediate = {
+		play_music_cue = adventure_begin_cue
+		# Save scopes for loc
+		primary_title = { save_scope_as = old_primary_title }
+		capital_province = { save_scope_as = old_capital_province }
+		if = {
+			limit = { top_liege != this }
+			liege = { save_scope_as = old_liege }
+		}
+		# Transfer landed titles
+		every_held_title = {
+			title_tier > barony
+			limit = {
+				OR = {
+					is_landless_type_title = no
+					#AGOT Modified
+					#is_nomad_title = yes
+					AND = {
+						is_nomad_title = yes
+						title_domicile ?= {
+							agot_domicile_is_non_nomad_county_tier_domicile_trigger = no
+						}
+					}
+				}
+			}
+			add_to_list = target_titles
+		}
+		create_title_and_vassal_change = {
+			type = conquest
+			save_scope_as = change
+			add_claim_on_loss = no
+		}
+		hidden_effect = {
+			every_in_list = {
+				list = target_titles
+				change_title_holder_include_vassals = {
+					holder = scope:laamp_inheritor
+					change = scope:change
+				}
+			}
+			resolve_title_and_vassal_change = scope:change
+		}
+		# Create Adventurer
+		create_landless_adventurer_title_effect = {
+			REASON = flag:voluntary
+			FLAVOR_CHAR = scope:laamp_inheritor
+		}
+		scope:laamp_inheritor = {
+			# Tooltip for player
+			custom_tooltip = become_landless_adventurer_decision_title_scope_tt
+			# Create a loving family so inheritance isn't so borked
+			if = {
+				limit = { has_character_flag = new_laamp_inheritor }
+				trigger_event = game_rule.1001
+				remove_character_flag = new_laamp_inheritor
+			}
+			#AGOT Added
+			if = {
+				limit = {
+					has_government = pirate_government
+					NOT = {
+						any_held_title = { agot_is_pirate_domicile_title_trigger = yes }
+					}
+				}
+				agot_create_pirate_domicile_effect = { PIRATE = scope:laamp_inheritor }
+			}
+		}
+		scope:old_liege ?= { trigger_event = ep3_laamps.0032 }
+		adventurer_prestige_reset_effect = yes
+		hidden_effect = {
+			every_held_title = {
+				limit = {
+					is_noble_family_title = yes
+				}
+				root = { destroy_title = prev }
+			}
+		}
+	}
+
+	option = {
+		name = ep3_laamps.0030.a
+		create_landless_adventurer_title_tooltip_effect = yes
+		add_prestige = medium_prestige_gain
+		add_character_modifier = {
+			modifier = ep3_voluntary_laamp_character_modifier
+			years = 5
+		}
+	}
+}

@@ -1,0 +1,396 @@
+﻿# AGOT Local Stability Patch 0.5.7 - MDE maintenance and dragonpit viewer rebase
+# Corrige la lista de huevos vivos para que no se reinicie por artefacto.
+
+agot_dragon_maintenance.0800 = {
+	type = character_event
+	title = agot_dragon_maintenance.0800.t
+	desc = agot_dragon_maintenance.0800.desc
+
+	theme = dragon
+	override_background = { reference = agot_dragonpit }
+	left_portrait = {
+		character = root
+		animation = chancellor
+	}
+	# Wild Dragons
+	option = {
+		name = agot_dragon_maintenance.0800.a
+		trigger = {
+			any_in_global_list = {
+				variable = living_dragons
+				NOT = {
+					has_character_flag = owned_dragon
+				}
+			}
+		}
+		set_variable = show_wild_dragons
+		trigger_event = agot_dragon_maintenance.0801
+	}
+	# Untamed Dragons
+	option = {
+		name = agot_dragon_maintenance.0800.b
+		trigger = {
+			any_in_global_list = {
+				variable = living_dragons
+				has_character_flag = owned_dragon
+				NOT = {
+					has_variable = current_rider
+				}
+			}
+		}
+		set_variable = show_untamed_dragons
+		trigger_event = agot_dragon_maintenance.0801
+	}
+	# Tamed Dragons
+	option = {
+		name = agot_dragon_maintenance.0800.c
+		trigger = {
+			any_in_global_list = {
+				variable = living_dragons
+				has_variable = current_rider
+			}
+		}
+		set_variable = show_tamed_dragons
+		trigger_event = agot_dragon_maintenance.0801
+	}
+	# Dead Dragons
+	option = {
+		name = agot_dragon_maintenance.0800.d
+		trigger = {
+			any_in_global_list = {
+				variable = dead_dragons_list
+				exists = this
+			}
+		}
+		set_variable = show_dead_dragons
+		trigger_event = agot_dragon_maintenance.0801
+	}
+	# Dragon Eggs
+	option = {
+		name = agot_dragon_maintenance.0800.eggs
+		trigger = {
+			any_artifact = {
+				has_variable = dragon_egg
+			}
+		}
+		trigger_event = agot_dragon_maintenance.0804 # MDE Modified
+	}
+	option = { #Pits
+		name = agot_dragon_maintenance.0800.dragonpits
+		trigger = {
+			mde_live_dragonpits = yes
+		}
+		trigger_event = agot_dragon_maintenance.0807
+	}
+	# Main
+	option = {
+		name = global_events_settings.main_screen
+		trigger_event = global_events_settings.0001
+	}
+	# Nevermind
+	option = {
+		name = global_events_settings.dismiss
+	}
+}
+
+agot_dragon_maintenance.0802 = {
+	type = character_event
+	title = agot_dragon_maintenance.0802.t
+	desc = agot_dragon_maintenance.0802.desc
+	theme = dragon
+
+	widget = {
+		is_shown = {
+			is_ai = no
+		}
+		gui = "agot_dragon_egg_selection"
+		container = "custom_widgets_container"
+	}
+
+	immediate = {
+		every_artifact = {
+			limit = {
+				has_variable = dragon_egg
+			}
+			root = {
+				add_to_variable_list = {
+					name = possible_dragon_eggs
+					target = prev
+				}
+			}
+		}
+	}
+	option = {
+		name = agot_dragon_maintenance.0801.a
+		trigger_event = agot_dragon_maintenance.0800
+		clear_variable_list = possible_dragon_eggs
+		remove_variable = mde_egg_button_open
+	}
+	option = {
+		name = global_events_settings.main_screen
+		trigger_event = global_events_settings.0001
+		clear_variable_list = possible_dragon_eggs
+		remove_variable = mde_egg_button_open
+
+	}
+	option = {
+		name = agot_dragon_maintenance.0804.a
+		trigger_event = agot_dragon_maintenance.0804
+		clear_variable_list = possible_dragon_eggs
+		remove_variable = mde_egg_button_open
+	}
+	# Cool thanks
+	option = {
+		name = global_events_settings.dismiss
+		clear_variable_list = possible_dragon_eggs
+		remove_variable = mde_egg_button_open
+	}
+}
+
+agot_dragon_maintenance.0804 = { # MDE Modified
+	type = character_event
+	title = agot_dragon_maintenance.0804.t
+	desc = agot_dragon_maintenance.0804.desc
+	theme = dragon
+
+	option = { #Living
+		name = agot_dragon_maintenance.0805.a
+		trigger_event = agot_dragon_maintenance.0805
+	}
+	option = { #Dead
+		name = agot_dragon_maintenance.0806.a
+		trigger_event = agot_dragon_maintenance.0806
+	}
+	option = { #All
+		name = agot_dragon_maintenance.0804.a
+		trigger_event = agot_dragon_maintenance.0802
+	}
+	option = {
+		name = agot_dragon_maintenance.0801.a
+		trigger_event = agot_dragon_maintenance.0800
+	}
+	option = {
+		name = agot_dragon_maintenance.0800.dragonpits
+		trigger = {
+			mde_live_dragonpits = yes
+		}
+		trigger_event = agot_dragon_maintenance.0807
+	}
+	option = {
+		name = global_events_settings.main_screen
+		trigger_event = global_events_settings.0001
+	}
+	# Cool thanks
+	option = {
+		name = global_events_settings.dismiss
+	}
+}
+
+agot_dragon_maintenance.0805 = {
+	type = character_event
+	title = agot_dragon_maintenance.0805.t
+	desc = agot_dragon_maintenance.0805.desc
+	theme = dragon
+	
+	widget = {
+		is_shown = {
+			is_ai = no
+		}
+		gui = "agot_dragon_egg_selection"
+		container = "custom_widgets_container"
+	}
+
+	immediate = {
+		clear_variable_list = possible_dragon_eggs
+		every_artifact = {
+			limit = {
+				has_variable = dragon_egg
+				NOT = { has_variable = dud_egg }
+			}
+			root = {
+				add_to_variable_list = {
+					name = possible_dragon_eggs
+					target = prev
+				}
+			}
+		}
+	}
+	option = {
+		name = agot_dragon_maintenance.0804.a
+		trigger_event = agot_dragon_maintenance.0804
+		clear_variable_list = possible_dragon_eggs
+	}
+	option = {
+		name = agot_dragon_maintenance.0801.a
+		trigger_event = agot_dragon_maintenance.0800
+		clear_variable_list = possible_dragon_eggs
+	}
+	option = {
+		name = global_events_settings.main_screen
+		trigger_event = global_events_settings.0001
+		clear_variable_list = possible_dragon_eggs
+	}
+	# Cool thanks
+	option = {
+		name = global_events_settings.dismiss
+		clear_variable_list = possible_dragon_eggs
+	}
+}
+
+agot_dragon_maintenance.0806 = {
+	type = character_event
+	title = agot_dragon_maintenance.0806.t
+	desc = agot_dragon_maintenance.0806.desc
+	theme = dragon
+
+	widget = {
+		is_shown = {
+			is_ai = no
+		}
+		gui = "agot_dragon_egg_selection"
+		container = "custom_widgets_container"
+	}
+
+	immediate = {
+		clear_variable_list = possible_dragon_eggs
+		every_artifact = {
+			limit = {
+				has_variable = dragon_egg
+				has_variable = dud_egg
+			}
+			root = {
+				add_to_variable_list = {
+					name = possible_dragon_eggs
+					target = prev
+				}
+			}
+		}
+	}
+	option = {
+		name = agot_dragon_maintenance.0804.a
+		trigger_event = agot_dragon_maintenance.0804
+		clear_variable_list = possible_dragon_eggs
+	}
+	option = {
+		name = agot_dragon_maintenance.0801.a
+		trigger_event = agot_dragon_maintenance.0800
+		clear_variable_list = possible_dragon_eggs
+	}
+	option = {
+		name = global_events_settings.main_screen
+		trigger_event = global_events_settings.0001
+		clear_variable_list = possible_dragon_eggs
+	}
+	# Cool thanks
+	option = {
+		name = global_events_settings.dismiss
+		clear_variable_list = possible_dragon_eggs
+	}
+}
+
+agot_dragon_maintenance.0807 = { # MDE Modified
+	type = character_event
+	title = agot_dragon_maintenance.0807.t
+	desc = agot_dragon_maintenance.0807.desc
+	theme = dragon
+	left_portrait = {
+		character = root
+		animation = chancellor
+	}
+	widget = {
+		is_shown = {
+			is_ai = no
+		}
+		gui = "event_window_dragonpit_selection_tall"
+		container = "custom_widgets_container"
+	}
+
+	immediate = {
+		every_county = {
+			limit = {
+				agot_title_is_an_active_dragonpit = yes
+			}
+			root = {
+				add_to_variable_list = {
+					name = possible_dragonpit_view_only
+					target = prev
+				}
+				set_variable = { name = selected_dragonpit value = prev }
+			}
+			
+		}
+	}
+	option = {
+		name = agot_dragon_maintenance.0807.a
+		trigger_event = more_dragon_eggs_events.0019
+		clear_variable_list = possible_dragonpit_view_only
+	}
+	option = {
+		name = agot_dragon_maintenance.0801.a
+		trigger_event = agot_dragon_maintenance.0800
+		clear_variable_list = possible_dragonpit_view_only
+	}
+	option = {
+		name = global_events_settings.main_screen
+		trigger_event = global_events_settings.0001
+		clear_variable_list = possible_dragonpit_view_only
+	}
+	option = {
+		name = agot_dragon_maintenance.0804.a
+		trigger_event = agot_dragon_maintenance.0804
+		clear_variable_list = possible_dragonpit_view_only
+	}
+	# Cool thanks
+	option = {
+		name = global_events_settings.dismiss
+		clear_variable_list = possible_dragonpit_view_only
+	}
+}
+
+agot_dragon_maintenance.0808 = { # MDE Modified
+	type = character_event
+	window = agot_dragon_character_event
+	title = agot_dragon_maintenance.0808.t
+	desc = agot_dragon_maintenance.0808.desc
+
+	theme = dragon
+	override_background = { reference = agot_dragonpit }
+
+	widget = {
+		is_shown = {
+			is_ai = no
+		}
+		gui = "mde_character_selection_two_options_display_dragonblood"
+		container = "custom_widgets_container"
+	}
+
+	left_portrait = root
+	lower_left_portrait = { character = scope:dragon }
+
+	immediate = {
+		every_living_character = {
+			limit = {
+				agot_has_dragonblood_heritage = yes
+				NOT = { has_trait = dragon }
+			}
+			root = {
+				add_to_variable_list = {
+					name = possible_characters
+					target = prev
+				}
+				set_variable = { name = si_selected_character value = prev }
+			}
+		}
+	}
+
+	option = {
+		name = global_events_settings.main_screen
+		trigger_event = global_events_settings.0001
+		clear_variable_list = possible_characters
+	}
+	# Cool thanks
+	option = {
+		name = global_events_settings.dismiss
+		clear_variable_list = possible_characters
+	}
+}

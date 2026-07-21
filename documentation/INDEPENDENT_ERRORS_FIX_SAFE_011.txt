@@ -1,0 +1,16 @@
+﻿AGOT INDEPENDENT ERRORS FIX - SAFE 0.1.1
+Instalado: 07/16/2026 12:23:47
+
+Clima:
+- Restaura location_has_harsh_winter_trigger para scopes de personaje.
+- Corrige solo las cuatro llamadas provinciales de escuderos.
+
+AOW:
+- Conserva type = heavy_cavalry.
+
+Dragones:
+- Seis script_values tienen valores neutros inmediatos.
+- monthly_global_pulse completa variables ausentes.
+- No se sobrescriben variables validas.
+
+Respaldo: D:\Paradox Interactive\Crusader Kings III\BACKUPS_MODS_MANUALES\AGOT_INDEPENDENT_ERRORS_FIX_SAFE_011_20260716_122347

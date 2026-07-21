@@ -1,0 +1,43 @@
+﻿{
+    "Version":  "0.1.1",
+    "InstalledAt":  "2026-07-16T12:23:47.4992838+02:00",
+    "BackupPath":  "D:\\Paradox Interactive\\Crusader Kings III\\BACKUPS_MODS_MANUALES\\AGOT_INDEPENDENT_ERRORS_FIX_SAFE_011_20260716_122347",
+    "Files":  [
+                  {
+                      "Key":  "Weather",
+                      "Relative":  "common\\scripted_triggers\\00_weather_triggers.txt",
+                      "HadPrevious":  true,
+                      "PayloadSHA256":  "78447549c346e541e1af5fc4ecd97b0a7b9ad6943bc5c56399c09d7ee019e58e"
+                  },
+                  {
+                      "Key":  "Accolades",
+                      "Relative":  "common\\scripted_effects\\00_accolades_scripted_effects.txt",
+                      "HadPrevious":  false,
+                      "PayloadSHA256":  "31e2c6e134987faa38a39af299b363059675960530dad3494dd5e6a001cb25ab"
+                  },
+                  {
+                      "Key":  "Aow",
+                      "Relative":  "common\\men_at_arms_types\\00_aow_hcav_cultural_maa_types.txt",
+                      "HadPrevious":  true,
+                      "PayloadSHA256":  "c348017a6c08fa08f7b63445d63cbc678bf28c0c4ff26db5277f2edbfd9db311"
+                  },
+                  {
+                      "Key":  "DragonValues",
+                      "Relative":  "common\\script_values\\00_agot_dragon_gene_values.txt",
+                      "HadPrevious":  true,
+                      "PayloadSHA256":  "20925279beb21b8729218dd6fc00a76052dcb58868a47502cc390def79eaef82"
+                  },
+                  {
+                      "Key":  "NewOnAction",
+                      "Relative":  "common\\on_action\\zz_agot_independent_errors_safe_011_on_actions.txt",
+                      "HadPrevious":  false,
+                      "PayloadSHA256":  "b708b233c3a13467e654e8139e9debaa63d03412fbf79bc312207bd623c2215f"
+                  }
+              ],
+    "OldOnActionRelative":  "common\\on_action\\zz_agot_independent_errors_safe_010_on_actions.txt",
+    "HadOldOnAction":  true,
+    "DocRelative":  "documentation\\INDEPENDENT_ERRORS_FIX_SAFE_011.txt",
+    "StateRelative":  "documentation\\INDEPENDENT_ERRORS_FIX_SAFE_011_STATE.json",
+    "HadDoc":  false,
+    "HadState":  false
+}

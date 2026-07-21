@@ -1,0 +1,35 @@
+﻿{
+    "Version":  "0.1.0",
+    "InstalledAt":  "2026-07-16T11:10:17.0510212+02:00",
+    "BackupPath":  "D:\\Paradox Interactive\\Crusader Kings III\\BACKUPS_MODS_MANUALES\\AGOT_INDEPENDENT_ERRORS_FIX_SAFE_010_20260716_111016",
+    "Files":  [
+                  {
+                      "Key":  "Weather",
+                      "Relative":  "common\\scripted_triggers\\00_weather_triggers.txt",
+                      "HadPrevious":  false,
+                      "PayloadSHA256":  "e33b43677e38419c6480cbfa57d2b0b771403cbbc2719037d0afb512f6998a11"
+                  },
+                  {
+                      "Key":  "AowHcav",
+                      "Relative":  "common\\men_at_arms_types\\00_aow_hcav_cultural_maa_types.txt",
+                      "HadPrevious":  false,
+                      "PayloadSHA256":  "c348017a6c08fa08f7b63445d63cbc678bf28c0c4ff26db5277f2edbfd9db311"
+                  },
+                  {
+                      "Key":  "DragonMigration",
+                      "Relative":  "common\\on_action\\zz_agot_independent_errors_safe_010_on_actions.txt",
+                      "HadPrevious":  false,
+                      "PayloadSHA256":  "60f205def197e77867da8f96784840286bae8399b9242f98cbbbaddd510eea06"
+                  }
+              ],
+    "DocRelative":  "documentation\\INDEPENDENT_ERRORS_FIX_SAFE_010.txt",
+    "StateRelative":  "documentation\\INDEPENDENT_ERRORS_FIX_SAFE_010_STATE.json",
+    "HadPreviousDoc":  false,
+    "HadPreviousState":  false,
+    "SourceHashes":  {
+                         "AgotWeather":  "78447549c346e541e1af5fc4ecd97b0a7b9ad6943bc5c56399c09d7ee019e58e",
+                         "AowHcav":  "63bbc83a8539ad10792f36eb0408ff4a3a4a24794245add35564201928735f9a",
+                         "LocalDragonValues":  "db8cbe1688443bdad3a85c58544ffd65d465cf4eef75da84fc82b74043d501b0",
+                         "AgotDragonGenes":  "b3a3f4f1163f31c39419ff33a55e7cc76080e5f73a8bd17f2006da2b14c22383"
+                     }
+}

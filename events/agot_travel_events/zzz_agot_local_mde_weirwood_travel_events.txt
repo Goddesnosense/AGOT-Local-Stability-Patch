@@ -1,0 +1,119 @@
+﻿# AGOT Local Stability 0.6.5
+# Restores AGOT 0.4.38 weirwood background, faith and stress logic.
+
+agot_travel_events.1001 = {
+	title = agot_travel_events.1001.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					religion = religion:the_pact_religion
+				}
+				desc = agot_travel_events.1001.intro_old_gods
+			}
+			desc = agot_travel_events.1001.intro_other
+		}
+		desc = agot_travel_events.1001.desc
+	}
+	type = character_event
+	theme = travel
+	override_background = {
+		reference = agot_weirwood_event
+	}
+
+	right_portrait = {
+		character = root
+		animation = personality_honorable
+	}
+
+	immediate = {
+
+	}
+
+	option = {
+		name = agot_travel_events.1001.a
+		trigger_event = agot_travel_events.1002
+
+		if = {
+			limit = {
+				NOR = {
+					faith.religion = religion:the_pact_religion
+					faith = { has_doctrine = doctrine_pantheon_old_gods }
+					faith = { has_doctrine = doctrine_syncretism_the_pact }
+				}
+			}
+
+			stress_impact = {
+				zealous = medium_stress_impact_gain
+			}
+		}
+	}
+
+	option = {
+		name = agot_travel_events.1001.b
+		trigger_event = agot_travel_events.1003
+	}
+}
+
+agot_travel_events.1002 = {
+	title = agot_travel_events.1002.t
+	desc = agot_travel_events.1002.desc
+	type = character_event
+	theme = travel
+	override_background = {
+		reference = agot_weirwood_event
+	}
+
+	right_portrait = {
+		character = root
+		animation = personality_zealous
+	}
+
+	immediate = {
+
+	}
+
+	option = {
+		name = agot_travel_events.1002.a
+		trigger = {
+			NOT = { religion = religion:the_pact_religion }
+		}
+		set_character_faith = faith:old_gods_wnw
+
+		if = {
+			limit = {
+				NOR = {
+					faith = { has_doctrine = doctrine_pantheon_old_gods }
+					faith = { has_doctrine = doctrine_syncretism_the_pact }
+				}
+			}
+
+			stress_impact = {
+				zealous = medium_stress_impact_gain
+			}
+		}
+		else = {
+			stress_impact = {
+				zealous = major_stress_impact_gain
+			}
+		}
+	}
+
+	option = {
+		name = agot_travel_events.1002.b
+		trigger = {
+			NOT = { religion = religion:the_pact_religion }
+		}
+
+		stress_impact = {
+			base = medium_stress_impact_gain
+			zealous = minor_stress_impact_loss
+		}
+	}
+
+	option = {
+		name = agot_travel_events.1002.c
+		trigger = { religion = religion:the_pact_religion }
+		add_piety = medium_piety_gain
+	}
+}

@@ -1,0 +1,16 @@
+﻿AGOT NAME PACK+ FROZEN SHORE REMAP - SAFE 0.3.0
+Instalado: 07/16/2026 16:07:42
+
+Remapeadas:
+- nightrunner
+- frozen_shoreman
+- ice_riverman
+
+Lista efectiva:
+- name_list_frozen_shore de AGOT Name Pack+ 1.0
+
+Retirados:
+- Wildling List Compat SAFE 0.1.0
+- Wildling Animal Equivalency Full SAFE 0.2.0
+
+Respaldo: D:\Paradox Interactive\Crusader Kings III\BACKUPS_MODS_MANUALES\AGOT_NAME_PACK_FROZEN_SHORE_REMAP_SAFE_030_20260716_160742

@@ -1,0 +1,115 @@
+﻿# AGOT Local Stability 0.6.5
+# Restores the valid embarrassing_godswood modifier key.
+
+agot_filler_north.0035 = {
+	type = character_event
+	title = agot_filler_north.0035.t
+	desc = agot_filler_north.0035.desc
+
+	 override_background = {
+		reference = garden
+	}
+
+	theme = realm
+
+	left_portrait = {
+		character = root
+	}
+
+	trigger = {
+		is_landed = yes
+		is_available_adult = yes
+		capital_province = { geographical_region = world_westeros_the_north }
+		NOT = {
+			has_character_flag = agot_filler_heart_tree_gardener_maintenance
+		}
+	}
+
+	weight_multiplier = {
+		base = 1
+		modifier = {
+			add = 0.6
+			has_trait = lifestyle_gardener
+		}
+		modifier = {
+			add = 0.5
+			has_trait = zealous
+		}
+	}
+
+	immediate = {
+		add_character_flag = {
+			flag = agot_filler_heart_tree_gardener_maintenance
+			years = 25
+		}
+	}
+
+	#Only let the most experienced gardeners do it.
+	option = {
+		name = agot_filler_north.0035.a
+		stress_impact = {
+			lifestyle_gardener = minor_stress_impact_loss
+		}
+	}
+
+	#Okay, what can go wrong?
+	option = {
+		name = agot_filler_north.0035.b
+		random = {
+			chance = 25
+			add_character_modifier = {
+				years = 10
+				modifier = agot_filler_magnificent_godswood
+			}
+		}
+		random = {
+			chance = 33
+			add_character_modifier = {
+				years = 10
+				modifier = agot_filler_embarrassing_godswood
+			}
+		}
+		stress_impact = {
+			paranoid = medium_stress_impact_gain
+		}
+	 }
+
+	#No - I don't want to risk it. The Heart Tree is too sacred.
+	option = {
+		name = agot_filler_north.0035.c
+		random = {
+			chance = 5
+			add_piety = 10
+		}
+		stress_impact = {
+			lifestyle_gardener = miniscule_stress_impact_loss
+			zealous = miniscule_stress_impact_loss
+		}
+	 }
+
+	#No, I'll do it myself!
+	option = {
+		name = agot_filler_north.0035.d
+		trigger = {
+			has_trait = lifestyle_gardener
+		}
+		trait = lifestyle_gardener
+		stress_impact = {
+			lifestyle_gardener = medium_stress_impact_loss
+		}
+		random = {
+			chance = 66
+			add_character_modifier = {
+				years = 10
+				modifier = agot_filler_magnificent_godswood
+			}
+		}
+		random = {
+			chance = 5
+			add_character_modifier = {
+				years = 10
+				modifier = agot_filler_embarrassing_godswood
+			}
+		}
+	 }
+}

@@ -1,0 +1,180 @@
+﻿# AGOT Local Stability Patch 0.6.1 — Winterfell travel egg discovery
+
+agot_travel_events.1004 = {
+	title = agot_travel_events.1004.t
+	desc = agot_travel_events.1004.desc
+	type = character_event
+	theme = travel
+	override_background = { reference = agot_underground }
+
+	right_portrait = {
+		character = root
+		animation = lantern
+	}
+
+	immediate = {
+
+	}
+
+	option = {
+		name = agot_travel_events.1004.a
+		if = { # MDE Modified
+			limit = {
+				has_game_rule = absolute_spawn
+				NOT = { has_global_variable = winterfell_dragon_egg_found }
+				NAND = {
+					has_game_rule = ai_can_not_get_eggs
+					is_ai = yes
+				}
+			}
+			trigger_event = agot_travel_events.1007
+		}
+		#Slim chances to find eggs
+		else_if = {
+			limit = {
+				NOT = { has_global_variable = winterfell_dragon_egg_found }
+				NAND = {
+					has_game_rule = ai_can_not_get_eggs
+					is_ai = yes
+				}
+				NOT = { has_game_rule = no_spawns }
+			}
+			hidden_effect = {
+				random_list = {
+					499 = {
+						modifier = {
+							add = 300
+							has_game_rule = very_unlikely_spawn
+						}
+						modifier = {
+							add = 900
+							has_game_rule = extremely_unlikely_spawn
+						}
+						trigger_event = agot_travel_events.1005
+					}
+					1 = {
+						trigger = { game_start_date > 8129.6.1 }
+						modifier = {
+							OR = {
+								dynasty = dynasty:dynn_Targaryen
+								dynasty = dynasty:dynn_Velaryon
+								dynasty = dynasty:dynn_Strong
+							}
+							add = 9
+						}
+						modifier = {
+							add = 10
+							has_trait = dragon_dreams
+						}
+						modifier = {
+							add = 24
+							has_game_rule = fairly_likely_spawn
+						}
+						modifier = {
+							add = 310
+							has_game_rule = very_likely_spawn
+						}
+						trigger_event = agot_travel_events.1007
+					}
+				}
+			}
+		}
+		else = { }
+	}
+
+	option = {
+		name = agot_travel_events.1004.b
+		if = { # MDE Modified
+			limit = {
+				has_game_rule = absolute_spawn
+				NOT = { has_global_variable = winterfell_dragon_egg_found }
+				NAND = {
+					has_game_rule = ai_can_not_get_eggs
+					is_ai = yes
+				}
+			}
+			trigger_event = agot_travel_events.1007
+		}
+		#Slim chances to find eggs
+		else_if = {
+			limit = {
+				NOT = { has_global_variable = winterfell_dragon_egg_found }
+				NAND = {
+					has_game_rule = ai_can_not_get_eggs
+					is_ai = yes
+				}
+				NOT = { has_game_rule = no_spawns }
+			}
+			hidden_effect = {
+				random_list = {
+					499 = {
+						modifier = {
+							add = 300
+							has_game_rule = very_unlikely_spawn
+						}
+						modifier = {
+							add = 900
+							has_game_rule = extremely_unlikely_spawn
+						}
+						trigger_event = agot_travel_events.1005
+					}
+					1 = {
+						trigger = { game_start_date > 8129.6.1 }
+						modifier = {
+							OR = {
+								dynasty = dynasty:dynn_Targaryen
+								dynasty = dynasty:dynn_Velaryon
+								dynasty = dynasty:dynn_Strong
+							}
+							add = 9
+						}
+						modifier = {
+							add = 10
+							has_trait = dragon_dreams
+						}
+						modifier = {
+							add = 24
+							has_game_rule = fairly_likely_spawn
+						}
+						modifier = {
+							add = 310
+							has_game_rule = very_likely_spawn
+						}
+						trigger_event = agot_travel_events.1007
+					}
+				}
+			}
+		}
+		else = { }
+	}
+}
+
+agot_travel_events.1007 = {
+	title = agot_travel_events.1007.t
+	desc = agot_travel_events.1007.desc
+	type = character_event
+	theme = travel
+	override_background = { reference = agot_underground }
+
+	right_portrait = {
+		character = root
+		animation = agot_egg_icefire # MDE Modified
+	}
+
+	immediate = {
+
+	}
+
+	option = {
+		name = agot_travel_events.1007.a
+		ai_chance = 0
+	}
+
+	option = {
+		name = agot_travel_events.1007.b
+		ai_chance = 100
+		set_global_variable = winterfell_dragon_egg_found
+		character:dragon_vermax = { save_scope_as = dragon_parent }
+		create_artifact_dragon_egg_icefire_effect = { OWNER = root }
+	}
+}

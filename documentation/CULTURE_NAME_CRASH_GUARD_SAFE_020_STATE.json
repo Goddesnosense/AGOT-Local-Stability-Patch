@@ -1,0 +1,22 @@
+﻿{
+    "Version":  "0.2.0",
+    "InstalledAt":  "2026-07-16T10:18:35.7134249+02:00",
+    "BackupPath":  "D:\\Paradox Interactive\\Crusader Kings III\\BACKUPS_MODS_MANUALES\\AGOT_CULTURE_NAME_CRASH_GUARD_SAFE_020_20260716_101835",
+    "UnknownRelative":  "common\\scripted_effects\\zz_agot_unknown_culture_conversion_crash_guard.txt",
+    "ChildRelative":  "common\\scripted_effects\\zz_agot_carnx_child_birth_name_crash_guard.txt",
+    "DocRelative":  "documentation\\CULTURE_NAME_CRASH_GUARD_SAFE_020.txt",
+    "StateRelative":  "documentation\\CULTURE_NAME_CRASH_GUARD_SAFE_020_STATE.json",
+    "OldDocRelative":  "documentation\\UNKNOWN_CULTURE_CRASH_GUARD_SAFE_011.txt",
+    "OldStateRelative":  "documentation\\UNKNOWN_CULTURE_CRASH_GUARD_SAFE_011_STATE.json",
+    "HadPreviousUnknown":  true,
+    "HadPreviousChild":  false,
+    "HadPreviousDoc":  false,
+    "HadPreviousState":  false,
+    "HadPreviousOldDoc":  true,
+    "HadPreviousOldState":  true,
+    "UnknownPayloadSHA256":  "c99f9357771fad34bc3301b618b9bc1260a3c822a7f9b5604b6df0af3817bace",
+    "ChildPayloadSHA256":  "c992a4bc6b9092ff13b521877db582ab61253bc6901815eacdb9d69d59729f88",
+    "AgotCultureEffectsSHA256":  "ef844cce2e3a62297704b06e63c6a4134beda47c9f68589c4fe12e59abee5854",
+    "AgotWildlingSHA256":  "b75d9567a9aeb59f1606c70010dab024f3bf11d269a2f3f6edac19e8eea469d3",
+    "CsrOnActionSHA256":  "667f89760706e94043f51152b4309a4e0ebd0b0a9db8ca6f971797d8cc631690"
+}

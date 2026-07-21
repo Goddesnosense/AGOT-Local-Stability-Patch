@@ -1,0 +1,110 @@
+﻿# AGOT Local Stability Patch 0.6.1 — Winterfell crypt egg discovery
+
+agot_filler_north.0128 = {
+	type = character_event
+	title = agot_filler_north.0128.t
+	desc = agot_filler_north.0128.desc
+
+	theme = dynasty
+	override_background = { reference = agot_underground }
+
+	right_portrait = {
+		character = root
+		animation = lantern
+	}
+
+	trigger = {
+		is_available_ai_adult = yes
+		has_title = title:c_winterfell
+		dynasty = dynasty:dynn_Stark
+	}
+
+	option = {
+		name = agot_filler_north.0128.a
+		if = { 
+			limit = {
+				has_game_rule = absolute_spawn
+				NOT = { has_global_variable = winterfell_dragon_egg_found }
+				NAND = {
+					has_game_rule = ai_can_not_get_eggs
+					is_ai = yes
+				}
+			}
+			trigger_event = agot_filler_north.0130
+		}
+		#Slim chances to find eggs
+		else_if = {
+			limit = {
+				NOT = { has_global_variable = winterfell_dragon_egg_found }
+				NAND = {
+					has_game_rule = ai_can_not_get_eggs
+					is_ai = yes
+				}
+				NOT = { has_game_rule = no_spawns }
+			}
+			hidden_effect = {
+				random_list = {
+					99 = {
+						trigger_event = agot_filler_north.0129
+					}
+					1 = {
+						trigger = { game_start_date > 8129.6.1 }
+						modifier = {
+							factor = 0
+							has_global_variable = winterfell_dragon_egg_found
+						}
+
+						trigger_event = agot_filler_north.0130
+					}
+				}
+			}
+		}
+		else = { }
+	}
+
+	option = {
+		name = agot_filler_north.0128.b
+		if = { 
+			limit = {
+				has_game_rule = absolute_spawn
+				NOT = { has_global_variable = winterfell_dragon_egg_found }
+				NAND = {
+					has_game_rule = ai_can_not_get_eggs
+					is_ai = yes
+				}
+			}
+			trigger_event = agot_filler_north.0130
+		}
+		#Slim chances to find eggs
+		else_if = {
+			limit = {
+				NOT = { has_global_variable = winterfell_dragon_egg_found }
+				NAND = {
+					has_game_rule = ai_can_not_get_eggs
+					is_ai = yes
+				}
+				NOT = { has_game_rule = no_spawns }
+			}
+			hidden_effect = {
+				random_list = {
+					99 = {
+						trigger_event = agot_filler_north.0129
+					}
+					1 = {
+						trigger = { game_start_date > 8129.6.1 }
+						modifier = {
+							factor = 0
+							has_global_variable = winterfell_dragon_egg_found
+						}
+
+						trigger_event = agot_filler_north.0130
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = agot_filler_north.0128.c
+	}
+}
